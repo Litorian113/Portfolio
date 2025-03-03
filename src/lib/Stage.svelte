@@ -60,25 +60,42 @@
     
       // --- FLUR-Linien & Rückwand (wie gehabt) ---
       const points = [
-        new THREE.Vector3(-10, 5, 20),
-        new THREE.Vector3(-5, 2.5, -50),
-        new THREE.Vector3(10, 5, 20),
-        new THREE.Vector3(5, 2.5, -50),
-        new THREE.Vector3(-10, -5, 20),
-        new THREE.Vector3(-5, -2.5, -50),
-        new THREE.Vector3(10, -5, 20),
-        new THREE.Vector3(5, -2.5, -50),
-        new THREE.Vector3(-5, 2.5, -50),
-        new THREE.Vector3(5, 2.5, -50),
-        new THREE.Vector3(-5, -2.5, -50),
-        new THREE.Vector3(5, -2.5, -50),
-        new THREE.Vector3(-5, 2.5, -50),
-        new THREE.Vector3(-5, -2.5, -50),
-        new THREE.Vector3(5, 2.5, -50),
-        new THREE.Vector3(5, -2.5, -50)
+        // Die Punkte werden paarweise zu Liniensegmenten verbunden:
+        // Punkt 1-2: Obere linke Diagonale vom vorderen Bereich zur linken Wand hinten
+        // new THREE.Vector3(-10, 5, 20),  // Vorderer, äußerer linker Punkt (oben)
+        // new THREE.Vector3(-5, 2.5, -50), // Hinterer, innerer linker Punkt (etwas unten)
+
+        // Punkt 3-4: Obere rechte Diagonale vom vorderen Bereich zur rechten Wand hinten
+        // new THREE.Vector3(10, 5, 20),   // Vorderer, äußerer rechter Punkt (oben)
+        // new THREE.Vector3(5, 2.5, -50),  // Hinterer, innerer rechter Punkt (etwas unten)
+
+        // Punkt 5-6: Untere linke Diagonale vom vorderen Bereich zur linken Wand hinten
+        new THREE.Vector3(-10, -5, 20), // Vorderer, äußerer linker Punkt (unten)
+        new THREE.Vector3(-5, -2.5, -50),// Hinterer, innerer linker Punkt (etwas oben)
+
+        // Punkt 7-8: Untere rechte Diagonale vom vorderen Bereich zur rechten Wand hinten
+        new THREE.Vector3(10, -5, 20),  // Vorderer, äußerer rechter Punkt (unten)
+        new THREE.Vector3(5, -2.5, -50), // Hinterer, innerer rechter Punkt (etwas oben)
+
+        // Punkt 9-10: Obere Kante der Rückwand (von linker zur rechter Seite)
+        new THREE.Vector3(-5, 2.5, -50), // Linker Punkt oben an der Rückwand
+        new THREE.Vector3(5, 2.5, -50),  // Rechter Punkt oben an der Rückwand
+
+        // Punkt 11-12: Untere Kante der Rückwand (von linker zur rechter Seite)
+        new THREE.Vector3(-5, -2.5, -50),// Linker Punkt unten an der Rückwand
+        new THREE.Vector3(5, -2.5, -50), // Rechter Punkt unten an der Rückwand
+
+        // Punkt 13-14: Linke Kante der Rückwand (von oben nach unten)
+        new THREE.Vector3(-5, 2.5, -50), // Obere linke Ecke der Rückwand
+        new THREE.Vector3(-5, -2.5, -50),// Untere linke Ecke der Rückwand
+
+        // Punkt 15-16: Rechte Kante der Rückwand (von oben nach unten)
+        new THREE.Vector3(5, 2.5, -50),  // Obere rechte Ecke der Rückwand
+        new THREE.Vector3(5, -2.5, -50)  // Untere rechte Ecke der Rückwand
+
       ];
       const corridorGeometry = new THREE.BufferGeometry().setFromPoints(points);
-      const corridorMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+      const corridorMaterial = new THREE.LineBasicMaterial({ color: 0x707070 });
       corridorLines = new THREE.LineSegments(corridorGeometry, corridorMaterial);
       scene.add(corridorLines);
     
@@ -90,7 +107,7 @@
 
           // Erstelle einen GridHelper, der ein Raster mit einer Breite von 20 Einheiten 
 // und 10 Unterteilungen zeigt. Du kannst die Farben (für die Mittellinie und das Raster) anpassen.
-const gridHelper = new THREE.GridHelper(20, 5, 0xffffff, 0xffffff);
+const gridHelper = new THREE.GridHelper(20, 5, 0x707070, 0x707070);  
 // Drehe den GridHelper, damit er horizontal (auf dem Boden) liegt.
 gridHelper.rotation.z = -Math.PI / 2;
 // Positioniere ihn so, dass er zwischen den beiden unteren Linien liegt.
@@ -98,7 +115,7 @@ gridHelper.rotation.z = -Math.PI / 2;
 gridHelper.position.set(-20, 0, -30); // Passe z und x an, damit er in deinen Flur passt
 scene.add(gridHelper);
 
-const gridHelper2 = new THREE.GridHelper(20, 20, 0xffffff, 0xffffff);
+const gridHelper2 = new THREE.GridHelper(20, 20, 0x707070, 0x707070);
 // Drehe den GridHelper, damit er horizontal (auf dem Boden) liegt.
 gridHelper2.rotation.z = -Math.PI / 2;
 // Positioniere ihn so, dass er zwischen den beiden unteren Linien liegt.
@@ -118,7 +135,7 @@ scene.add(gridHelper2);
       const textMaterial = new THREE.MeshBasicMaterial({ map: textTexture, transparent: true });
       const textGeometry = new THREE.PlaneGeometry(4, 2);
       textMesh = new THREE.Mesh(textGeometry, textMaterial);
-      textMesh.position.set(0, 0, cameraStartZ - 2);
+      textMesh.position.set(0, 0, cameraStartZ - 1.7);
       scene.add(textMesh);
     
       // --- Bild als Plane mit PNG-Transparenz (Erstes Bild) ---
@@ -147,7 +164,32 @@ scene.add(gridHelper2);
       pngMesh2.userData.offscreenX = 3;
       scene.add(pngMesh2);
       imageMeshes.push(pngMesh2);
+
+      const pngTexture3 = textureLoader.load('/Bwegt1.png');
+      pngTexture3.encoding = THREE.sRGBEncoding;
+      const pngGeometry3 = new THREE.PlaneGeometry(3, 2);
+      const pngMaterial3 = new THREE.MeshBasicMaterial({ map: pngTexture3, transparent: true });
+      const pngMesh3 = new THREE.Mesh(pngGeometry3, pngMaterial3);
+      // Starte offscreen (x = offscreenX) und setze die finalen Werte:
+      pngMesh3.position.set(-3, 0, 7.5);
+      pngMesh3.userData.finalX = 0;      // Zielposition
+      pngMesh3.userData.offscreenX = -3;    // Ausgangsposition
+      scene.add(pngMesh3);
+      imageMeshes.push(pngMesh3);
+
+      const pngTexture4 = textureLoader.load('/Bwegt1.png');
+      pngTexture4.encoding = THREE.sRGBEncoding;
+      const pngGeometry4 = new THREE.PlaneGeometry(3, 2);
+      const pngMaterial4 = new THREE.MeshBasicMaterial({ map: pngTexture4, transparent: true });
+      const pngMesh4 = new THREE.Mesh(pngGeometry4, pngMaterial4);
+      // Starte offscreen (x = offscreenX) und setze die finalen Werte:
+      pngMesh4.position.set(3, 0, 3.5);
+      pngMesh4.userData.finalX = 0;      // Zielposition
+      pngMesh4.userData.offscreenX = 3;    // Ausgangsposition
+      scene.add(pngMesh4);
+      imageMeshes.push(pngMesh4);
     }
+
 
     
     
@@ -201,7 +243,7 @@ scene.add(gridHelper2);
     
     
     let isTransitioning = false;
-const cameraStations = [20, 16.5, 13]; // Beispielwerte (Z-Positionen)
+const cameraStations = [20, 16.5, 13, 9.5, 5.5]; // Beispielwerte (Z-Positionen)
 let currentStation = 0;
 
 function onWheel(event) {
@@ -244,7 +286,7 @@ function onWheel(event) {
     // Funktion zum Aktualisieren der Bild-Opacities
     function updateAllImages() {
       const dMin = 2;
-      const dMax = 8;
+      const dMax = 3;
     
       imageMeshes.forEach(mesh => {
         const dist = Math.abs(camera.position.z - mesh.position.z);
@@ -252,7 +294,7 @@ function onWheel(event) {
         if (dist <= dMin) {
           opacity = 1;
         } else if (dist >= dMax) {
-          opacity = 0.05;
+          opacity = 0;
         } else {
           const t = (dist - dMin) / (dMax - dMin);
           opacity = 1 - t * (1 - 0.1);
