@@ -1,6 +1,12 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { gsap } from 'gsap'; 
+    import { goto } from '$app/navigation';
+    import { page } from '$app/stores';
+
+    export let cx = 0;
+    export let cy = 0;
+    export let cz = 20;
 
     let container;
     let scene, camera, renderer;
@@ -28,12 +34,45 @@
 
     // Scroll-Logik
     let isTransitioning = false;
-    const cameraStations = [20, 16.5, 13, 9.5, 5.5, 1, -3.5];
+    const cameraStations = [20, 16.5, 13, 9.5, 5.5, 1, -3.5, -7.5, -12, -35];
     let currentStation = 0;
+
+    let initialPositionSet = false;
 
     onMount(async () => {
       THREE = await import('three');
       initScene();
+      camera.position.set(cx, cy, cz);
+  initialPositionSet = true;
+  
+  const tolerance = 0.1;
+  const index = cameraStations.findIndex(val => Math.abs(val - cz) < tolerance);
+  if (index >= 0) {
+    currentStation = index;
+    console.log("Set currentStation to", currentStation);
+  } else {
+    currentStation = cameraStations.reduce((prev, curr, i) =>
+      Math.abs(curr - cz) < Math.abs(cameraStations[prev] - cz) ? i : prev, 0);
+    console.log("Fallback: Set currentStation to", currentStation);
+  }
+
+    // Abonniere den $page-Store, um bei URL-Änderungen die Kamera einmalig zu aktualisieren:
+    const unsubscribe = page.subscribe(($page) => {
+    const newCx = Number($page.url.searchParams.get('cx')) || 0;
+    const newCy = Number($page.url.searchParams.get('cy')) || 0;
+    const newCz = Number($page.url.searchParams.get('cz')) || 20;
+    // Wenn die URL-Parameter sich geändert haben, setze die Kamera:
+    if (camera && newCz !== cz) {
+      console.log("Updating camera position from URL to", newCx, newCy, newCz);
+      camera.position.set(newCx, newCy, newCz);
+      // Aktualisiere auch currentStation:
+      const idx = cameraStations.findIndex(val => Math.abs(val - newCz) < tolerance);
+      currentStation = idx >= 0 ? idx : cameraStations.reduce((prev, curr, i) =>
+        Math.abs(curr - newCz) < Math.abs(cameraStations[prev] - newCz) ? i : prev, 0);
+    }
+  });
+
+
       animate();
 
       window.addEventListener('wheel', onWheel, { passive: false });
@@ -55,6 +94,8 @@
       clearInterval(textUpdateInterval);
     });
 
+
+
     function initScene() {
       // Szene und Hintergrund
       scene = new THREE.Scene();
@@ -66,8 +107,10 @@
         window.innerWidth / window.innerHeight,
         0.1,
         1000
+
+        
       );
-      camera.position.set(0, 0, cameraStartZ);
+    //   camera.position.set(0, 0, cameraStartZ);
 
       // Renderer
       renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -83,6 +126,8 @@
       // Raycaster & Maus-Vektor
       raycaster = new THREE.Raycaster();
       mouse = new THREE.Vector2();
+
+
 
       // --------------------------------------------------------
       // Flur-Linien
@@ -109,20 +154,23 @@
       const backWallGeo = new THREE.PlaneGeometry(10, 5);
       const backWallMat = new THREE.MeshBasicMaterial({ color: 0x010300 });
       backWall = new THREE.Mesh(backWallGeo, backWallMat);
-      backWall.position.set(0, 0, -50);
+      backWall.position.set(0, 0, -40);
       scene.add(backWall);
 
       // GridHelper links
-      const gridHelper = new THREE.GridHelper(20, 5, 0x707070, 0x707070);
-      gridHelper.rotation.z = -Math.PI / 2;
-      gridHelper.position.set(-20, 0, -30);
-      scene.add(gridHelper);
+    //   const gridHelper = new THREE.GridHelper(20, 5, 0x707070, 0x707070);
+    //   gridHelper.rotation.z = -Math.PI / 2;
+    //   gridHelper.position.set(-20, 0, -30);
+    //   scene.add(gridHelper);
 
       // GridHelper rechts
-      const gridHelper2 = new THREE.GridHelper(20, 20, 0x707070, 0x707070);
-      gridHelper2.rotation.z = -Math.PI / 2;
-      gridHelper2.position.set(20, 0, 0);
-      scene.add(gridHelper2);
+    //   const gridHelper2 = new THREE.GridHelper(20, 20, 0x707070, 0x707070);
+    //   gridHelper2.rotation.z = -Math.PI / 2;
+    //   gridHelper2.position.set(20, 0, 0);
+    //   scene.add(gridHelper2);
+
+
+
 
       // --------------------------------------------------------
       // 1) ERSTER TEXT (Canvas: "Hello., I'm Franz.")
@@ -176,6 +224,42 @@
       const textMesh2 = new THREE.Mesh(textGeometry2, textMaterial2);
       textMesh2.position.set(0, 0, -0.5);
       scene.add(textMesh2);
+
+      // --------------------------------------------------------
+      // 3) ZWEITER TEXT: "Coding / Projects" (zentriert)
+      const canvas3 = document.createElement('canvas');
+      const ratio3 = window.devicePixelRatio || 1;
+      canvas3.width = 1024 * ratio3;
+      canvas3.height = 512 * ratio3;
+      const context3 = canvas3.getContext('2d');
+      context3.scale(ratio3, ratio3);
+
+      const textTexture3 = new THREE.CanvasTexture(canvas3);
+      textTexture3.colorSpace = THREE.SRGBColorSpace;
+      textTexture3.needsUpdate = true;
+
+      function updateCanvas3Text() {
+         context3.clearRect(0, 0, 1024, 512);
+         context3.fillStyle = "rgba(0,0,0,0)";
+         context3.fillRect(0, 0, 1024, 512);
+         context3.textAlign = "center";
+         context3.textBaseline = "middle";
+         context3.fillStyle = "white";
+         context3.font = "56px 'IBM Plex Mono'";
+         const centerX = 1024 / 2;
+         const centerY = 512 / 2;
+         context3.fillText("Website", centerX, centerY - 30);
+         context3.fillText("Projects", centerX, centerY + 30);
+         textTexture3.needsUpdate = true;
+      }
+      updateCanvas3Text();
+
+      const textMaterial3 = new THREE.MeshBasicMaterial({ map: textTexture3, transparent: true });
+      const textGeometry3 = new THREE.PlaneGeometry(4, 2);
+      const textMesh3 = new THREE.Mesh(textGeometry3, textMaterial3);
+      textMesh3.position.set(0, 0, -9);
+      scene.add(textMesh3);
+
 
       // --------------------------------------------------------
       // 3) BILDER LADEN + HOVER-TEXTUREN (Cover-Gruppen)
@@ -248,23 +332,25 @@
       coverGroups.push(coverGroup1, coverGroup2, coverGroup3, coverGroup4);
 
       // --------------------------------------------------------
-      // 4) WEITERE BILDER (z. B. Earthquake, Nass1, Bwegt1)
-      const pngTexture1 = textureLoader.load('/Earthquake.png');
-      pngTexture1.colorSpace = THREE.SRGBColorSpace;
-      const pngGeometry1 = new THREE.PlaneGeometry(3, 2);
-      const pngMaterial1 = new THREE.MeshBasicMaterial({
-         map: pngTexture1,
-         transparent: true,
-         toneMapped: false
-      });
-      const pngMesh1 = new THREE.Mesh(pngGeometry1, pngMaterial1);
-      pngMesh1.position.set(-3, 0, 15);
-      pngMesh1.userData.finalX = 0;
-      pngMesh1.userData.offscreenX = -3;
-      scene.add(pngMesh1);
-      imageMeshes.push(pngMesh1);
+    // 4) WEITERE BILDER (z. B. Earthquake, Nass1, Bwegt1)
+    const pngTexture1 = textureLoader.load('/Bild2.png');
+    pngTexture1.colorSpace = THREE.SRGBColorSpace;
+    const pngGeometry1 = new THREE.PlaneGeometry(3, 2);
+    const pngMaterial1 = new THREE.MeshBasicMaterial({
+    map: pngTexture1,
+    transparent: true,
+    toneMapped: false
+    });
+    const pngMesh1 = new THREE.Mesh(pngGeometry1, pngMaterial1);
+    pngMesh1.position.set(-3, 0, 15);
+    pngMesh1.userData.finalX = 0;
+    pngMesh1.userData.offscreenX = -3;
+    // Markiere dieses Bild als Nass-Projekt:
+    pngMesh1.userData.project = 'nass';
+    scene.add(pngMesh1);
+    imageMeshes.push(pngMesh1);
 
-      const pngTexture2 = textureLoader.load('/Nass1.png');
+      const pngTexture2 = textureLoader.load('/Bild1.png');
       pngTexture2.colorSpace = THREE.SRGBColorSpace;
       const pngGeometry2 = new THREE.PlaneGeometry(3, 2);
       const pngMaterial2 = new THREE.MeshBasicMaterial({ map: pngTexture2, transparent: true });
@@ -272,31 +358,100 @@
       pngMesh2.position.set(3, 0, 11.5);
       pngMesh2.userData.finalX = 0;
       pngMesh2.userData.offscreenX = 3;
+      pngMesh2.userData.project = 'bwegt';
       scene.add(pngMesh2);
       imageMeshes.push(pngMesh2);
 
-      const pngTexture3 = textureLoader.load('/Bwegt1.png');
+      const pngTexture3 = textureLoader.load('/Bild3.png');
       pngTexture3.colorSpace = THREE.SRGBColorSpace;
       const pngGeometry3 = new THREE.PlaneGeometry(3, 2);
       const pngMaterial3 = new THREE.MeshBasicMaterial({ map: pngTexture3, transparent: true });
       const pngMesh3 = new THREE.Mesh(pngGeometry3, pngMaterial3);
-      pngMesh3.position.set(-3, 0, 7.5);
+      pngMesh3.position.set(-3, 0, 8);
       pngMesh3.userData.finalX = 0;
       pngMesh3.userData.offscreenX = -3;
       scene.add(pngMesh3);
       imageMeshes.push(pngMesh3);
 
-      const pngTexture4 = textureLoader.load('/Bwegt1.png');
+      const pngTexture4 = textureLoader.load('/Bild4.png');
       pngTexture4.colorSpace = THREE.SRGBColorSpace;
       const pngGeometry4 = new THREE.PlaneGeometry(3, 2);
       const pngMaterial4 = new THREE.MeshBasicMaterial({ map: pngTexture4, transparent: true });
       const pngMesh4 = new THREE.Mesh(pngGeometry4, pngMaterial4);
-      pngMesh4.position.set(3, 0, 3.5);
+      pngMesh4.position.set(3, 0, 4);
       pngMesh4.userData.finalX = 0;
       pngMesh4.userData.offscreenX = 3;
       scene.add(pngMesh4);
       imageMeshes.push(pngMesh4);
+
+      const pngTexturePC1 = textureLoader.load('/Website1.png');
+      pngTexturePC1.colorSpace = THREE.SRGBColorSpace;
+      const pngGeometryPC1 = new THREE.PlaneGeometry(2.8, 3.4);
+      const pngMaterialPC1 = new THREE.MeshBasicMaterial({ map: pngTexturePC1, transparent: true });
+      const pngMeshPC1 = new THREE.Mesh(pngGeometryPC1, pngMaterialPC1);
+      pngMeshPC1.position.set(-3, 0, -13.5);
+      pngMeshPC1.scale.set(0.6,0.6,0.6);
+      pngMeshPC1.userData.finalX = -0.8;
+      pngMeshPC1.userData.offscreenX = -3;
+      scene.add(pngMeshPC1);
+      imageMeshes.push(pngMeshPC1);
+
+
+      const pngTexturePC2 = textureLoader.load('/Website2.png');
+      pngTexturePC2.colorSpace = THREE.SRGBColorSpace;
+      const pngGeometryPC2 = new THREE.PlaneGeometry(2.8, 3.4);
+      const pngMaterialPC2 = new THREE.MeshBasicMaterial({ map: pngTexturePC2, transparent: true });
+      const pngMeshPC2 = new THREE.Mesh(pngGeometryPC2, pngMaterialPC2);
+      pngMeshPC2.position.set(3, 0, -13.5);
+      pngMeshPC2.scale.set(0.6,0.6,0.6);
+      pngMeshPC2.userData.finalX = 0.8;
+      pngMeshPC2.userData.offscreenX = 3;
+      scene.add(pngMeshPC2);
+      imageMeshes.push(pngMeshPC2);
    }
+
+
+
+
+
+
+
+
+   function handleCanvasClick(event) {
+  // Normalisierte Mauskoordinaten berechnen
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+
+  // Überprüfe sowohl Cover-Gruppen als auch die imageMeshes (für einzelne Bilder)
+  const clickableObjects = [
+    ...coverGroups.map(group => group.userData.defaultMesh),
+    ...imageMeshes
+  ];
+  const intersects = raycaster.intersectObjects(clickableObjects, false);
+
+  if (intersects.length > 0) {
+    const clickedObj = intersects[0].object;
+    if (intersects.length > 0) {
+    const clickedObj = intersects[0].object;
+    if (clickedObj.userData.project === 'nass') {
+      openNassProject();
+    } else if (clickedObj.userData.project === 'bwegt') {
+      openBwegtProject();
+    }
+    }
+  }
+}
+
+function openBwegtProject() {
+  const { x, y, z } = camera.position;
+  goto(`/project/bwegt?cx=${x}&cy=${y}&cz=${z}`);
+}
+
+function openNassProject() {
+  const { x, y, z } = camera.position;
+  goto(`/project/nass?cx=${x}&cy=${y}&cz=${z}`);
+}
 
    // ----------------------------------------------------------------------------
    // Aktualisiert den Canvas-Text ("Hello..., I'm Franz...")
@@ -352,6 +507,7 @@
    // ----------------------------------------------------------------------------
    function onWheel(event) {
       event.preventDefault();
+      console.log("Before scroll: currentStation =", currentStation, "camera z =", camera.position.z);
       if (isTransitioning) return;
 
       if (event.deltaY > 0 && currentStation < cameraStations.length - 1) {
@@ -362,6 +518,7 @@
             duration: 1,
             ease: "power2.out",
             onComplete: () => {
+                console.log("After scroll (forward): currentStation =", currentStation, "camera z =", camera.position.z);
                setTimeout(() => {
                   isTransitioning = false;
                }, 200);
@@ -375,6 +532,7 @@
             duration: 1,
             ease: "power2.out",
             onComplete: () => {
+                console.log("After scroll (backward): currentStation =", currentStation, "camera z =", camera.position.z);
                setTimeout(() => {
                   isTransitioning = false;
                }, 200);
@@ -387,30 +545,42 @@
    // MOUSEMOVE -> Raycasting -> HOVER-LOGIK (für Cover-Gruppen)
    // ----------------------------------------------------------------------------
    function onMouseMove(event) {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-      raycaster.setFromCamera(mouse, camera);
-      // Raycast nur gegen die defaultMesh der Cover-Gruppen
-      const intersects = raycaster.intersectObjects(coverGroups.map(group => group.userData.defaultMesh), false);
+  raycaster.setFromCamera(mouse, camera);
+  // Klickbare Objekte: sowohl Cover-Gruppen (defaultMesh) als auch einzelne Bilder
+  const clickableObjects = [
+    ...coverGroups.map(group => group.userData.defaultMesh),
+    ...imageMeshes
+  ];
+  const intersects = raycaster.intersectObjects(clickableObjects, false);
 
-      if (intersects.length === 0) {
-         // Keine Gruppe hovered → setze alle Cover-Gruppen in den Default-Zustand
-         coverGroups.forEach(group => {
-            setCoverGroupState(group, "default");
-         });
+  // Hier den Cursor setzen:
+  if (intersects.length > 0 && ['nass', 'bwegt'].includes(intersects[0].object.userData.project)) {
+  container.style.cursor = 'pointer';
+} else {
+  container.style.cursor = 'default';
+}
+
+  // Dein bestehender Hover-Logik-Code
+  if (intersects.length === 0) {
+    coverGroups.forEach(group => {
+      setCoverGroupState(group, "default");
+    });
+  } else {
+    const hoveredDefault = intersects[0].object;
+    const hoveredGroup = hoveredDefault.userData.parentGroup;
+    coverGroups.forEach(group => {
+      if (group === hoveredGroup) {
+        setCoverGroupState(group, "hover");
       } else {
-         const hoveredDefault = intersects[0].object;
-         const hoveredGroup = hoveredDefault.userData.parentGroup;
-         coverGroups.forEach(group => {
-            if (group === hoveredGroup) {
-               setCoverGroupState(group, "hover");
-            } else {
-               setCoverGroupState(group, "gray");
-            }
-         });
+        setCoverGroupState(group, "gray");
       }
-   }
+    });
+  }
+}
+
 
    // Setzt den Zustand einer Cover-Gruppe:
    // "hover": Hover-Gruppen: hoverMesh.opacity → 1, defaultMesh.opacity → 0.5, Farbe Weiß
@@ -437,7 +607,7 @@
    // ----------------------------------------------------------------------------
    function updateAllImages() {
       const dMin = 2;
-      const dMax = 3;
+      const dMax = 20;
       imageMeshes.forEach(mesh => {
          const dist = Math.abs(camera.position.z - mesh.position.z);
          let opacity;
@@ -447,7 +617,7 @@
             opacity = 0;
          } else {
             const t = (dist - dMin) / (dMax - dMin);
-            opacity = 1 - t * (1 - 0.1);
+            opacity = 0.7 - t * (1 - 0.1);
          }
          mesh.material.opacity = opacity;
       });
@@ -519,4 +689,12 @@
    }
 </style>
 
-<div id="stage-container" bind:this={container}></div>
+
+<div
+  id="stage-container"
+  bind:this={container}
+  role="button"
+  tabindex="0"
+  on:click={handleCanvasClick}
+  on:keydown={(e) => { if(e.key === 'Enter' || e.key === ' ') handleCanvasClick(e); }}>
+</div>
