@@ -22,6 +22,31 @@
 
 
 <style>
+/* IBM Plex Mono Regular */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('/fonts/IBM_Plex_Mono/IBMPlexMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Space Grotesk Regular */
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/fonts/Space_Grotesk/static/SpaceGrotesk-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 96px;
+    color: yellow;
+}
+
 
 
 </style>
