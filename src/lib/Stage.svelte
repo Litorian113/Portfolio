@@ -8,6 +8,9 @@
     export let cy = 0;
     export let cz = 20;
 
+    // Neuer Parameter, um zu prüfen ob wir uns auf der Hauptseite befinden
+    export let isMainPage = true;
+
     let container;
     let scene, camera, renderer;
     let corridorLines, backWall, textMesh;
@@ -34,10 +37,31 @@
 
     // Scroll-Logik
     let isTransitioning = false;
-    const cameraStations = [20, 16.5, 13, 9.5, 5.5, 1, -3.5, -7.5, -12, -35];
+    const cameraStations = [20, 16.5, 13, 9.5, 5.5, 1, -3.5, -7.5, -12, -16.5, -21, -35];
     let currentStation = 0;
+    
 
     let initialPositionSet = false;
+
+    // Funktion zum Hinzufügen des Wheel-Event-Listeners
+    function addWheelListener() {
+      window.addEventListener('wheel', onWheel, { passive: false });
+      console.log("Wheel listener added");
+    }
+
+    // Funktion zum Entfernen des Wheel-Event-Listeners
+    function removeWheelListener() {
+      window.removeEventListener('wheel', onWheel);
+      console.log("Wheel listener removed");
+    }
+
+    // Diese Funktion setzt den Overflow-Style basierend auf isMainPage
+    function updateOverflowStyle() {
+      if (typeof document !== 'undefined') {
+        document.documentElement.style.overflow = isMainPage ? 'hidden' : 'auto';
+        document.body.style.overflow = isMainPage ? 'hidden' : 'auto';
+      }
+    }
 
     onMount(async () => {
       THREE = await import('three');
@@ -75,7 +99,11 @@
 
       animate();
 
-      window.addEventListener('wheel', onWheel, { passive: false });
+      // Nur auf der Hauptseite den Wheel-Listener hinzufügen
+      if (isMainPage) {
+        addWheelListener();
+      }
+      
       window.addEventListener('resize', onWindowResize);
       window.addEventListener('mousemove', onMouseMove, false);
 
@@ -83,15 +111,46 @@
         currentGreetingIndex = (currentGreetingIndex + 1) % greetings.length;
         updateCanvasText();
       }, 2000);
+
+      // Setze Overflow-Style sofort beim Mounten
+      updateOverflowStyle();
     });
 
     onDestroy(() => {
       if (typeof window !== 'undefined') {
-        window.removeEventListener('wheel', onWheel, { passive: false });
+        removeWheelListener();
         window.removeEventListener('resize', onWindowResize);
         window.removeEventListener('mousemove', onMouseMove, false);
+        
+        // Stoppe den Animation-Loop
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+        }
+        
+        // Bereinige WebGL-Ressourcen
+        if (renderer) {
+          renderer.dispose();
+          
+          // Bereinige alle Materials und Geometries
+          scene.traverse((object) => {
+            if (object.isMesh) {
+              object.geometry.dispose();
+              
+              if (object.material.map) {
+                object.material.map.dispose();
+              }
+              object.material.dispose();
+            }
+          });
+        }
       }
       clearInterval(textUpdateInterval);
+
+      // Beim Zerstören der Komponente, stelle sicher, dass Overflow wieder aktiviert wird
+      if (typeof document !== 'undefined') {
+        document.documentElement.style.overflow = 'auto';
+        document.body.style.overflow = 'auto';
+      }
     });
 
 
@@ -252,6 +311,8 @@
          context3.fillText("Projects", centerX, centerY + 30);
          textTexture3.needsUpdate = true;
       }
+
+      
       updateCanvas3Text();
 
       const textMaterial3 = new THREE.MeshBasicMaterial({ map: textTexture3, transparent: true });
@@ -259,6 +320,44 @@
       const textMesh3 = new THREE.Mesh(textGeometry3, textMaterial3);
       textMesh3.position.set(0, 0, -9);
       scene.add(textMesh3);
+
+
+
+
+            // --------------------------------------------------------
+      // 2) ZWEITER TEXT: "Coding / Projects" (zentriert)
+      const canvas4 = document.createElement('canvas');
+      const ratio4 = window.devicePixelRatio || 1;
+      canvas4.width = 1024 * ratio2;
+      canvas4.height = 512 * ratio2;
+      const context4 = canvas4.getContext('2d');
+      context4.scale(ratio4, ratio4);
+
+      const textTexture4 = new THREE.CanvasTexture(canvas4);
+      textTexture4.colorSpace = THREE.SRGBColorSpace;
+      textTexture4.needsUpdate = true;
+
+      function updateCanvas4Text() {
+         context4.clearRect(0, 0, 1024, 512);
+         context4.fillStyle = "rgba(0,0,0,0)";
+         context4.fillRect(0, 0, 1024, 512);
+         context4.textAlign = "center";
+         context4.textBaseline = "middle";
+         context4.fillStyle = "white";
+         context4.font = "56px 'IBM Plex Mono'";
+         const centerX = 1024 / 2;
+         const centerY = 512 / 2;
+         context4.fillText("Photography", centerX, centerY - 30);
+         context4.fillText("Videography", centerX, centerY + 30);
+         textTexture4.needsUpdate = true;
+      }
+      updateCanvas4Text();
+
+      const textMaterial4 = new THREE.MeshBasicMaterial({ map: textTexture4, transparent: true });
+      const textGeometry4 = new THREE.PlaneGeometry(4, 2);
+      const textMesh4 = new THREE.Mesh(textGeometry4, textMaterial4);
+      textMesh4.position.set(0, 0, -18);
+      scene.add(textMesh4);
 
 
       // --------------------------------------------------------
@@ -408,7 +507,21 @@
       pngMeshPC2.userData.offscreenX = 3;
       scene.add(pngMeshPC2);
       imageMeshes.push(pngMeshPC2);
+
+
+
+      const pngTextureFoto = textureLoader.load('/photo-video.png');
+      pngTextureFoto.colorSpace = THREE.SRGBColorSpace;
+      const pngGeometryFoto = new THREE.PlaneGeometry(3, 2);
+      const pngMaterialFoto = new THREE.MeshBasicMaterial({ map: pngTextureFoto, transparent: true });
+      const pngMeshFoto = new THREE.Mesh(pngGeometryFoto, pngMaterialFoto);
+      pngMeshFoto.position.set(3, 0, -22.5);
+      pngMeshFoto.userData.finalX = 0;
+      pngMeshFoto.userData.offscreenX = 3;
+      scene.add(pngMeshFoto);
+      imageMeshes.push(pngMeshFoto);
    }
+
 
 
 
@@ -507,6 +620,7 @@ function openNassProject() {
    // ----------------------------------------------------------------------------
    function onWheel(event) {
       event.preventDefault();
+      console.log("Wheel event in Stage component");
       console.log("Before scroll: currentStation =", currentStation, "camera z =", camera.position.z);
       if (isTransitioning) return;
 
@@ -652,8 +766,10 @@ function openNassProject() {
    // ----------------------------------------------------------------------------
    // Animation-Loop
    // ----------------------------------------------------------------------------
+   let animationId; // Speichern der requestAnimationFrame ID
+
    function animate() {
-      requestAnimationFrame(animate);
+      animationId = requestAnimationFrame(animate);
       updateAllImages();
       updateImagePositions();
       updateCoverGroupPositions();
@@ -673,10 +789,10 @@ function openNassProject() {
 <style>
    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
 
+   /* Mache die Overflow-Eigenschaft abhängig von isMainPage */
    :global(html, body) {
       margin: 0;
       padding: 0;
-      overflow: hidden;
       height: 100%;
    }
    #stage-container {

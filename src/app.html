@@ -1,12 +1,32 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="viewport" content="width=device-width" />
 		%sveltekit.head%
+		<style>
+			/* Standard-Scroll-Verhalten im Root */
+			html, body {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				overflow: auto;
+			}
+		</style>
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
+		<script>
+			// Event-Listener, der bei Routing-Änderungen prüft, 
+			// ob das Scrollen zurückgesetzt werden muss
+			document.addEventListener('sveltekit:navigation', function(event) {
+				// Überprüfe, ob wir uns auf einer Projektseite befinden
+				if (window.location.pathname.includes('/project/')) {
+					document.documentElement.style.overflow = 'auto';
+					document.body.style.overflow = 'auto';
+				}
+			});
+		</script>
 	</body>
 </html>
