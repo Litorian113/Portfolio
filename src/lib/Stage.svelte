@@ -6,10 +6,74 @@
 
     export let cx = 0;
     export let cy = 0;
-    export let cz = 20;
+    export let cz = 28.8;
 
     // Neuer Parameter, um zu prüfen ob wir uns auf der Hauptseite befinden
     export let isMainPage = true;
+
+    // Füge eine neue Variable hinzu, die den aktuellen Abschnitt repräsentiert
+    export let currentSection = 'intro'; // Exportiere diese Variable
+
+    // Exportiere eine Funktion zur Navigation zwischen den Stationen
+    export function navigateToSection(sectionId) {
+        if (isTransitioning) return;
+        
+        let targetStation;
+        switch(sectionId) {
+            case "design-work":
+                targetStation = 1; // ca. 20 (Design Work)
+                break;
+            case "code-data":
+                targetStation = 6; // ca. 1 (Code & Data)
+                break;
+            case "website-projects":
+                targetStation = 8; // ca. -7.5 (Website Projects)
+                break;
+            case "photo-video":
+                targetStation = 10; // ca. -16.5 (Photo & Video)
+                break;
+            case "about-me":
+                targetStation = 12; // ca. -31.5 (About me)
+                break;
+            default:
+                targetStation = 0; // Start
+                break;
+        }
+        
+        if (targetStation !== currentStation) {
+            isTransitioning = true;
+            currentStation = targetStation;
+            currentSection = sectionId; // Aktualisiere auch den aktuellen Abschnitt
+            
+            gsap.to(camera.position, {
+                z: cameraStations[currentStation],
+                duration: 1.5,
+                ease: "power2.inOut",
+                onComplete: () => {
+                    setTimeout(() => {
+                        isTransitioning = false;
+                    }, 200);
+                }
+            });
+        }
+    }
+
+    // Funktion zum Aktualisieren des aktuellen Abschnitts basierend auf der Kameraposition
+    function updateCurrentSection() {
+        if (camera.position.z > 24) {
+            currentSection = 'intro';
+        } else if (camera.position.z > 1.5) {
+            currentSection = 'design-work';
+        } else if (camera.position.z > -7.5) {
+            currentSection = 'code-data';
+        } else if (camera.position.z > -13) {
+            currentSection = 'website-projects';
+        } else if (camera.position.z > -25) {
+            currentSection = 'photo-video';
+        } else {
+            currentSection = 'about-me';
+        }
+    }
 
     let container;
     let scene, camera, renderer;
@@ -17,7 +81,7 @@
     let scrollProgress = 0;
 
     // Start- und Endposition der Kamera
-    const cameraStartZ = 20; 
+    const cameraStartZ = 28.8; 
     const cameraEndZ = -40;
 
     let THREE;
@@ -37,7 +101,7 @@
 
     // Scroll-Logik
     let isTransitioning = false;
-    const cameraStations = [20, 16.5, 13, 9.5, 5.5, 1, -3.5, -7.5, -12, -16.5, -21, -35];
+    const cameraStations = [28.8, 20, 16.5, 13, 9.5, 5.5, 1, -3.5, -7.5, -12, -16.5, -21, -27, -31.5, -36];
     let currentStation = 0;
     
 
@@ -84,7 +148,7 @@
     const unsubscribe = page.subscribe(($page) => {
     const newCx = Number($page.url.searchParams.get('cx')) || 0;
     const newCy = Number($page.url.searchParams.get('cy')) || 0;
-    const newCz = Number($page.url.searchParams.get('cz')) || 20;
+    const newCz = Number($page.url.searchParams.get('cz')) || 28.8;
     // Wenn die URL-Parameter sich geändert haben, setze die Kamera:
     if (camera && newCz !== cz) {
       console.log("Updating camera position from URL to", newCx, newCy, newCz);
@@ -246,11 +310,47 @@
       const textMaterial = new THREE.MeshBasicMaterial({ map: textTexture, transparent: true });
       const textGeometry = new THREE.PlaneGeometry(4, 2);
       textMesh = new THREE.Mesh(textGeometry, textMaterial);
-      textMesh.position.set(0, 0, cameraStartZ - 1.7);
+      textMesh.position.set(0, 0, 26.5);
       scene.add(textMesh);
 
+
+            // --------------------------------------------------------
+      // 1) Design Work
+      const canvas1 = document.createElement('canvas');
+      const ratio1 = window.devicePixelRatio || 1;
+      canvas1.width = 1024 * ratio1;
+      canvas1.height = 512 * ratio1;
+      const context1 = canvas1.getContext('2d');
+      context1.scale(ratio1, ratio1);
+
+      const textTexture1 = new THREE.CanvasTexture(canvas1);
+      textTexture1.colorSpace = THREE.SRGBColorSpace;
+      textTexture1.needsUpdate = true;
+
+      function updateCanvas1Text() {
+         context1.clearRect(0, 0, 1024, 512);
+         context1.fillStyle = "rgba(0,0,0,0)";
+         context1.fillRect(0, 0, 1024, 512);
+         context1.textAlign = "center";
+         context1.textBaseline = "middle";
+         context1.fillStyle = "white";
+         context1.font = "56px 'IBM Plex Mono'";
+         const centerX = 1024 / 2;
+         const centerY = 512 / 2;
+         context1.fillText("Design Work", centerX, centerY);
+         // context2.fillText("Projects", centerX, centerY + 30);
+         textTexture1.needsUpdate = true;
+      }
+      updateCanvas1Text();
+
+      const textMaterial1 = new THREE.MeshBasicMaterial({ map: textTexture1, transparent: true });
+      const textGeometry1 = new THREE.PlaneGeometry(4, 2);
+      const textMesh1 = new THREE.Mesh(textGeometry1, textMaterial1);
+      textMesh1.position.set(0, 0.6, 18.5);
+      scene.add(textMesh1);
+
       // --------------------------------------------------------
-      // 2) ZWEITER TEXT: "Coding / Projects" (zentriert)
+      // 2) Code und Data
       const canvas2 = document.createElement('canvas');
       const ratio2 = window.devicePixelRatio || 1;
       canvas2.width = 1024 * ratio2;
@@ -272,8 +372,8 @@
          context2.font = "56px 'IBM Plex Mono'";
          const centerX = 1024 / 2;
          const centerY = 512 / 2;
-         context2.fillText("Coding", centerX, centerY - 30);
-         context2.fillText("Projects", centerX, centerY + 30);
+         context2.fillText("Code & Data", centerX, centerY);
+         // context2.fillText("Projects", centerX, centerY + 30);
          textTexture2.needsUpdate = true;
       }
       updateCanvas2Text();
@@ -281,11 +381,11 @@
       const textMaterial2 = new THREE.MeshBasicMaterial({ map: textTexture2, transparent: true });
       const textGeometry2 = new THREE.PlaneGeometry(4, 2);
       const textMesh2 = new THREE.Mesh(textGeometry2, textMaterial2);
-      textMesh2.position.set(0, 0, -0.5);
+      textMesh2.position.set(0, 0.6, -0.5);
       scene.add(textMesh2);
 
       // --------------------------------------------------------
-      // 3) ZWEITER TEXT: "Coding / Projects" (zentriert)
+      // 3) Website projects
       const canvas3 = document.createElement('canvas');
       const ratio3 = window.devicePixelRatio || 1;
       canvas3.width = 1024 * ratio3;
@@ -307,8 +407,8 @@
          context3.font = "56px 'IBM Plex Mono'";
          const centerX = 1024 / 2;
          const centerY = 512 / 2;
-         context3.fillText("Website", centerX, centerY - 30);
-         context3.fillText("Projects", centerX, centerY + 30);
+         context3.fillText("Website Projects", centerX, centerY);
+         // context3.fillText("Projects", centerX, centerY + 30);
          textTexture3.needsUpdate = true;
       }
 
@@ -318,18 +418,18 @@
       const textMaterial3 = new THREE.MeshBasicMaterial({ map: textTexture3, transparent: true });
       const textGeometry3 = new THREE.PlaneGeometry(4, 2);
       const textMesh3 = new THREE.Mesh(textGeometry3, textMaterial3);
-      textMesh3.position.set(0, 0, -9);
+      textMesh3.position.set(0, 0.6, -9);
       scene.add(textMesh3);
 
 
 
 
             // --------------------------------------------------------
-      // 2) ZWEITER TEXT: "Coding / Projects" (zentriert)
+      // 4) Photo & Video
       const canvas4 = document.createElement('canvas');
       const ratio4 = window.devicePixelRatio || 1;
-      canvas4.width = 1024 * ratio2;
-      canvas4.height = 512 * ratio2;
+      canvas4.width = 1024 * ratio4;
+      canvas4.height = 512 * ratio4;
       const context4 = canvas4.getContext('2d');
       context4.scale(ratio4, ratio4);
 
@@ -347,8 +447,8 @@
          context4.font = "56px 'IBM Plex Mono'";
          const centerX = 1024 / 2;
          const centerY = 512 / 2;
-         context4.fillText("Photography", centerX, centerY - 30);
-         context4.fillText("Videography", centerX, centerY + 30);
+         context4.fillText("Photo & Video", centerX, centerY);
+         // context4.fillText("Videography", centerX, centerY + 30);
          textTexture4.needsUpdate = true;
       }
       updateCanvas4Text();
@@ -356,8 +456,50 @@
       const textMaterial4 = new THREE.MeshBasicMaterial({ map: textTexture4, transparent: true });
       const textGeometry4 = new THREE.PlaneGeometry(4, 2);
       const textMesh4 = new THREE.Mesh(textGeometry4, textMaterial4);
-      textMesh4.position.set(0, 0, -18);
+      textMesh4.position.set(0, 0.6, -18);
       scene.add(textMesh4);
+
+
+
+
+
+// --------------------------------------------------------
+      // 5) About me
+      const canvas5 = document.createElement('canvas');
+      const ratio5 = window.devicePixelRatio || 1;
+      canvas5.width = 1024 * ratio5;
+      canvas5.height = 512 * ratio5;
+      const context5 = canvas5.getContext('2d');
+      context5.scale(ratio5, ratio5);
+
+      const textTexture5 = new THREE.CanvasTexture(canvas5);
+      textTexture5.colorSpace = THREE.SRGBColorSpace;
+      textTexture5.needsUpdate = true;
+
+      function updateCanvas5Text() {
+         context5.clearRect(0, 0, 1024, 512);
+         context5.fillStyle = "rgba(0,0,0,0)";
+         context5.fillRect(0, 0, 1024, 512);
+         context5.textAlign = "center";
+         context5.textBaseline = "middle";
+         context5.fillStyle = "white";
+         context5.font = "56px 'IBM Plex Mono'";
+         const centerX = 1024 / 2;
+         const centerY = 512 / 2;
+         context5.fillText("About me", centerX, centerY);
+         // context4.fillText("Videography", centerX, centerY + 30);
+         textTexture5.needsUpdate = true;
+      }
+      updateCanvas5Text();
+
+      const textMaterial5 = new THREE.MeshBasicMaterial({ map: textTexture5, transparent: true });
+      const textGeometry5 = new THREE.PlaneGeometry(4, 2);
+      const textMesh5 = new THREE.Mesh(textGeometry5, textMaterial5);
+      textMesh5.position.set(0, 0.6, -28.5);
+      scene.add(textMesh5);
+
+
+      
 
 
       // --------------------------------------------------------
@@ -520,6 +662,19 @@
       pngMeshFoto.userData.offscreenX = 3;
       scene.add(pngMeshFoto);
       imageMeshes.push(pngMeshFoto);
+
+
+
+      const pngTextureMe = textureLoader.load('/photo-video.png');
+      pngTextureMe.colorSpace = THREE.SRGBColorSpace;
+      const pngGeometryMe = new THREE.PlaneGeometry(3, 2);
+      const pngMaterialMe = new THREE.MeshBasicMaterial({ map: pngTextureMe, transparent: true });
+      const pngMeshMe = new THREE.Mesh(pngGeometryMe, pngMaterialMe);
+      pngMeshMe.position.set(3, 0, -33);
+      pngMeshMe.userData.finalX = 0;
+      pngMeshMe.userData.offscreenX = 3;
+      scene.add(pngMeshMe);
+      imageMeshes.push(pngMeshMe);
    }
 
 
@@ -582,11 +737,12 @@ function openNassProject() {
          "i'm",
          "Franz.",
          "",
-         "Feel free to browse",
-         "through my work in",
-         "3 dimensional Space.",
-         "Click to open project."
+         "an Interaction Designer passionated",
+         "about crafting intuitive and enganging digital",
+         "experience, bringing digital worlds to life",
+         "through user-centered design."
       ];
+
 
       let maxWidth = 0;
       for (let i = 0; i < lines.length; i++) {
@@ -632,6 +788,7 @@ function openNassProject() {
             duration: 1,
             ease: "power2.out",
             onComplete: () => {
+                updateCurrentSection(); // Hier den aktuellen Abschnitt aktualisieren
                 console.log("After scroll (forward): currentStation =", currentStation, "camera z =", camera.position.z);
                setTimeout(() => {
                   isTransitioning = false;
@@ -646,6 +803,7 @@ function openNassProject() {
             duration: 1,
             ease: "power2.out",
             onComplete: () => {
+                updateCurrentSection(); // Hier den aktuellen Abschnitt aktualisieren
                 console.log("After scroll (backward): currentStation =", currentStation, "camera z =", camera.position.z);
                setTimeout(() => {
                   isTransitioning = false;
@@ -773,6 +931,7 @@ function openNassProject() {
       updateAllImages();
       updateImagePositions();
       updateCoverGroupPositions();
+      updateCurrentSection(); // Aktualisiere den aktuellen Abschnitt
       renderer.render(scene, camera);
    }
 

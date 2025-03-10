@@ -131,6 +131,7 @@
         <FadeInSection>
         <div>
         <h4>Introduction</h4>
+        <br>
         <p class="text-doku">
           In the “Application 1” course at HfG during the winter semester, we took a closer look at the existing “bwegt”
           mobility app for Baden-Württemberg. Our goal was to address common user pain points such as confusing ticket
@@ -543,6 +544,174 @@
     overflow-y: auto;
     width: 100%;
     height: 100%;
+  }
+
+  /* Mobile Anpassungen */
+  @media (max-width: 768px) {
+    /* Anpassung der Textpassagen */
+    .grid-section1 {
+      display: block;
+      margin-top: 4rem;
+    }
+    
+    .text-grid1 {
+      width: 100%;
+    }
+    
+    .text-doku {
+      font-size: 1.2rem;
+    }
+    
+    h4 {
+      font-size: 1.4rem;
+    }
+    
+    /* Bildergalerie neu anpassen */
+    .img-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: auto auto auto;
+      gap: 1.5rem;
+      scale: 1;
+      margin-top: 3rem;
+    }
+    
+    /* Erstes Bild kleiner skalieren und über volle Breite */
+    .img-grid .img1 {
+      grid-column: 1 / span 2;
+      width: 100% !important;
+      max-width: 80%;
+      margin: 0 auto 1rem auto;
+    }
+    
+    /* Restliche Bilder im 2x2 Grid */
+    .img-grid .img2 {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    
+    .img-grid .img3 {
+      grid-column: 2;
+      grid-row: 2;
+    }
+    
+    .img-grid .img4 {
+      grid-column: 1;
+      grid-row: 3;
+    }
+    
+    .img-grid .img5 {
+      grid-column: 2;
+      grid-row: 3;
+    }
+    
+    .img-grid div {
+      width: 100% !important;
+    }
+
+    /* Anpassung der Überschriftengröße und -höhe */
+    .heading-container {
+      height: auto;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .heading-container h2 {
+      font-size: 4rem;
+      line-height: 1.1;
+    }
+    
+    /* Projektspaltentexte und Tags auf volle Breite */
+    .project-columns .project-column p {
+      width: 100%;
+    }
+    
+    .tags {
+      width: 100%;
+    }
+    
+    /* Andere Bilder sollen die volle Breite behalten */
+    .img-section-4 {
+      display: block;
+      margin-top: 5rem;
+    }
+    
+    .img-container {
+      width: 100%;
+    }
+    
+    .image-section {
+      margin-top: 5rem;
+    }
+    
+    /* Anpassung der Projektspaltenlayouts */
+    .project-columns {
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .project-columns .project-column {
+      min-width: 100%;
+    }
+    
+    .project-columns .project-column .divider {
+      width: 100%;
+    }
+  }
+  
+  /* Noch kleinere Geräte */
+  @media (max-width: 480px) {
+    .content-wrapper {
+      padding: 2rem 1.5rem;
+    }
+    
+    h4 {
+      font-size: 1.3rem;
+    }
+    
+    .text-doku {
+      font-size: 1.1rem;
+    }
+    
+    .img-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .img-grid .img1,
+    .img-grid .img2,
+    .img-grid .img3,
+    .img-grid .img4,
+    .img-grid .img5 {
+      grid-column: 1;
+    }
+    
+    .img-grid .img1 {
+      max-width: 90%;
+    }
+
+    .heading-container h2 {
+      font-size: 3rem;
+    }
+    
+    .content-wrapper {
+      padding: 2rem 1.5rem;
+      width: 95%;
+    }
+    
+    .back-btn-container button {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+    }
+    
+    .project-columns .project-column h3 {
+      font-size: 1.3rem;
+    }
+    
+    .project-columns .project-column p {
+      font-size: 1.2rem;
+    }
   }
   
   </style>
