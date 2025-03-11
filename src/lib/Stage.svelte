@@ -581,7 +581,7 @@
 
       // --------------------------------------------------------
     // 4) WEITERE BILDER (z. B. Earthquake, Nass1, Bwegt1)
-    const pngTexture1 = textureLoader.load('/Bild1.png'); // Bild1 für nass
+    const pngTexture1 = textureLoader.load('/Bild2.png'); // Bild1 für nass
     pngTexture1.colorSpace = THREE.SRGBColorSpace;
     const pngGeometry1 = new THREE.PlaneGeometry(3, 2);
     const pngMaterial1 = new THREE.MeshBasicMaterial({
@@ -597,7 +597,7 @@
     scene.add(pngMesh1);
     imageMeshes.push(pngMesh1);
 
-    const pngTexture2 = textureLoader.load('/Bild2.png'); // Bild2 für bwegt
+    const pngTexture2 = textureLoader.load('/Bild1.png'); // Bild2 für bwegt
     pngTexture2.colorSpace = THREE.SRGBColorSpace;
     const pngGeometry2 = new THREE.PlaneGeometry(3, 2);
     const pngMaterial2 = new THREE.MeshBasicMaterial({ map: pngTexture2, transparent: true });
@@ -760,7 +760,7 @@ function openHybridWalletProject() {
          "i'm",
          "Franz.",
          "",
-         "an Interaction Designer passionated",
+         "a product-design student passionated",
          "about crafting intuitive and enganging digital",
          "experience, bringing digital worlds to life",
          "through user-centered design."

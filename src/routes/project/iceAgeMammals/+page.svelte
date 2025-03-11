@@ -37,6 +37,7 @@
           observer.observe(img);
         });
       }
+
     });
   
     function goBackToFlur() {
@@ -82,7 +83,7 @@
         </button>
       </div>
       <div class="heading-container">
-        <h2>Nass Device</h2>
+        <h2>Ice Age Mammals</h2>
       </div>
       <div class="project-columns">
         <div class="project-column">
@@ -94,17 +95,17 @@
         <div class="project-column">
           <h3>Project Overview</h3>
           <div class="divider"></div>
-          <p>NASS is a portable water testing device with a simple E-Ink interface and open-data sharing, designed to make water quality analysis accessible.
-  
+          <p>
+            An interactive table using Reed sensors, a 3D-printed game piece, and projection mapping to let users explore the saber-toothed tiger through playful interaction.  
           </p>
         </div>
         <div class="project-column">
           <h3>Project Tags</h3>
           <div class="divider"></div>
           <div class="tags">
-            <div class="tag">Product-Design</div>
+            <div class="tag">Interactive Installation</div>
             <div class="tag">UX/UI-Design</div>
-            <div class="tag">E-Ink Interface</div>
+            <div class="tag">Gamification</div>
             <div class="tag">Prototyping</div>
             <div class="tag">Open Data</div>
             <div class="tag">Usability</div>
@@ -122,7 +123,7 @@
     role="figure"
     on:mousemove={handleMouseMove}
     on:mouseleave={resetTransform}>
-  <img src="/Nass-cover.png" alt="Beschreibung des Bildes" />
+  <img src="/ice-cover.png" alt="Beschreibung des Bildes" />
   </div>
   
   
@@ -133,41 +134,64 @@
         <h4>Introduction</h4>
         <br>
         <p class="text-doku">
-          During our Innovation 1 course at HfG, we explored solutions for one of the world’s most pressing issues: unsafe drinking water. Every year, millions suffer from waterborne diseases, especially in regions like Uganda, where contaminated water—often carrying E. coli bacteria—poses a severe health risk.</p>
-        <br><p class="text-doku"> To address this, we developed NASS (Network for Aquatic Substance Sensors)—a portable water testing device that allows non-specialists to quickly check water quality. The collected data is shared on an open platform, helping local communities and NGOs make informed decisions about water safety. Our goal was to create an affordable, accessible, and intuitive solution to prevent waterborne illnesses and save lives.</p>
+            As part of the Interactive Communication Systems 1 course, we designed and built an interactive table that allows users to explore Ice Age animals through a tangible and immersive experience. Our team focused on the saber-toothed tiger (Smilodon) and developed an interaction system using Reed sensors and a magnetized 3D-printed game piece.
+                    <br>
+                    <p class="text-doku"> 
+                        By moving the figure across specific trigger points, users activate different events and animations, unlocking information about the animal’s habitat, hunting strategies, and social behavior. A custom-built control panel allows further navigation, enhanced by color-coded indicators for intuitive interaction. The entire interface was projected onto the table using a ceiling-mounted projector, creating a visually engaging experience that blended physical and digital elements seamlessly.                    </p>
       </div>
     </FadeInSection>
     </div>
     </div>
-  
-    <div class="img-section-2col">
-      <div class="img-container-left">
-        <img src="/Nass-Doku1.png" alt="NASS Device Präsentation" />
-      </div>
-      <div class="img-container-right">
-        <img src="/Nass-Doku2.png" alt="NASS Device Detail" />
+
+
+    <div class="grid-section1">
+      <div class="ice-img-grid">
+        <div class="row">
+        <div class="grid-item"><img src="/iceGrid1.png" alt="Ice Age Project Image 1" /></div>
+        <div class="grid-item"><img src="/iceGrid2.png" alt="Ice Age Project Image 2" /></div>
+    </div>
+        <div class="grid-item full-width"><img src="/iceGrid3.png" alt="Ice Age Project Image 3" /></div>
+        <div class="grid-item full-width"><img src="/iceGrid4.png" alt="Ice Age Project Image 4" /></div>
+        <div class="row">
+        <div class="grid-item"><img src="/iceGrid5.png" alt="Ice Age Project Image 5" /></div>
+        <div class="grid-item"><img src="/iceGrid6.png" alt="Ice Age Project Image 6" /></div>
+    </div>
+    <div class="row">
+        <div class="grid-item"><img src="/iceGrid7.png" alt="Ice Age Project Image 7 description" /></div>
+        <div class="grid-item"><img src="/iceGrid8.png" alt="Ice Age Project Image 8" /></div>
+    </div>
+        <div class="grid-item full-width"><img src="/iceGrid9.png" alt="Ice Age Project Image 9" /></div>
       </div>
     </div>
+
+
+  
   
     <div class="grid-section1">
       <div class="text-grid1">
         <FadeInSection>
           <div>
-        <h4>Research</h4>
+        <h4>Building the <br> 
+            Interactive Table</h4>
         <br>
         <p class="text-doku">
-          Initially, we envisioned a universal water testing device, but research revealed the need for a more focused approach. Testing multiple contaminants in one device proved technically complex, and water issues vary by region.
-        </p> <br>
+            To create a three-dimensional landscape, we cut and layered wooden plates, gluing them together for added depth and structure. We then carved out designated slots where the game piece would be placed, embedding Reed sensors underneath and wiring them to an Arduino system to detect user interactions.        </p> <br>
         <p class="text-doku">
-          We shifted our focus to Uganda, where unsafe drinking water is a major health risk. Our goal was to design a user-friendly, affordable device that enables non-specialists to detect key contaminants like E. coli. By integrating an open-data platform, NASS helps communities and NGOs take informed action against waterborne diseases.
-        </p>
+            Once assembled, we brought the table to life by projecting a dynamic landscape onto its surface using a ceiling-mounted projector. This combination of physical depth and digital projection created an immersive, interactive experience, seamlessly blending tangible and visual storytelling.        </p>
       </div>
       </FadeInSection>
       </div>
     </div>
-  
-    <div class="img-section-4">
-      <div class="img-container"><img src="/Nass-Doku3.png" alt="Beschreibung des Bildes" /></div>
+
+  <div class="grid-section1">
+    <div class="icegrid2-container">
+      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-1.png" alt="Ice Age Project Detail 1" /></div>
+      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-2.png" alt="Ice Age Project Detail 2" /></div>
+      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-3.png" alt="Ice Age Project Detail 3" /></div>
+      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-4.png" alt="Ice Age Project Detail 4" /></div>
+      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-5.png" alt="Ice Age Project Detail 5" /></div>
+      <!-- Weitere Bilder können hier hinzugefügt werden -->
+    </div>
   </div>
   
   
@@ -177,94 +201,104 @@
       <div class="text-grid1">
         <FadeInSection>
           <div>
-        <h4>Universal Icon Language</h4>
+        <h4>Navigation Controller</h4>
         <br>
         <p class="text-doku">
-          To ensure clarity and usability, we developed a minimalist visual style with a strong focus on intuitive iconography. We used the Untitled UI library as a foundation and created custom icons to fit the specific needs of our device and interface.      </p>
-        <br><p class="text-doku">
-          Given the international context, we carefully considered cultural differences in symbol interpretation, ensuring that icons were universally recognizable—even for users with low literacy levels. The icons were designed to be easily readable on both the website and the small E-Ink display, maintaining high contrast and simplicity for maximum accessibility.      </p>
-      </div>
+            To enable intuitive user navigation, we explored different interaction methods and ultimately settled on a control panel with a directional pad. This D-pad design allows users to seamlessly move through the information, ensuring a smooth and engaging experience.        
+            <br>
+            <p class="text-doku">
+                We built the controller using a 3D-printed case, which was assembled and glued together. Inside, 3D-printed buttons press against physical switches, sending navigation inputs to an Arduino system. To enhance usability, we integrated color-coded lighting, guiding users toward the active controls and making interaction more intuitive and accessible.    
+            </p>  </div>
       </FadeInSection>
       </div>
     </div>
+
+    <div class="grid-section1">
+        <div class="text-grid1">
+          <FadeInSection>
+            <div>
+          <h4>Bringing the Interaction to Life</h4>
+          <br>
+          <p class="text-doku">
+            With the final setup, users explore the saber-toothed tiger’s world through sensor-based interaction, dynamic lighting, and projection mapping, creating an immersive experience.              <br>
+        </div>
+        </FadeInSection>
+        </div>
+      </div>
+
+
+      <!-- Erster Slider - automatisch von rechts nach links -->
+      <div class="slider-container slider-right">
+        <div class="slider-track">
+          <!-- Erste Gruppe von Bildern -->
+          <div class="slider-item"><img src="/sliderIce1/slider1-1.png" alt="Ice Age Interface 1" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-2.png" alt="Ice Age Interface 2" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-3.png" alt="Ice Age Interface 3" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-4.png" alt="Ice Age Interface 4" /></div>
+          <!-- Wiederholen für nahtloses Looping -->
+          <div class="slider-item"><img src="/sliderIce1/slider1-1.png" alt="Ice Age Interface 1" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-2.png" alt="Ice Age Interface 2" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-3.png" alt="Ice Age Interface 3" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-4.png" alt="Ice Age Interface 4" /></div>
+          <!-- Eine weitere Wiederholung für bessere Abdeckung -->
+          <div class="slider-item"><img src="/sliderIce1/slider1-1.png" alt="Ice Age Interface 1" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-2.png" alt="Ice Age Interface 2" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-3.png" alt="Ice Age Interface 3" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-4.png" alt="Ice Age Interface 4" /></div>
+        </div>
+      </div>
   
-    <div class="img-section-4">
-      <div class="img-container"><img src="/Nass-Doku4.png" alt="Beschreibung des Bildes" /></div>
+      <!-- Zweiter Slider - automatisch von links nach rechts -->
+      <div class="slider-container slider-left">
+        <div class="slider-track">
+          <!-- Bilder dreifach für nahtloses Looping -->
+          <div class="slider-item"><img src="/sliderIce2/slider2-1.png" alt="Ice Age Process 1" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-2.png" alt="Ice Age Process 2" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-3.png" alt="Ice Age Process 3" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-4.png" alt="Ice Age Process 4" /></div>
+          <!-- Erste Wiederholung -->
+          <div class="slider-item"><img src="/sliderIce2/slider2-1.png" alt="Ice Age Process 1" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-2.png" alt="Ice Age Process 2" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-3.png" alt="Ice Age Process 3" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-4.png" alt="Ice Age Process 4" /></div>
+          <!-- Zweite Wiederholung für bessere Abdeckung -->
+          <div class="slider-item"><img src="/sliderIce2/slider2-1.png" alt="Ice Age Process 1" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-2.png" alt="Ice Age Process 2" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-3.png" alt="Ice Age Process 3" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-4.png" alt="Ice Age Process 4" /></div>
+        </div>
+      </div>
+  
+
+  
+  
+  <div class="grid-section1">
+    <div class="text-grid1">
+      <FadeInSection>
+        <div>
+      <h4>Style Guide & Visual Design</h4>
+      <br>
+      <p class="text-doku">
+        We used Lacquer for a bold look and Kulim Park for readability, paired with earthy Ice Age tones for immersion. Our team collaboratively designed illustrations to create a realistic and engaging experience, bringing the saber-toothed tiger’s world to life.  
+       </p></div>
+      </FadeInSection>
+    </div>
   </div>
   
   <div class="img-section-4">
-    <div class="img-container"><img src="/Nass-Doku5.png" alt="Beschreibung des Bildes" /></div>
-  </div>
+    <div class="img-container"><img src="/iceFarbe.png" alt="Beschreibung des Bildes" /></div>
+</div>
+<div class="img-section-4">
+    <div class="img-container"><img src="/iceAsset1.png" alt="Beschreibung des Bildes" /></div>
+</div>
+<div class="img-section-4">
+    <div class="img-container"><img src="/iceAsset2.png" alt="Beschreibung des Bildes" /></div>
+</div>
   
   
-  <div class="grid-section1">
-    <div class="text-grid1">
-      <FadeInSection>
-        <div>
-      <h4>Final Product</h4>
-      <br>
-      <p class="text-doku">
-        Our water testing device was designed for ease of use, efficiency, and durability. The ergonomic shape ensures comfortable handling, with a dedicated slot for replaceable test tubes. A simple two-button interface allows for intuitive navigation, while the E-Ink display provides high contrast and low power consumption, ensuring readability in all conditions. The UI guides users step by step, minimizing errors. The final prototype was modeled in Fusion 360, 3D-printed, and assembled with key functional elements, creating a practical and accessible solution for real-world use.     </p>
-      </div>
-      </FadeInSection>
-    </div>
-  </div>
+
   
-  <div class="image-section">
-    <img src="/Nass-Doku6.png" alt="Beschreibung des Bildes" />
-  </div>
-  
-  
-  <div class="grid-section1">
-    <div class="text-grid1">
-      <FadeInSection>
-        <div>
-      <h4>Turning Data into Action</h4>
-      <br>
-      <p class="text-doku">
-        To support the device, we designed a clean and structured website that provides essential information and enhances usability. The platform offers a visual representation of collected water data, allowing users to analyze results through an interactive dashboard. Each device has a unique ID, enabling users to log in and track personalized test results over time.    </p>
-      <br>
-      <p class="text-doku">
-        Beyond data visualization, the website explains the technology behind NASS, shares insights into the project, and invites NGOs and individuals to get involved. The design focuses on clarity, readability, and accessibility, ensuring a seamless experience for all users.    </p>
-    </div>
-    </FadeInSection>
-    </div>
-  </div>
-  
-  <div class="image-section">
-    <img src="/Nass-Doku7.png" alt="Beschreibung des Bildes" />
-  </div>
-  
-  <div class="grid-section1">
-    <div class="text-grid1">
-      <FadeInSection>
-        <div>
-      <h4>Turning Data into Action</h4>
-      <br>
-      <p class="text-doku">
-        To make NASS easy to use, we designed a compact A5 handbook that guides users step by step, mirroring the E-Ink display UI. It serves as a physical reference, ensuring accessibility even without digital instructions. Beyond daily use, it supports training and community workshops, making water testing intuitive for everyone.  </div>
-    </FadeInSection>
-    </div>
-  </div>
-  
-  <div class="image-section">
-    <img src="/Nass-Doku8.png" alt="Beschreibung des Bildes" />
-  </div>
-  
-  
-  <div class="grid-section1">
-    <div class="text-grid1">
-      <FadeInSection>
-        <div>
-      <h4>Future Potential</h4>
-      <br>
-      <p class="text-doku">
-        NASS was an exciting project that challenged us to think beyond traditional interaction design and explore how technology could solve real-world problems. While our prototype remains a conceptual model, the process helped us understand the challenges of designing for usability, accessibility, and clear user guidance in a complex system.
-        By focusing on intuitive interaction, clear visual communication, and a seamless user flow, we created a vision for how a water testing device could work in the future. This project reinforced the importance of prototyping, iteration, and user-centered design in shaping meaningful solutions.  </FadeInSection>
-    </div>
-  </div>
-  
-  
+
   
   </div>
   </div>
@@ -348,7 +382,7 @@
     margin: 0;
     padding: 0.5rem 0;
     font-family: 'Franz-Grotesk', sans-serif;
-    color: #1359FF;
+    color: #7DAA62;
     letter-spacing: 0.1rem;
   }
   
@@ -435,34 +469,23 @@
     will-change: transform;
   }
   
-  .image-section {
-    width: 100%;
-    align-content: center;
-    margin-top: 10rem;
-  }
-  
-  .image-section img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-  }
   
   .grid-section1 {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: repeat(1, 1fr);
+    grid-template-rows: repeat(1, auto);
     gap: 8px;
     margin-top: 7rem;
+    width: 100%;
   }
   
   .text-grid1 {
-    grid-column: span 4 / span 4;
+    grid-column: 1 / span 4;
   }
   
   h4 {
     font-family: 'Franz-Plex', mono;
-    color: #1359FF;
+    color: #7DAA62;
     line-height: 1.6;
     font-size: 1.5rem;
   }
@@ -472,39 +495,6 @@
     font-family: 'Franz-Plex', mono;
     line-height: 1.6;
     font-size: 1.5rem;
-  }
-  
-  .img-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 8px;
-    margin-top: 5rem;
-    justify-items: center;
-    align-items: center;
-    scale: 0.8;
-  }
-  
-  .img1 {
-    grid-row: span 2 / span 2;
-  }
-  
-  .img4 {
-    grid-column-start: 2;
-  }
-  
-  .img5 {
-    grid-column-start: 3;
-  }
-  
-  .img-grid img {
-    filter: grayscale(100%);
-    transition: filter 0.8s ease;
-    transform: translateZ(0);
-  }
-  
-  .img-grid img:hover {
-    filter: grayscale(0%);
   }
   
   .img-section-4 {
@@ -519,40 +509,6 @@
     grid-column: span 4 / span 4;
   }
   
-  .img-section-2col {
-    display: grid;
-    grid-template-columns: 4fr 2fr; /* 4:2 Verhältnis wie gewünscht */
-    gap: 2rem;
-    margin-top: 10rem;
-    width: 100%;
-  }
-  
-  .img-container-left, .img-container-right {
-    width: 100%;
-    display: flex;         /* Für die Zentrierung */
-    justify-content: center; /* Horizontal zentrieren */
-    align-items: center;    /* Vertikal zentrieren */
-  }
-  
-  .img-container-left img, .img-container-right img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    object-position: center;
-  }
-  
-  @media (max-width: 768px) {
-    .img-section-2col {
-      display: flex;
-      flex-direction: column;
-      gap: 3rem;
-      margin-top: 5rem;
-    }
-    
-    .img-container-left, .img-container-right {
-      width: 100%;
-    }
-  }
   
   img {
     width: 100%;
@@ -566,6 +522,101 @@
     overflow-y: auto;
     width: 100%;
     height: 100%;
+  }
+  
+  /* Ice Age Mammals spezifisches Bildergitter */
+  .ice-img-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: 0;
+    grid-column: 1 / span 4;
+    width: 100%;
+  }
+  
+  /* Zeilencontainer für 2-spaltige Bilder */
+  .ice-img-grid .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    grid-column: 1 / span 4; /* Nimmt die volle Breite des parent-grids ein (4 Spalten) */
+    width: 100%;
+    filter: grayscale(100%); /* Grayscale auf Reihenebene */
+    transition: filter 0.8s ease;
+  }
+  
+  /* Hover-Effekt auf Zeilenebene */
+  .ice-img-grid .row:hover {
+    filter: grayscale(0%);
+  }
+  
+  /* Die einzelnen Grid-Items in den Rows */
+  .ice-img-grid .row .grid-item {
+    width: 100%;
+    padding: 0;
+    line-height: 0;
+  }
+  
+  /* Elemente mit voller Breite nehmen alle 4 Spalten im Grid ein */
+  .ice-img-grid .grid-item.full-width {
+    grid-column: 1 / span 4;
+    filter: grayscale(100%); /* Grayscale für Vollbreite-Items */
+    transition: filter 0.8s ease;
+  }
+  
+  /* Hover für Vollbreite-Items */
+  .ice-img-grid .grid-item.full-width:hover {
+    filter: grayscale(0%);
+  }
+  
+  /* Allgemeine Bild-Styles */
+  .ice-img-grid img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+    transform: translateZ(0);
+    display: block;
+  }
+  
+  /* Neues Grid für icegrid2 */
+  .icegrid2-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    grid-column: 1 / span 4; /* Nimmt 4 von 6 Spalten ein */
+    width: 100%;
+  }
+  
+  .icegrid2-item {
+    width: 100%;
+    line-height: 0; /* Verhindert unerwünschte Abstände */
+    filter: grayscale(100%);
+    transition: filter 0.8s ease;
+  }
+  
+  .icegrid2-item:hover {
+    filter: grayscale(0%);
+  }
+  
+  .icegrid2-item img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+    display: block; /* Verhindert unerwünschte Abstände */
+  }
+  
+  /* Mobile Anpassungen für das neue Grid */
+  @media (max-width: 768px) {
+    .icegrid2-container {
+      width: 100%;
+    }
+    
+    .icegrid2-item {
+      width: 100%;
+    }
   }
   
   /* Mobile Anpassungen */
@@ -588,55 +639,6 @@
       font-size: 1.4rem;
     }
     
-    /* Bildergalerie neu anpassen */
-    .img-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: auto auto auto;
-      gap: 1.5rem;
-      scale: 1;
-      margin-top: 3rem;
-    }
-    
-    /* Erstes Bild kleiner skalieren und über volle Breite */
-    .img-grid .img1 {
-      grid-column: 1 / span 2;
-      width: 100% !important;
-      max-width: 80%;
-      margin: 0 auto 1rem auto;
-    }
-    
-    /* Restliche Bilder im 2x2 Grid */
-    .img-grid .img2 {
-      grid-column: 1;
-      grid-row: 2;
-    }
-    
-    .img-grid .img3 {
-      grid-column: 2;
-      grid-row: 2;
-    }
-    
-    .img-grid .img4 {
-      grid-column: 1;
-      grid-row: 3;
-    }
-    
-    .img-grid .img5 {
-      grid-column: 2;
-      grid-row: 3;
-    }
-    
-    .img-grid div {
-      width: 100% !important;
-    }
-  
-    .project-columns .project-column .divider,
-    .project-columns .project-column p,
-    .tags {
-      width: 100%;
-    }
-  
     /* Anpassung der Überschriftengröße und -höhe */
     .heading-container {
       height: auto;
@@ -658,10 +660,7 @@
     .img-container {
       width: 100%;
     }
-    
-    .image-section {
-      margin-top: 5rem;
-    }
+
     
     /* Anpassung der Projektspaltenlayouts */
     .project-columns {
@@ -671,6 +670,53 @@
     
     .project-columns .project-column {
       min-width: 100%;
+    }
+    
+    .project-columns .project-column .divider,
+    .project-columns .project-column p,
+    .tags {
+      width: 100%;
+    }
+    
+    /* Mobile Bildgrid */
+    .ice-img-grid {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .ice-img-grid .grid-item,
+    .ice-img-grid .grid-item.full-width {
+      width: 100%;
+    }
+    
+
+    /* Grayscale-Effekte auf mobilen Geräten entfernen */
+    .ice-img-grid .row {
+      filter: grayscale(0%); /* Kein Grayscale auf mobil */
+    }
+    
+    .ice-img-grid .grid-item.full-width {
+      filter: grayscale(0%); /* Kein Grayscale auf mobil */
+    }
+    
+    .icegrid2-item {
+      filter: grayscale(0%); /* Kein Grayscale auf mobil */
+    }
+    
+    /* Auch für Slider-Items Grayscale entfernen */
+    .slider-item img {
+      filter: grayscale(0%);
+    }
+    
+    /* Slider Animationen eventuell verlangsamen für mobil */
+    .slider-right .slider-track {
+      animation: slideRight 45s linear infinite;
+    }
+    
+    .slider-left .slider-track {
+      animation: slideLeft 45s linear infinite;
     }
   }
   
@@ -693,24 +739,6 @@
       font-size: 1.1rem;
     }
     
-    .img-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-    
-    .img-grid .img1,
-    .img-grid .img2,
-    .img-grid .img3,
-    .img-grid .img4,
-    .img-grid .img5 {
-      grid-column: 1;
-    }
-    
-    .img-grid .img1 {
-      max-width: 90%;
-    }
-    
     .back-btn-container button {
       padding: 0.6rem 1.2rem;
       font-size: 0.9rem;
@@ -724,4 +752,97 @@
       font-size: 1.2rem;
     }
   }
-  </style>
+
+  /* Horizontaler Slider mit Autoplay */
+.slider-container {
+  width: 100vw;
+  overflow: hidden;
+  margin: 4rem 0;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  height: auto;
+  max-height: 220px; /* Leicht erhöht für bessere Darstellung */
+  transition: max-height 0.3s ease; /* Animation für Höhenänderung */
+}
+
+/* Mehr Raum und Sichtbarkeit beim Hover über den Container */
+.slider-container:hover {
+  max-height: 320px; /* Leicht reduziert für angemessenere Größe */
+  overflow: visible; /* Erlaubt Bildern, über den Container hinauszuragen */
+  z-index: 100; /* Bringt den Container vor andere Elemente */
+}
+
+.slider-track {
+  display: flex;
+  gap: 0.5rem;
+  width: max-content;
+  padding: 0 5vw;
+}
+
+/* Animation-Anpassungen für bessere Abdeckung */
+@keyframes slideRight {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50%));
+  }
+}
+
+/* Für den unteren Slider: Angepasste Startposition und Bewegungsbereich */
+@keyframes slideLeft {
+  0% {
+    transform: translateX(calc(-33.33%)); /* Erhöhter Startpunkt für mehr Bewegungsraum */
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Slider-Animationen */
+.slider-right .slider-track {
+  animation: slideRight 30s linear infinite;
+}
+
+.slider-left .slider-track {
+  animation: slideLeft 30s linear infinite;
+}
+
+.slider-item {
+  flex: 0 0 auto;
+  width: auto;
+  height: auto;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+/* Stärkere Vergrößerung beim Hover */
+.slider-container:hover .slider-item:hover {
+  transform: scale(1.5); /* Deutlich stärkere Vergrößerung */
+  z-index: 101; /* Noch höherer z-index für das gehovered Bild */
+  filter: drop-shadow(0 0 12px rgba(0,0,0,0.6)); /* Schatten für besseren Kontrast */
+}
+
+/* Mindestbreite für die Slider-Tracks */
+.slider-right .slider-track,
+.slider-left .slider-track {
+  min-width: 220vw; /* Stellt sicher, dass der Slider immer breiter als die Seite ist */
+}
+
+/* Slider-Tracks brauchen mehr Breite für den zweiten Slider */
+.slider-left .slider-track {
+  min-width: 280vw; /* Von 220vw erhöht für mehr Bildmaterial */
+}
+
+/* Sicherstellen, dass die Bilder vollständig sichtbar sind */
+.slider-item img {
+  width: 100%;
+  height: auto;
+  max-height: 200px;
+  object-fit: contain; /* Von cover auf contain geändert */
+  object-position: center;
+  border-radius: 8px;
+}
+</style>
