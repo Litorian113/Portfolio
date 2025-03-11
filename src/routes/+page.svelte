@@ -26,6 +26,19 @@
     }
 </script>
   
+<div class="header-text">
+    <div class="default-text">
+        <span class="copyright">©</span>
+        <span class="code-by">Code by</span>
+        <span class="franz">Franz</span>
+    </div>
+    <div class="hover-text">
+        <span class="copyright">©</span>
+        <span class="franz">Franz</span>
+        <span class="anhaupl">Anhäupl</span>
+    </div>
+</div>
+
 <div class="app">
     <Stage 
         bind:this={stageComponent} 
@@ -136,5 +149,52 @@
     .side-navigation button:focus {
         outline: none;
         box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+    }
+    
+    /* Verbesserte Header-Text Styles */
+    .header-text {
+        position: fixed;
+        top: 30px;
+        left: 30px;
+        z-index: 9999; 
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 16px;
+        color: white;
+        cursor: pointer;
+        overflow: visible; /* Overflow auf visible ändern */
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.3);
+        padding: 8px 12px;
+        border-radius: 4px;
+        transform-style: flat; /* 3D-Transformationen zurücksetzen */
+        transform: translateZ(0); /* Force GPU rendering und verhindert 3D-Skalierungsprobleme */
+        backface-visibility: hidden; /* Verhindert Rendering-Probleme */
+        perspective: none; /* Keine Perspektive für dieses Element */
+        width: auto; /* Explizite Breite */
+    }
+    
+    .default-text, .hover-text {
+        position: absolute;
+        top: 0;
+        left: 0;
+        white-space: nowrap;
+        transition: all 0.5s ease;
+        padding: 8px 0;
+        transform-style: flat; /* Auch hier 3D-Transformationen zurücksetzen */
+    }
+    
+    .hover-text {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    
+    .header-text:hover .default-text {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    
+    .header-text:hover .hover-text {
+        opacity: 1;
+        transform: translateX(0);
     }
 </style>

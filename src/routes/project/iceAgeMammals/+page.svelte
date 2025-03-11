@@ -13,7 +13,7 @@
       document.documentElement.style.overflow = 'auto';
       document.body.style.overflow = 'auto';
       console.log("Project page: Enabling scroll");
-
+  
       if (browser) {
         // Benutze Intersection Observer für Lazy Loading
         const observer = new IntersectionObserver((entries) => {
@@ -38,7 +38,7 @@
         });
       }
     });
-
+  
     function goBackToFlur() {
       const cx = url.searchParams.get('cx') ?? 0;
       const cy = url.searchParams.get('cy') ?? 0;
@@ -82,7 +82,7 @@
         </button>
       </div>
       <div class="heading-container">
-        <h2>bwegt App</h2>
+        <h2>Nass Device</h2>
       </div>
       <div class="project-columns">
         <div class="project-column">
@@ -94,21 +94,21 @@
         <div class="project-column">
           <h3>Project Overview</h3>
           <div class="divider"></div>
-          <p>We redesigned the bwegt mobility app to improve usability, simplify navigation, and enhance real-time travel
-            information for a seamless user experience.</p>
+          <p>NASS is a portable water testing device with a simple E-Ink interface and open-data sharing, designed to make water quality analysis accessible.
+  
+          </p>
         </div>
         <div class="project-column">
           <h3>Project Tags</h3>
           <div class="divider"></div>
           <div class="tags">
-            <div class="tag">App-Redesign</div>
-            <div class="tag">Typography</div>
-            <div class="tag">Figma</div>
+            <div class="tag">Product-Design</div>
+            <div class="tag">UX/UI-Design</div>
+            <div class="tag">E-Ink Interface</div>
             <div class="tag">Prototyping</div>
-            <div class="tag">Stablediffusion</div>
-            <div class="tag">Styleguide</div>
-            <div class="tag">Usertesting</div>
-            <div class="tag">User-Centered-Interface</div>
+            <div class="tag">Open Data</div>
+            <div class="tag">Usability</div>
+            <div class="tag">Human-Centered Design</div>
           </div>
         </div>
       </div>
@@ -122,7 +122,7 @@
     role="figure"
     on:mousemove={handleMouseMove}
     on:mouseleave={resetTransform}>
-  <img src="/bwegt-doku1.png" alt="Beschreibung des Bildes" />
+  <img src="/Nass-cover.png" alt="Beschreibung des Bildes" />
   </div>
   
   
@@ -133,66 +133,33 @@
         <h4>Introduction</h4>
         <br>
         <p class="text-doku">
-          In the “Application 1” course at HfG during the winter semester, we took a closer look at the existing “bwegt”
-          mobility app for Baden-Württemberg. Our goal was to address common user pain points such as confusing ticket
-          structures, unclear navigation, and a lack of real-time information.</p>
-        <p class="text-doku"> By integrating user research and iterative design methods, we developed a refined,
-          user-centered app concept that not only simplifies everyday travel but also motivates more environmentally
-          friendly transport choices.</p>
+          During our Innovation 1 course at HfG, we explored solutions for one of the world’s most pressing issues: unsafe drinking water. Every year, millions suffer from waterborne diseases, especially in regions like Uganda, where contaminated water—often carrying E. coli bacteria—poses a severe health risk.</p>
+        <br><p class="text-doku"> To address this, we developed NASS (Network for Aquatic Substance Sensors)—a portable water testing device that allows non-specialists to quickly check water quality. The collected data is shared on an open platform, helping local communities and NGOs make informed decisions about water safety. Our goal was to create an affordable, accessible, and intuitive solution to prevent waterborne illnesses and save lives.</p>
       </div>
     </FadeInSection>
     </div>
     </div>
   
-  
-    <div class="image-section">
-      <img src="/bwegt-doku2.png" alt="Beschreibung des Bildes" />
+    <div class="img-section-2col">
+      <div class="img-container-left">
+        <img src="/Nass-Doku1.png" alt="NASS Device Präsentation" />
+      </div>
+      <div class="img-container-right">
+        <img src="/Nass-Doku2.png" alt="NASS Device Detail" />
+      </div>
     </div>
-  
   
     <div class="grid-section1">
       <div class="text-grid1">
         <FadeInSection>
           <div>
-        <h4>User-Centered Research & Flow</h4>
+        <h4>Research</h4>
+        <br>
         <p class="text-doku">
-          To ensure a user-centered redesign, we conducted qualitative research, including 13 in-depth interviews, to
-          identify common pain points in mobility apps. Insights revealed issues like unclear navigation, lack of
-          real-time updates, and complex ticket structures.
-        </p>
+          Initially, we envisioned a universal water testing device, but research revealed the need for a more focused approach. Testing multiple contaminants in one device proved technically complex, and water issues vary by region.
+        </p> <br>
         <p class="text-doku">
-          Based on this, we developed a persona, Rebeka, a frequent public transport user who relies on apps for planning
-          but struggles with inconsistent information and crowded trains. The new user flow prioritizes intuitive
-          navigation, quick ticket access, and transparent real-time updates, ensuring a seamless and stress-free travel
-          experience.
-        </p>
-      </div>
-      </FadeInSection>
-      </div>
-    </div>
-  
-  
-    <div class="img-grid">
-      <div class="img1"><img src="/grid1.png" alt="Beschreibung des Bildes" /></div>
-      <div class="img2"><img src="/grid2.png" alt="Beschreibung des Bildes" /></div>
-      <div class="img3"><img src="/grid3.png" alt="Beschreibung des Bildes" /></div>
-      <div class="img4"><img src="/grid4.png" alt="Beschreibung des Bildes" /></div>
-      <div class="img5"><img src="/grid5.png" alt="Beschreibung des Bildes" /></div>
-    </div>
-  
-  
-  
-  
-    <div class="grid-section1">
-      <div class="text-grid1">
-        <FadeInSection>
-          <div>
-        <h4>Gamification Design</h4>
-        <p class="text-doku">
-          We used Stable Diffusion to generate various visual elements in the app, ensuring a cohesive and modern design language. This included UI illustrations, badges, and interactive icons that enhance user engagement.
-        </p>
-        <p class="text-doku">
-          A key feature of our redesign was the integration of gamification through an environmental rewards system. Users earn points and badges for choosing public transport, track their CO₂ savings in real time, and progress through virtual station upgrades—creating an engaging and motivating experience that encourages sustainable mobility choices.
+          We shifted our focus to Uganda, where unsafe drinking water is a major health risk. Our goal was to design a user-friendly, affordable device that enables non-specialists to detect key contaminants like E. coli. By integrating an open-data platform, NASS helps communities and NGOs take informed action against waterborne diseases.
         </p>
       </div>
       </FadeInSection>
@@ -200,7 +167,33 @@
     </div>
   
     <div class="img-section-4">
-      <div class="img-container"><img src="/bwegt-doku3.png" alt="Beschreibung des Bildes" /></div>
+      <div class="img-container"><img src="/Nass-Doku3.png" alt="Beschreibung des Bildes" /></div>
+  </div>
+  
+  
+  
+  
+    <div class="grid-section1">
+      <div class="text-grid1">
+        <FadeInSection>
+          <div>
+        <h4>Universal Icon Language</h4>
+        <br>
+        <p class="text-doku">
+          To ensure clarity and usability, we developed a minimalist visual style with a strong focus on intuitive iconography. We used the Untitled UI library as a foundation and created custom icons to fit the specific needs of our device and interface.      </p>
+        <br><p class="text-doku">
+          Given the international context, we carefully considered cultural differences in symbol interpretation, ensuring that icons were universally recognizable—even for users with low literacy levels. The icons were designed to be easily readable on both the website and the small E-Ink display, maintaining high contrast and simplicity for maximum accessibility.      </p>
+      </div>
+      </FadeInSection>
+      </div>
+    </div>
+  
+    <div class="img-section-4">
+      <div class="img-container"><img src="/Nass-Doku4.png" alt="Beschreibung des Bildes" /></div>
+  </div>
+  
+  <div class="img-section-4">
+    <div class="img-container"><img src="/Nass-Doku5.png" alt="Beschreibung des Bildes" /></div>
   </div>
   
   
@@ -208,43 +201,67 @@
     <div class="text-grid1">
       <FadeInSection>
         <div>
-      <h4>Design Evolution</h4>
+      <h4>Final Product</h4>
+      <br>
       <p class="text-doku">
-        Throughout the design process, we iteratively refined components to enhance clarity, usability, and consistency. Colors played a key role in establishing a clear visual hierarchy—contrasting shades ensure readability, while accent colors guide user focus. The interface evolved through multiple adjustments, optimizing button placements, spacing, and iconography to create an intuitive and visually engaging experience.   
-       </p>
+        Our water testing device was designed for ease of use, efficiency, and durability. The ergonomic shape ensures comfortable handling, with a dedicated slot for replaceable test tubes. A simple two-button interface allows for intuitive navigation, while the E-Ink display provides high contrast and low power consumption, ensuring readability in all conditions. The UI guides users step by step, minimizing errors. The final prototype was modeled in Fusion 360, 3D-printed, and assembled with key functional elements, creating a practical and accessible solution for real-world use.     </p>
       </div>
       </FadeInSection>
     </div>
   </div>
   
-  <div class="img-section-4">
-    <div class="img-container"><img src="/bwegt-doku4.png" alt="Beschreibung des Bildes" /></div>
+  <div class="image-section">
+    <img src="/Nass-Doku6.png" alt="Beschreibung des Bildes" />
   </div>
   
-  <div class="img-section-4">
-    <div class="img-container"><img src="/bwegt-doku5.png" alt="Beschreibung des Bildes" /></div>
+  
+  <div class="grid-section1">
+    <div class="text-grid1">
+      <FadeInSection>
+        <div>
+      <h4>Turning Data into Action</h4>
+      <br>
+      <p class="text-doku">
+        To support the device, we designed a clean and structured website that provides essential information and enhances usability. The platform offers a visual representation of collected water data, allowing users to analyze results through an interactive dashboard. Each device has a unique ID, enabling users to log in and track personalized test results over time.    </p>
+      <br>
+      <p class="text-doku">
+        Beyond data visualization, the website explains the technology behind NASS, shares insights into the project, and invites NGOs and individuals to get involved. The design focuses on clarity, readability, and accessibility, ensuring a seamless experience for all users.    </p>
+    </div>
+    </FadeInSection>
+    </div>
   </div>
   
   <div class="image-section">
-    <img src="/bwegt-doku6.png" alt="Beschreibung des Bildes" />
+    <img src="/Nass-Doku7.png" alt="Beschreibung des Bildes" />
   </div>
   
   <div class="grid-section1">
     <div class="text-grid1">
       <FadeInSection>
         <div>
-      <h4>Active Journey Mode</h4>
+      <h4>Turning Data into Action</h4>
+      <br>
       <p class="text-doku">
-        The Active Journey Mode keeps users informed in real time, automatically checking them into their trip. It displays upcoming stops, delays, and alternative connections with clear icons and color-coded alerts. Designed for quick readability, this feature minimizes uncertainty and enhances the travel experience.     
-      </p>
-    </div>
+        To make NASS easy to use, we designed a compact A5 handbook that guides users step by step, mirroring the E-Ink display UI. It serves as a physical reference, ensuring accessibility even without digital instructions. Beyond daily use, it supports training and community workshops, making water testing intuitive for everyone.  </div>
     </FadeInSection>
     </div>
   </div>
   
+  <div class="image-section">
+    <img src="/Nass-Doku8.png" alt="Beschreibung des Bildes" />
+  </div>
   
-  <div class="img-section-4">
-    <div class="img-container"><img data-src="/bwegt-doku7.png" alt="Beschreibung des Bildes" src="/placeholder.png" /></div>
+  
+  <div class="grid-section1">
+    <div class="text-grid1">
+      <FadeInSection>
+        <div>
+      <h4>Future Potential</h4>
+      <br>
+      <p class="text-doku">
+        NASS was an exciting project that challenged us to think beyond traditional interaction design and explore how technology could solve real-world problems. While our prototype remains a conceptual model, the process helped us understand the challenges of designing for usability, accessibility, and clear user guidance in a complex system.
+        By focusing on intuitive interaction, clear visual communication, and a seamless user flow, we created a vision for how a water testing device could work in the future. This project reinforced the importance of prototyping, iteration, and user-centered design in shaping meaningful solutions.  </FadeInSection>
+    </div>
   </div>
   
   
@@ -265,7 +282,7 @@
     font-style: normal;
     font-display: swap;
   }
-
+  
   /* Space Grotesk Regular */
   @font-face {
     font-family: 'Franz-Grotesk';
@@ -274,14 +291,14 @@
     font-style: normal;
     font-display: swap;
   }
-
+  
   .content-wrapper {
     width: 92%;
     max-width: 1400px;
     margin: 0 auto;
     padding: 4rem 4rem;
   }
-
+  
   /* Top-Section: 80vh hoch, Flexbox-Layout für die Elemente */
   .top-section {
     height: 70%;
@@ -289,12 +306,12 @@
     flex-direction: column;
     justify-content: flex-start;
   }
-
+  
   /* Button-Container: 100% Breite, Button linksbündig */
   .back-btn-container {
     width: 100%;
   }
-
+  
   .back-btn-container button {
     color: white;
     font-family: 'Franz-Grotesk', sans-serif;
@@ -309,13 +326,13 @@
     text-align: left;
     cursor: pointer;
   }
-
+  
   /* Optional: Größe und Ausrichtung des Pfeils anpassen */
   .back-btn-container button img {
     height: 1.2em;
     width: auto;
   }
-
+  
   /* Überschrift-Container: 100% Breite, h2 linksbündig */
   .heading-container {
     width: 100%;
@@ -323,7 +340,7 @@
     margin-top: 1rem;
     align-content: center;
   }
-
+  
   .heading-container h2 {
     width: 100%;
     text-align: left;
@@ -331,10 +348,10 @@
     margin: 0;
     padding: 0.5rem 0;
     font-family: 'Franz-Grotesk', sans-serif;
-    color: #FFCD06;
+    color: #1359FF;
     letter-spacing: 0.1rem;
   }
-
+  
   /* Drei Spalten Layout */
   .project-columns {
     display: flex;
@@ -345,7 +362,7 @@
     margin-top: 1rem;
     max-width: 100%;
   }
-
+  
   /* Jede Spalte */
   .project-columns .project-column {
     flex: 1;
@@ -354,7 +371,7 @@
     flex-direction: column;
     align-items: flex-start;
   }
-
+  
   .project-columns .project-column h3 {
     width: 100%;
     text-align: left;
@@ -364,14 +381,14 @@
     color: grey;
     font-family: 'Franz-Grotesk', sans-serif;
   }
-
+  
   .project-columns .project-column .divider {
     width: 95%;
     height: 2px;
     background-color: grey;
     margin-bottom: 0.5rem;
   }
-
+  
   .project-columns .project-column p {
     width: 95%;
     text-align: left;
@@ -381,7 +398,7 @@
     font-family: 'Franz-Grotesk', sans-serif;
     line-height: 1.6;
   }
-
+  
   /* Container für die Tags */
   .tags {
     display: flex;
@@ -390,7 +407,7 @@
     gap: 0.7rem;
     margin-top: 1rem;
   }
-
+  
   /* Einzelnes Tag-Element */
   .tag {
     display: inline-flex;
@@ -402,10 +419,11 @@
     font-size: 1rem;
     font-family: 'Franz-Grotesk', sans-serif;
   }
-
+  
   .cover-section {
     width: 100%;
     position: relative;
+    scale: 0.8;
   }
     
   .cover-section img {
@@ -416,20 +434,20 @@
     transform: translate(0, 0);
     will-change: transform;
   }
-
+  
   .image-section {
     width: 100%;
     align-content: center;
     margin-top: 10rem;
   }
-
+  
   .image-section img {
     width: 100%;
     height: 100%;
     object-fit: contain;
     object-position: center;
   }
-
+  
   .grid-section1 {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -437,25 +455,25 @@
     gap: 8px;
     margin-top: 7rem;
   }
-
+  
   .text-grid1 {
     grid-column: span 4 / span 4;
   }
-
+  
   h4 {
     font-family: 'Franz-Plex', mono;
-    color: #FFCD06;
+    color: #1359FF;
     line-height: 1.6;
     font-size: 1.5rem;
   }
-
+  
   .text-doku {
     color: white;
     font-family: 'Franz-Plex', mono;
     line-height: 1.6;
     font-size: 1.5rem;
   }
-
+  
   .img-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -466,29 +484,29 @@
     align-items: center;
     scale: 0.8;
   }
-
+  
   .img1 {
     grid-row: span 2 / span 2;
   }
-
+  
   .img4 {
     grid-column-start: 2;
   }
-
+  
   .img5 {
     grid-column-start: 3;
   }
-
+  
   .img-grid img {
     filter: grayscale(100%);
     transition: filter 0.8s ease;
     transform: translateZ(0);
   }
-
+  
   .img-grid img:hover {
     filter: grayscale(0%);
   }
-
+  
   .img-section-4 {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -500,21 +518,56 @@
   .img-container {
     grid-column: span 4 / span 4;
   }
-
+  
+  .img-section-2col {
+    display: grid;
+    grid-template-columns: 4fr 2fr; /* 4:2 Verhältnis wie gewünscht */
+    gap: 2rem;
+    margin-top: 10rem;
+    width: 100%;
+  }
+  
+  .img-container-left, .img-container-right {
+    width: 100%;
+    display: flex;         /* Für die Zentrierung */
+    justify-content: center; /* Horizontal zentrieren */
+    align-items: center;    /* Vertikal zentrieren */
+  }
+  
+  .img-container-left img, .img-container-right img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+  }
+  
+  @media (max-width: 768px) {
+    .img-section-2col {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      margin-top: 5rem;
+    }
+    
+    .img-container-left, .img-container-right {
+      width: 100%;
+    }
+  }
+  
   img {
     width: 100%;
     height: 100%;
     object-fit: contain;
     object-position: center;
   }
-
+  
   /* Stelle sicher, dass diese Seite scrollbar ist */
   .scroll-container {
     overflow-y: auto;
     width: 100%;
     height: 100%;
   }
-
+  
   /* Mobile Anpassungen */
   @media (max-width: 768px) {
     /* Anpassung der Textpassagen */
@@ -577,13 +630,13 @@
     .img-grid div {
       width: 100% !important;
     }
-
+  
     .project-columns .project-column .divider,
     .project-columns .project-column p,
     .tags {
       width: 100%;
     }
-
+  
     /* Anpassung der Überschriftengröße und -höhe */
     .heading-container {
       height: auto;
@@ -671,4 +724,4 @@
       font-size: 1.2rem;
     }
   }
-</style>
+  </style>

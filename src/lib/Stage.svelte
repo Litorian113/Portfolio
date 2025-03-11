@@ -561,9 +561,16 @@
 
       // Vier Cover-Gruppen erstellen
       const coverGroup1 = createCoverGroup(cover3, hover3,  3,  0.65, -5.5, 1.2,  3);
+      coverGroup1.userData.project = 'iceAgeMammals'; // Hier fügen wir den Projektnamen hinzu
+      
       const coverGroup2 = createCoverGroup(cover2, hover2,  3, -0.65, -5.5, 1.2,  3);
+      coverGroup2.userData.project = 'hybridWallet'; // Hier fügen wir den Projektnamen hinzu
+      
       const coverGroup3 = createCoverGroup(cover1, hover1, -3,  0.65, -5.5, -1.2, -3);
+      coverGroup3.userData.project = 'nass';
+      
       const coverGroup4 = createCoverGroup(cover4, hover4, -3, -0.65, -5.5, -1.2, -3);
+      coverGroup4.userData.project = 'bwegt';
 
       scene.add(coverGroup1);
       scene.add(coverGroup2);
@@ -574,7 +581,7 @@
 
       // --------------------------------------------------------
     // 4) WEITERE BILDER (z. B. Earthquake, Nass1, Bwegt1)
-    const pngTexture1 = textureLoader.load('/Bild2.png');
+    const pngTexture1 = textureLoader.load('/Bild1.png'); // Bild1 für nass
     pngTexture1.colorSpace = THREE.SRGBColorSpace;
     const pngGeometry1 = new THREE.PlaneGeometry(3, 2);
     const pngMaterial1 = new THREE.MeshBasicMaterial({
@@ -586,44 +593,45 @@
     pngMesh1.position.set(-3, 0, 15);
     pngMesh1.userData.finalX = 0;
     pngMesh1.userData.offscreenX = -3;
-    // Markiere dieses Bild als Nass-Projekt:
-    pngMesh1.userData.project = 'nass';
+    pngMesh1.userData.project = 'nass'; // Nass-Projekt
     scene.add(pngMesh1);
     imageMeshes.push(pngMesh1);
 
-      const pngTexture2 = textureLoader.load('/Bild1.png');
-      pngTexture2.colorSpace = THREE.SRGBColorSpace;
-      const pngGeometry2 = new THREE.PlaneGeometry(3, 2);
-      const pngMaterial2 = new THREE.MeshBasicMaterial({ map: pngTexture2, transparent: true });
-      const pngMesh2 = new THREE.Mesh(pngGeometry2, pngMaterial2);
-      pngMesh2.position.set(3, 0, 11.5);
-      pngMesh2.userData.finalX = 0;
-      pngMesh2.userData.offscreenX = 3;
-      pngMesh2.userData.project = 'bwegt';
-      scene.add(pngMesh2);
-      imageMeshes.push(pngMesh2);
+    const pngTexture2 = textureLoader.load('/Bild2.png'); // Bild2 für bwegt
+    pngTexture2.colorSpace = THREE.SRGBColorSpace;
+    const pngGeometry2 = new THREE.PlaneGeometry(3, 2);
+    const pngMaterial2 = new THREE.MeshBasicMaterial({ map: pngTexture2, transparent: true });
+    const pngMesh2 = new THREE.Mesh(pngGeometry2, pngMaterial2);
+    pngMesh2.position.set(3, 0, 11.5);
+    pngMesh2.userData.finalX = 0;
+    pngMesh2.userData.offscreenX = 3;
+    pngMesh2.userData.project = 'bwegt'; // Bwegt-Projekt
+    scene.add(pngMesh2);
+    imageMeshes.push(pngMesh2);
 
-      const pngTexture3 = textureLoader.load('/Bild3.png');
-      pngTexture3.colorSpace = THREE.SRGBColorSpace;
-      const pngGeometry3 = new THREE.PlaneGeometry(3, 2);
-      const pngMaterial3 = new THREE.MeshBasicMaterial({ map: pngTexture3, transparent: true });
-      const pngMesh3 = new THREE.Mesh(pngGeometry3, pngMaterial3);
-      pngMesh3.position.set(-3, 0, 8);
-      pngMesh3.userData.finalX = 0;
-      pngMesh3.userData.offscreenX = -3;
-      scene.add(pngMesh3);
-      imageMeshes.push(pngMesh3);
+    const pngTexture3 = textureLoader.load('/Bild3.png'); // Bild3 für iceAgeMammals
+    pngTexture3.colorSpace = THREE.SRGBColorSpace;
+    const pngGeometry3 = new THREE.PlaneGeometry(3, 2);
+    const pngMaterial3 = new THREE.MeshBasicMaterial({ map: pngTexture3, transparent: true });
+    const pngMesh3 = new THREE.Mesh(pngGeometry3, pngMaterial3);
+    pngMesh3.position.set(-3, 0, 8);
+    pngMesh3.userData.finalX = 0;
+    pngMesh3.userData.offscreenX = -3;
+    pngMesh3.userData.project = 'iceAgeMammals'; // IceAgeMammals-Projekt
+    scene.add(pngMesh3);
+    imageMeshes.push(pngMesh3);
 
-      const pngTexture4 = textureLoader.load('/Bild4.png');
-      pngTexture4.colorSpace = THREE.SRGBColorSpace;
-      const pngGeometry4 = new THREE.PlaneGeometry(3, 2);
-      const pngMaterial4 = new THREE.MeshBasicMaterial({ map: pngTexture4, transparent: true });
-      const pngMesh4 = new THREE.Mesh(pngGeometry4, pngMaterial4);
-      pngMesh4.position.set(3, 0, 4);
-      pngMesh4.userData.finalX = 0;
-      pngMesh4.userData.offscreenX = 3;
-      scene.add(pngMesh4);
-      imageMeshes.push(pngMesh4);
+    const pngTexture4 = textureLoader.load('/Bild4.png'); // Bild4 für hybridWallet
+    pngTexture4.colorSpace = THREE.SRGBColorSpace;
+    const pngGeometry4 = new THREE.PlaneGeometry(3, 2);
+    const pngMaterial4 = new THREE.MeshBasicMaterial({ map: pngTexture4, transparent: true });
+    const pngMesh4 = new THREE.Mesh(pngGeometry4, pngMaterial4);
+    pngMesh4.position.set(3, 0, 4);
+    pngMesh4.userData.finalX = 0;
+    pngMesh4.userData.offscreenX = 3;
+    pngMesh4.userData.project = 'hybridWallet'; // HybridWallet-Projekt
+    scene.add(pngMesh4);
+    imageMeshes.push(pngMesh4);
 
       const pngTexturePC1 = textureLoader.load('/Website1.png');
       pngTexturePC1.colorSpace = THREE.SRGBColorSpace;
@@ -700,13 +708,18 @@
 
   if (intersects.length > 0) {
     const clickedObj = intersects[0].object;
-    if (intersects.length > 0) {
-    const clickedObj = intersects[0].object;
-    if (clickedObj.userData.project === 'nass') {
+    const projectName = clickedObj.userData.parentGroup ? 
+                        clickedObj.userData.parentGroup.userData.project : 
+                        clickedObj.userData.project;
+    
+    if (projectName === 'nass') {
       openNassProject();
-    } else if (clickedObj.userData.project === 'bwegt') {
+    } else if (projectName === 'bwegt') {
       openBwegtProject();
-    }
+    } else if (projectName === 'iceAgeMammals') {
+      openIceAgeMammalsProject();
+    } else if (projectName === 'hybridWallet') {
+      openHybridWalletProject();
     }
   }
 }
@@ -719,6 +732,16 @@ function openBwegtProject() {
 function openNassProject() {
   const { x, y, z } = camera.position;
   goto(`/project/nass?cx=${x}&cy=${y}&cz=${z}`);
+}
+
+function openIceAgeMammalsProject() {
+  const { x, y, z } = camera.position;
+  goto(`/project/iceAgeMammals?cx=${x}&cy=${y}&cz=${z}`);
+}
+
+function openHybridWalletProject() {
+  const { x, y, z } = camera.position;
+  goto(`/project/hybridWallet?cx=${x}&cy=${y}&cz=${z}`);
 }
 
    // ----------------------------------------------------------------------------
@@ -821,7 +844,7 @@ function openNassProject() {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
   raycaster.setFromCamera(mouse, camera);
-  // Klickbare Objekte: sowohl Cover-Gruppen (defaultMesh) als auch einzelne Bilder
+  // Klickbare Objekte: sowohl Cover-Gruppen als auch einzelne Bilder
   const clickableObjects = [
     ...coverGroups.map(group => group.userData.defaultMesh),
     ...imageMeshes
@@ -829,11 +852,20 @@ function openNassProject() {
   const intersects = raycaster.intersectObjects(clickableObjects, false);
 
   // Hier den Cursor setzen:
-  if (intersects.length > 0 && ['nass', 'bwegt'].includes(intersects[0].object.userData.project)) {
-  container.style.cursor = 'pointer';
-} else {
-  container.style.cursor = 'default';
-}
+  if (intersects.length > 0) {
+    const projectName = intersects[0].object.userData.parentGroup ? 
+                        intersects[0].object.userData.parentGroup.userData.project : 
+                        intersects[0].object.userData.project;
+    
+    // Überprüfe, ob das Objekt einem Projekt zugeordnet ist
+    if (['nass', 'bwegt', 'iceAgeMammals', 'hybridWallet'].includes(projectName)) {
+      container.style.cursor = 'pointer';
+    } else {
+      container.style.cursor = 'default';
+    }
+  } else {
+    container.style.cursor = 'default';
+  }
 
   // Dein bestehender Hover-Logik-Code
   if (intersects.length === 0) {
