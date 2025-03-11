@@ -94,21 +94,22 @@
         <div class="project-column">
           <h3>Project Overview</h3>
           <div class="divider"></div>
-          <p>We redesigned the bwegt mobility app to improve usability, simplify navigation, and enhance real-time travel
-            information for a seamless user experience.</p>
+          <p>A smart wallet with NFC payment, LED feedback, fingerprint authentication, and a companion app—blending digital and physical payments seamlessly.
+
+          </p>
         </div>
         <div class="project-column">
           <h3>Project Tags</h3>
           <div class="divider"></div>
           <div class="tags">
-            <div class="tag">App-Redesign</div>
-            <div class="tag">Typography</div>
-            <div class="tag">Figma</div>
-            <div class="tag">Prototyping</div>
-            <div class="tag">Stablediffusion</div>
-            <div class="tag">Styleguide</div>
+            <div class="tag">Smart Wallet</div>
+            <div class="tag">UX/UI-Design</div>
+            <div class="tag">Arduino Prototyping</div>
+            <div class="tag">NFC Payment</div>
+            <div class="tag">Interaction Design</div>
+            <div class="tag">LED Feedback</div>
             <div class="tag">Usertesting</div>
-            <div class="tag">User-Centered-Interface</div>
+            <div class="tag">Human-Centered Design</div>
           </div>
         </div>
       </div>
@@ -122,7 +123,7 @@
     role="figure"
     on:mousemove={handleMouseMove}
     on:mouseleave={resetTransform}>
-  <img src="/bwegt-doku1.png" alt="Beschreibung des Bildes" />
+  <img src="/walletImg/hybridWallet-cover.png" alt="Beschreibung des Bildes" />
   </div>
   
   
@@ -133,51 +134,69 @@
         <h4>Introduction</h4>
         <br>
         <p class="text-doku">
-          In the “Application 1” course at HfG during the winter semester, we took a closer look at the existing “bwegt”
-          mobility app for Baden-Württemberg. Our goal was to address common user pain points such as confusing ticket
-          structures, unclear navigation, and a lack of real-time information.</p>
-        <p class="text-doku"> By integrating user research and iterative design methods, we developed a refined,
-          user-centered app concept that not only simplifies everyday travel but also motivates more environmentally
-          friendly transport choices.</p>
+            In the User Interfaces 1 course, we explored how to modernize the traditional wallet while keeping it practical and intuitive. As digital payments become more common, physical wallets still play a role—many cards aren’t fully digital yet, and cash remains essential in some situations.
+            Our solution was a smart wallet that combines NFC payment, fingerprint authentication, and LED feedback with a manual card slot and coin storage. Paired with a companion app, it allows users to select and manage bank cards, customize settings, and track transactions, bridging the gap between digital convenience and real-world usability.</p>
+
       </div>
     </FadeInSection>
     </div>
     </div>
   
+    <div class="grid-section1">
+        <div class="text-grid1">
+          <FadeInSection>
+          <div>
+          <h4>Rethinking the Wallet</h4>
+          <br>
+          <p class="text-doku">
+            Through user research and questioning, we found a gap between digital convenience and real-world needs. While many cards are moving to smartphones, physical wallets remain essential for payments where digital isn’t accepted. This often means carrying both a phone and a wallet at checkout. Based on these insights, we began developing a smart wallet that seamlessly merges digital and physical payments into one user-friendly experience.     
+               </p>
+  
+        </div>
+      </FadeInSection>
+      </div>
+      </div>
+
+
+
+
+    <div class="image-section">
+        <h4 class="img-title">Drawings and first dummy</h4>
+      <img src="/walletImg/hybrid1.png" alt="Beschreibung des Bildes" />
+    </div>
+
+    <div class="image-section">
+        <h4 class="img-title">Building more advanced prototype dummies</h4>
+      <img src="/walletImg/hybrid2.png" alt="Beschreibung des Bildes" />
+    </div>
+
+    <div class="image-section">
+        <h4 class="img-title">Enhancing prototype and taking user feedback through testing</h4>
+      <img src="/walletImg/hybrid3.png" alt="Beschreibung des Bildes" />
+    </div>
+  
+  
+    <div class="grid-section1">
+      <div class="text-grid1">
+        <FadeInSection>
+          <div>
+        <h4>HYBRID App</h4>
+        <br>
+        <p class="text-doku">
+            The companion app allows users to add, manage, and customize bank cards, which are then paired with the smart wallet. Users can assign a unique color to each card, making selection intuitive through the wallet’s LED feedback system. Once paired via Bluetooth, the app syncs the selected card to the wallet, enabling seamless NFC payments. Additional features include locking cards, tracking transactions, and locating the wallet in case of loss, ensuring both convenience and security.
+        </p>
+      </div>
+      </FadeInSection>
+      </div>
+    </div>
+
+    <div class="image-section">
+      <img src="/walletImg/hybrid4.png" alt="Beschreibung des Bildes" />
+    </div>
   
     <div class="image-section">
-      <img src="/bwegt-doku2.png" alt="Beschreibung des Bildes" />
-    </div>
-  
-  
-    <div class="grid-section1">
-      <div class="text-grid1">
-        <FadeInSection>
-          <div>
-        <h4>User-Centered Research & Flow</h4>
-        <p class="text-doku">
-          To ensure a user-centered redesign, we conducted qualitative research, including 13 in-depth interviews, to
-          identify common pain points in mobility apps. Insights revealed issues like unclear navigation, lack of
-          real-time updates, and complex ticket structures.
-        </p>
-        <p class="text-doku">
-          Based on this, we developed a persona, Rebeka, a frequent public transport user who relies on apps for planning
-          but struggles with inconsistent information and crowded trains. The new user flow prioritizes intuitive
-          navigation, quick ticket access, and transparent real-time updates, ensuring a seamless and stress-free travel
-          experience.
-        </p>
-      </div>
-      </FadeInSection>
-      </div>
-    </div>
-  
-  
-    <div class="img-grid">
-      <div class="img1"><img src="/grid1.png" alt="Beschreibung des Bildes" /></div>
-      <div class="img2"><img src="/grid2.png" alt="Beschreibung des Bildes" /></div>
-      <div class="img3"><img src="/grid3.png" alt="Beschreibung des Bildes" /></div>
-      <div class="img4"><img src="/grid4.png" alt="Beschreibung des Bildes" /></div>
-      <div class="img5"><img src="/grid5.png" alt="Beschreibung des Bildes" /></div>
+        <h4 class="img-title">Interactive Elements & Icons</h4>
+      <img src="/walletImg/hybrid5.png" alt="Beschreibung des Bildes" />
     </div>
   
   
@@ -187,65 +206,21 @@
       <div class="text-grid1">
         <FadeInSection>
           <div>
-        <h4>Gamification Design</h4>
+        <h4>3D Models – Visualizing the Future</h4>
+        <br>
         <p class="text-doku">
-          We used Stable Diffusion to generate various visual elements in the app, ensuring a cohesive and modern design language. This included UI illustrations, badges, and interactive icons that enhance user engagement.
-        </p>
-        <p class="text-doku">
-          A key feature of our redesign was the integration of gamification through an environmental rewards system. Users earn points and badges for choosing public transport, track their CO₂ savings in real time, and progress through virtual station upgrades—creating an engaging and motivating experience that encourages sustainable mobility choices.
-        </p>
+            Alongside our physical prototype, we created high-quality 3D renders to showcase the ideal vision of our smart wallet. While building the prototype, we realized that current technical limitations made it difficult to fit all components into an ultra-thin design. To overcome this, our 3D models illustrate how the final product could look with refined engineering and compact technology, providing a realistic yet aspirational representation of the wallet’s future potential.        </p>
+
       </div>
       </FadeInSection>
       </div>
     </div>
-  
-    <div class="img-section-4">
-      <div class="img-container"><img src="/bwegt-doku3.png" alt="Beschreibung des Bildes" /></div>
-  </div>
-  
-  
-  <div class="grid-section1">
-    <div class="text-grid1">
-      <FadeInSection>
-        <div>
-      <h4>Design Evolution</h4>
-      <p class="text-doku">
-        Throughout the design process, we iteratively refined components to enhance clarity, usability, and consistency. Colors played a key role in establishing a clear visual hierarchy—contrasting shades ensure readability, while accent colors guide user focus. The interface evolved through multiple adjustments, optimizing button placements, spacing, and iconography to create an intuitive and visually engaging experience.   
-       </p>
-      </div>
-      </FadeInSection>
+
+    <div class="image-section">
+      <img src="/walletImg/hybrid6.png" alt="Beschreibung des Bildes" />
     </div>
-  </div>
+
   
-  <div class="img-section-4">
-    <div class="img-container"><img src="/bwegt-doku4.png" alt="Beschreibung des Bildes" /></div>
-  </div>
-  
-  <div class="img-section-4">
-    <div class="img-container"><img src="/bwegt-doku5.png" alt="Beschreibung des Bildes" /></div>
-  </div>
-  
-  <div class="image-section">
-    <img src="/bwegt-doku6.png" alt="Beschreibung des Bildes" />
-  </div>
-  
-  <div class="grid-section1">
-    <div class="text-grid1">
-      <FadeInSection>
-        <div>
-      <h4>Active Journey Mode</h4>
-      <p class="text-doku">
-        The Active Journey Mode keeps users informed in real time, automatically checking them into their trip. It displays upcoming stops, delays, and alternative connections with clear icons and color-coded alerts. Designed for quick readability, this feature minimizes uncertainty and enhances the travel experience.     
-      </p>
-    </div>
-    </FadeInSection>
-    </div>
-  </div>
-  
-  
-  <div class="img-section-4">
-    <div class="img-container"><img data-src="/bwegt-doku7.png" alt="Beschreibung des Bildes" src="/placeholder.png" /></div>
-  </div>
   
   
   
@@ -258,6 +233,10 @@
   
   <style>
   /* IBM Plex Mono Regular */
+.img-title {
+    padding-bottom: 25px;
+}
+
   @font-face {
     font-family: 'Franz-Plex';
     src: url('/fonts/IBM_Plex_Mono/IBMPlexMono-Regular.ttf') format('truetype');
@@ -456,51 +435,8 @@
     font-size: 1.5rem;
   }
 
-  .img-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 8px;
-    margin-top: 5rem;
-    justify-items: center;
-    align-items: center;
-    scale: 0.8;
-  }
-
-  .img1 {
-    grid-row: span 2 / span 2;
-  }
-
-  .img4 {
-    grid-column-start: 2;
-  }
-
-  .img5 {
-    grid-column-start: 3;
-  }
-
-  .img-grid img {
-    filter: grayscale(100%);
-    transition: filter 0.8s ease;
-    transform: translateZ(0);
-  }
-
-  .img-grid img:hover {
-    filter: grayscale(0%);
-  }
-
-  .img-section-4 {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: repeat(1, 1fr);
-    gap: 8px;
-    margin-top: 10rem;
-  }
-      
-  .img-container {
-    grid-column: span 4 / span 4;
-  }
-
+ 
+ 
   img {
     width: 100%;
     height: 100%;
@@ -596,15 +532,7 @@
       line-height: 1.1;
     }
     
-    /* Andere Bilder sollen die volle Breite behalten */
-    .img-section-4 {
-      display: block;
-      margin-top: 5rem;
-    }
-    
-    .img-container {
-      width: 100%;
-    }
+
     
     .image-section {
       margin-top: 5rem;

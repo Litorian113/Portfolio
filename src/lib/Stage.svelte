@@ -178,6 +178,13 @@
 
       // Setze Overflow-Style sofort beim Mounten
       updateOverflowStyle();
+
+      // Touch-Events für mobile Geräte
+      if (typeof window !== 'undefined') {
+        container.addEventListener('touchstart', handleTouchStart, { passive: false });
+        container.addEventListener('touchmove', handleTouchMove, { passive: false });
+        container.addEventListener('touchend', handleTouchEnd, { passive: false });
+      }
     });
 
     onDestroy(() => {
@@ -207,6 +214,10 @@
             }
           });
         }
+
+        container.removeEventListener('touchstart', handleTouchStart);
+        container.removeEventListener('touchmove', handleTouchMove);
+        container.removeEventListener('touchend', handleTouchEnd);
       }
       clearInterval(textUpdateInterval);
 
@@ -217,7 +228,74 @@
       }
     });
 
+    // Zunächst fügen wir neue Variablen für den Typewriter-Effekt hinzu
+    // Diese in den Script-Teil einfügen
+    let typingInProgress = false;
+    let subtitleProgress = [0, 0, 0, 0, 0]; // Fortschritt des Typewriter-Effekts für alle 5 Stationen
+    let titleOpacities = [0.4, 0.4, 0.4, 0.4, 0.4]; // Standard-Opacity für Überschriften
+    let subtitleTexts = [
+      ['A selection of interaction design projects', 'created during my studies at HfG Schwäbisch Gmünd.'],
+      ['A collection of coded projects from my', 'studies and personal explorations.'],
+      ['Freelance web projects developed for', 'small and medium-sized businesses.'],
+      ['Visual work from years of experience as a', 'professional photographer, spanning commercial', 'and personal projects.'],
+      ['A glimpse into who I am and', 'what drives my creative journey.']
+    ];
 
+    // Füge diese Variable zu den bestehenden Variablen für den Typewriter-Effekt hinzu
+    let subtitleOpacities = [1, 1, 1, 1, 1]; // Opacity für jeden Untertext
+
+    // 1. Diese Variablen müssen außerhalb von initScene() deklariert werden:
+    let context1, context2, context3, context4, context5;
+    let textTexture1, textTexture2, textTexture3, textTexture4, textTexture5;
+
+    // Füge diese Variablen im Script-Bereich hinzu
+    let touchStartY = 0;
+    let touchEndY = 0;
+    let touchStartTime = 0; // Zeit für Geschwindigkeitsmessung
+    let isSwiping = false; // Flag, um zu verfolgen, ob ein Swipe im Gange ist
+
+    // Touch-Handler-Funktionen
+    function handleTouchStart(event) {
+      touchStartY = event.touches[0].clientY;
+      touchStartTime = Date.now();
+      isSwiping = true;
+    }
+
+    function handleTouchMove(event) {
+      if (isSwiping) {
+        // Optional: Verhindern des Scroll-Verhaltens der Seite
+        event.preventDefault();
+      }
+    }
+
+    function handleTouchEnd(event) {
+      if (!isSwiping) return;
+      
+      isSwiping = false;
+      touchEndY = event.changedTouches[0].clientY;
+      const touchDiff = touchStartY - touchEndY;
+      const touchTime = Date.now() - touchStartTime;
+      
+      // Berechne Swipe-Geschwindigkeit (Pixel pro Millisekunde)
+      const swipeVelocity = Math.abs(touchDiff) / touchTime;
+      
+      // Minimaler Schwellenwert für Swipe-Erkennung (50px oder hohe Geschwindigkeit)
+      if (Math.abs(touchDiff) > 50 || swipeVelocity > 0.5) {
+        // Emuliere ein Mausrad-Event für die bestehende onWheel-Funktion
+        const wheelEvent = { 
+          deltaY: touchDiff, 
+          preventDefault: () => {} 
+        };
+        onWheel(wheelEvent);
+      }
+    }
+
+    // Optional: Erkennung, ob wir auf einem mobilen Gerät sind
+    function isMobileDevice() {
+      return (typeof window !== 'undefined' && window.innerWidth <= 768) || 
+            (typeof navigator !== 'undefined' && 
+            (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)));
+    }
 
     function initScene() {
       // Szene und Hintergrund
@@ -250,7 +328,12 @@
       raycaster = new THREE.Raycaster();
       mouse = new THREE.Vector2();
 
-
+      // Für mobile Geräte: Reduziere die Render-Qualität für bessere Performance
+      if (isMobileDevice()) {
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+      } else {
+        renderer.setPixelRatio(window.devicePixelRatio);
+      }
 
       // --------------------------------------------------------
       // Flur-Linien
@@ -320,28 +403,13 @@
       const ratio1 = window.devicePixelRatio || 1;
       canvas1.width = 1024 * ratio1;
       canvas1.height = 512 * ratio1;
-      const context1 = canvas1.getContext('2d');
+      context1 = canvas1.getContext('2d'); // KEINE lokale Variable!
       context1.scale(ratio1, ratio1);
 
-      const textTexture1 = new THREE.CanvasTexture(canvas1);
+      textTexture1 = new THREE.CanvasTexture(canvas1); // KEINE lokale Variable!
       textTexture1.colorSpace = THREE.SRGBColorSpace;
-      textTexture1.needsUpdate = true;
-
-      function updateCanvas1Text() {
-         context1.clearRect(0, 0, 1024, 512);
-         context1.fillStyle = "rgba(0,0,0,0)";
-         context1.fillRect(0, 0, 1024, 512);
-         context1.textAlign = "center";
-         context1.textBaseline = "middle";
-         context1.fillStyle = "white";
-         context1.font = "56px 'IBM Plex Mono'";
-         const centerX = 1024 / 2;
-         const centerY = 512 / 2;
-         context1.fillText("Design Work", centerX, centerY);
-         // context2.fillText("Projects", centerX, centerY + 30);
-         textTexture1.needsUpdate = true;
-      }
-      updateCanvas1Text();
+      
+      updateCanvas1Text(); // Initialen Text setzen
 
       const textMaterial1 = new THREE.MeshBasicMaterial({ map: textTexture1, transparent: true });
       const textGeometry1 = new THREE.PlaneGeometry(4, 2);
@@ -355,28 +423,13 @@
       const ratio2 = window.devicePixelRatio || 1;
       canvas2.width = 1024 * ratio2;
       canvas2.height = 512 * ratio2;
-      const context2 = canvas2.getContext('2d');
+      context2 = canvas2.getContext('2d'); // KEINE lokale Variable!
       context2.scale(ratio2, ratio2);
 
-      const textTexture2 = new THREE.CanvasTexture(canvas2);
+      textTexture2 = new THREE.CanvasTexture(canvas2); // KEINE lokale Variable!
       textTexture2.colorSpace = THREE.SRGBColorSpace;
-      textTexture2.needsUpdate = true;
-
-      function updateCanvas2Text() {
-         context2.clearRect(0, 0, 1024, 512);
-         context2.fillStyle = "rgba(0,0,0,0)";
-         context2.fillRect(0, 0, 1024, 512);
-         context2.textAlign = "center";
-         context2.textBaseline = "middle";
-         context2.fillStyle = "white";
-         context2.font = "56px 'IBM Plex Mono'";
-         const centerX = 1024 / 2;
-         const centerY = 512 / 2;
-         context2.fillText("Code & Data", centerX, centerY);
-         // context2.fillText("Projects", centerX, centerY + 30);
-         textTexture2.needsUpdate = true;
-      }
-      updateCanvas2Text();
+      
+      updateCanvas2Text(); // Initialen Text setzen
 
       const textMaterial2 = new THREE.MeshBasicMaterial({ map: textTexture2, transparent: true });
       const textGeometry2 = new THREE.PlaneGeometry(4, 2);
@@ -390,30 +443,13 @@
       const ratio3 = window.devicePixelRatio || 1;
       canvas3.width = 1024 * ratio3;
       canvas3.height = 512 * ratio3;
-      const context3 = canvas3.getContext('2d');
+      context3 = canvas3.getContext('2d'); // KEINE lokale Variable!
       context3.scale(ratio3, ratio3);
 
-      const textTexture3 = new THREE.CanvasTexture(canvas3);
+      textTexture3 = new THREE.CanvasTexture(canvas3); // KEINE lokale Variable!
       textTexture3.colorSpace = THREE.SRGBColorSpace;
-      textTexture3.needsUpdate = true;
-
-      function updateCanvas3Text() {
-         context3.clearRect(0, 0, 1024, 512);
-         context3.fillStyle = "rgba(0,0,0,0)";
-         context3.fillRect(0, 0, 1024, 512);
-         context3.textAlign = "center";
-         context3.textBaseline = "middle";
-         context3.fillStyle = "white";
-         context3.font = "56px 'IBM Plex Mono'";
-         const centerX = 1024 / 2;
-         const centerY = 512 / 2;
-         context3.fillText("Website Projects", centerX, centerY);
-         // context3.fillText("Projects", centerX, centerY + 30);
-         textTexture3.needsUpdate = true;
-      }
-
       
-      updateCanvas3Text();
+      updateCanvas3Text(); // Initialen Text setzen
 
       const textMaterial3 = new THREE.MeshBasicMaterial({ map: textTexture3, transparent: true });
       const textGeometry3 = new THREE.PlaneGeometry(4, 2);
@@ -430,28 +466,13 @@
       const ratio4 = window.devicePixelRatio || 1;
       canvas4.width = 1024 * ratio4;
       canvas4.height = 512 * ratio4;
-      const context4 = canvas4.getContext('2d');
+      context4 = canvas4.getContext('2d'); // KEINE lokale Variable!
       context4.scale(ratio4, ratio4);
 
-      const textTexture4 = new THREE.CanvasTexture(canvas4);
+      textTexture4 = new THREE.CanvasTexture(canvas4); // KEINE lokale Variable!
       textTexture4.colorSpace = THREE.SRGBColorSpace;
-      textTexture4.needsUpdate = true;
-
-      function updateCanvas4Text() {
-         context4.clearRect(0, 0, 1024, 512);
-         context4.fillStyle = "rgba(0,0,0,0)";
-         context4.fillRect(0, 0, 1024, 512);
-         context4.textAlign = "center";
-         context4.textBaseline = "middle";
-         context4.fillStyle = "white";
-         context4.font = "56px 'IBM Plex Mono'";
-         const centerX = 1024 / 2;
-         const centerY = 512 / 2;
-         context4.fillText("Photo & Video", centerX, centerY);
-         // context4.fillText("Videography", centerX, centerY + 30);
-         textTexture4.needsUpdate = true;
-      }
-      updateCanvas4Text();
+      
+      updateCanvas4Text(); // Initialen Text setzen
 
       const textMaterial4 = new THREE.MeshBasicMaterial({ map: textTexture4, transparent: true });
       const textGeometry4 = new THREE.PlaneGeometry(4, 2);
@@ -469,28 +490,13 @@
       const ratio5 = window.devicePixelRatio || 1;
       canvas5.width = 1024 * ratio5;
       canvas5.height = 512 * ratio5;
-      const context5 = canvas5.getContext('2d');
+      context5 = canvas5.getContext('2d'); // KEINE lokale Variable!
       context5.scale(ratio5, ratio5);
 
-      const textTexture5 = new THREE.CanvasTexture(canvas5);
+      textTexture5 = new THREE.CanvasTexture(canvas5); // KEINE lokale Variable!
       textTexture5.colorSpace = THREE.SRGBColorSpace;
-      textTexture5.needsUpdate = true;
-
-      function updateCanvas5Text() {
-         context5.clearRect(0, 0, 1024, 512);
-         context5.fillStyle = "rgba(0,0,0,0)";
-         context5.fillRect(0, 0, 1024, 512);
-         context5.textAlign = "center";
-         context5.textBaseline = "middle";
-         context5.fillStyle = "white";
-         context5.font = "56px 'IBM Plex Mono'";
-         const centerX = 1024 / 2;
-         const centerY = 512 / 2;
-         context5.fillText("About me", centerX, centerY);
-         // context4.fillText("Videography", centerX, centerY + 30);
-         textTexture5.needsUpdate = true;
-      }
-      updateCanvas5Text();
+      
+      updateCanvas5Text(); // Initialen Text setzen
 
       const textMaterial5 = new THREE.MeshBasicMaterial({ map: textTexture5, transparent: true });
       const textGeometry5 = new THREE.PlaneGeometry(4, 2);
@@ -660,7 +666,7 @@
 
 
 
-      const pngTextureFoto = textureLoader.load('/photo-video.png');
+      const pngTextureFoto = textureLoader.load('/foto-cover.png');
       pngTextureFoto.colorSpace = THREE.SRGBColorSpace;
       const pngGeometryFoto = new THREE.PlaneGeometry(3, 2);
       const pngMaterialFoto = new THREE.MeshBasicMaterial({ map: pngTextureFoto, transparent: true });
@@ -753,8 +759,16 @@ function openHybridWalletProject() {
       context.fillRect(0, 0, 1024, 512);
       context.textAlign = "left";
       context.textBaseline = "middle";
+      
+      // Schatten-Eigenschaften für besseren Kontrast
+      context.shadowColor = "rgba(0, 0, 0, 0.6)";
+      context.shadowBlur = 8;
+      context.shadowOffsetX = 1;
+      context.shadowOffsetY = 1;
+      
       context.fillStyle = "white";
-
+      // Rest der Funktion bleibt unverändert...
+      
       const lines = [
          greetings[currentGreetingIndex],
          "i'm",
@@ -792,6 +806,9 @@ function openHybridWalletProject() {
          }
       }
       textTexture.needsUpdate = true;
+      
+      // Am Ende die Shadow-Eigenschaft zurücksetzen
+      context.shadowColor = "transparent";
    }
 
    // ----------------------------------------------------------------------------
@@ -959,22 +976,400 @@ function openHybridWalletProject() {
    let animationId; // Speichern der requestAnimationFrame ID
 
    function animate() {
-      animationId = requestAnimationFrame(animate);
-      updateAllImages();
-      updateImagePositions();
-      updateCoverGroupPositions();
-      updateCurrentSection(); // Aktualisiere den aktuellen Abschnitt
-      renderer.render(scene, camera);
-   }
+  animationId = requestAnimationFrame(animate);
+  updateAllImages();
+  updateImagePositions();
+  updateCoverGroupPositions();
+  updateCurrentSection();
+  updateTitleOpacitiesAndStartTyping(); // Neue Funktion hinzufügen
+  renderer.render(scene, camera);
+}
 
    // ----------------------------------------------------------------------------
    // onWindowResize: Anpassen von Kamera und Renderer
    // ----------------------------------------------------------------------------
    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-   }
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  
+  // Textmesh-Größen anpassen
+  adjustTextMeshSizes();
+  
+  // Canvas-Texturen aktualisieren
+  recreateCanvasTextures();
+}
+
+// Neue Funktion zur Anpassung der TextMesh-Größen
+function adjustTextMeshSizes() {
+  // Basis-Skalierung
+  const baseScale = 0.6;
+  
+  // Breakpoints definieren
+  let scale = baseScale;
+  if (window.innerWidth <= 768) {
+    // Mobile Geräte
+    scale = baseScale * 0.8;
+  } else if (window.innerWidth <= 1024) {
+    // Tablets
+    scale = baseScale * 0.9;
+  }
+  
+  // Alle TextMeshes im Scene-Graph finden und anpassen
+  scene.traverse((object) => {
+    // Suche nach den TextMesh-Objekten
+    if (object.isMesh && object.material && object.material.map && 
+        (object.material.map === textTexture1 || 
+         object.material.map === textTexture2 ||
+         object.material.map === textTexture3 ||
+         object.material.map === textTexture4 ||
+         object.material.map === textTexture5)) {
+      
+      // Passe die Skalierung an
+      object.scale.set(scale, scale, scale);
+    }
+  });
+}
+
+// Funktion zum Neuerstellen der Canvas-Texturen bei Größenänderung
+function recreateCanvasTextures() {
+  // Alle Canvas-Texturen neu erstellen mit angepassten Größen
+  updateCanvas1Text();
+  updateCanvas2Text();
+  updateCanvas3Text();
+  updateCanvas4Text();
+  updateCanvas5Text();
+}
+
+// Hilfsfunktion zur Berechnung responsiver Größen
+// Füge diese Funktion im Script-Bereich hinzu
+function getResponsiveSize(baseSize) {
+  // Basis-Breite für die Referenzgrößen
+  const baseWidth = 1920;
+  // Minimal erlaubte Größe (verhindert zu kleine Texte)
+  const minScale = 0.7;
+  
+  let scale = Math.max(window.innerWidth / baseWidth, minScale);
+  return Math.floor(baseSize * scale);
+}
+
+   // Füge diese Funktion im Script-Teil hinzu:
+let previousStation = -1;
+
+function updateTitleOpacitiesAndStartTyping() {
+  // Mapping der Kamerastationen zu den zugehörigen Titel-Indizes
+  const stationToTitleMap = [
+    { station: 1, titleIndex: 0 },  // Design Work
+    { station: 6, titleIndex: 1 },  // Code & Data
+    { station: 8, titleIndex: 2 },  // Website Projects
+    { station: 10, titleIndex: 3 }, // Photo & Video
+    { station: 12, titleIndex: 4 }  // About me
+  ];
+
+  // Reset alle Titel-Opacities auf 0.4
+  titleOpacities = titleOpacities.map(() => 0.4);
+  
+  // Wenn die Station gewechselt hat
+  if (previousStation !== currentStation) {
+    // Finde den Index der vorherigen Station, falls vorhanden
+    const prevMatch = stationToTitleMap.find(item => item.station === previousStation);
+    if (prevMatch) {
+      // Starte das Ausblenden der Station, die wir verlassen
+      fadeOutSubtitle(prevMatch.titleIndex);
+    }
+    previousStation = currentStation;
+  }
+
+  // Finde die entsprechende Station und setze ihre Opacity auf 1.0
+  const match = stationToTitleMap.find(item => item.station === currentStation);
+  if (match) {
+    titleOpacities[match.titleIndex] = 1.0;
+    
+    // Faden wir die aktuelle Station ein
+    fadeInSubtitle(match.titleIndex);
+    
+    // Starte Typewriter-Effekt, wenn wir ankommen und er noch nicht gestartet wurde
+    if (subtitleProgress[match.titleIndex] === 0 && !typingInProgress) {
+      startTypewriterEffect(match.titleIndex);
+    }
+  }
+  
+  // Aktualisiere alle Canvas-Texte
+  updateCanvas1Text();
+  updateCanvas2Text();
+  updateCanvas3Text();
+  updateCanvas4Text();
+  updateCanvas5Text();
+}
+
+// Neue Funktionen für das Ein- und Ausblenden
+function fadeOutSubtitle(index) {
+  // Starte GSAP-Animation zum sanften Ausblenden
+  gsap.to(subtitleOpacities, {
+    [index]: 0, // Setze die Opacity für diesen Index auf 0
+    duration: 0.8,
+    ease: "power1.out",
+    onComplete: () => {
+      // Erst nach dem Ausblenden den Progress zurücksetzen
+      subtitleProgress[index] = 0;
+    }
+  });
+}
+
+function fadeInSubtitle(index) {
+  // Starte GSAP-Animation zum sanften Einblenden
+  gsap.to(subtitleOpacities, {
+    [index]: 1, // Setze die Opacity für diesen Index auf 1
+    duration: 0.5,
+    ease: "power1.in"
+  });
+}
+
+// Füge diese Typewriter-Funktionen hinzu:
+function startTypewriterEffect(sectionIndex) {
+  typingInProgress = true;
+  
+  // Berechne die Gesamtlänge des zu schreibenden Textes
+  const totalLength = subtitleTexts[sectionIndex].reduce((sum, text) => sum + text.length, 0);
+  
+  // Setze den Fortschritt zurück
+  subtitleProgress[sectionIndex] = 0;
+  
+  // Starte das Typing
+  typeNextCharacter(sectionIndex, totalLength);
+}
+
+function typeNextCharacter(sectionIndex, totalLength) {
+  if (subtitleProgress[sectionIndex] < totalLength) {
+    subtitleProgress[sectionIndex]++;
+    
+    // Aktualisiere den entsprechenden Canvas
+    switch(sectionIndex) {
+      case 0: updateCanvas1Text(); break;
+      case 1: updateCanvas2Text(); break;
+      case 2: updateCanvas3Text(); break;
+      case 3: updateCanvas4Text(); break;
+      case 4: updateCanvas5Text(); break;
+    }
+    
+    // Zufällige Verzögerung für realistischeren Typewriter-Effekt
+    const delay = 20 + Math.random() * 30;
+    setTimeout(() => typeNextCharacter(sectionIndex, totalLength), delay);
+  } else {
+    typingInProgress = false;
+  }
+}
+
+// 2. Die updateCanvas-Funktionen aus initScene() nach außen verschieben:
+function updateCanvas1Text() {
+  context1.clearRect(0, 0, 1024, 512);
+  context1.fillStyle = "rgba(0,0,0,0)";
+  context1.fillRect(0, 0, 1024, 512);
+  context1.textAlign = "left"; // Auf "center" ändern
+  context1.textBaseline = "middle";
+  
+  // Schatten-Eigenschaften für Titel
+  context1.shadowColor = "rgba(0, 0, 0, 0.5)";
+  context1.shadowBlur = 5;
+  context1.shadowOffsetX = 1;
+  context1.shadowOffsetY = 1;
+  
+  // Hauptüberschrift mit dynamischer Opacity
+  const titleFontSize = getResponsiveSize(42);
+  const subtitleFontSize = getResponsiveSize(24);
+  context1.fillStyle = `rgba(255,255,255,${titleOpacities[0]})`;
+  context1.font = `${titleFontSize}px 'IBM Plex Mono'`;
+  
+  // Horizontale Position in die Mitte des Canvas setzen
+  const centerX = 1024 / 4.5;
+  // Vertikale Position anpassen
+  const centerY = 512 / 1.25;
+  
+  // Text zentriert zeichnen
+  context1.fillText("Design Work", centerX, centerY - 50);
+  
+  // Untertext mit Typewriter-Effekt UND Opacity
+  context1.fillStyle = `rgba(255,255,255,${subtitleOpacities[0]})`;
+  context1.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
+  
+  const subtitle1 = subtitleTexts[0][0].substring(0, subtitleProgress[0]);
+  context1.fillText(subtitle1, centerX, centerY);
+  
+  if (subtitleProgress[0] >= subtitleTexts[0][0].length) {
+    const subtitle2 = subtitleTexts[0][1].substring(0, subtitleProgress[0] - subtitleTexts[0][0].length);
+    context1.fillText(subtitle2, centerX, centerY + 35);
+  }
+  
+  // Zurücksetzen des Schattens
+  context1.shadowColor = "transparent";
+  
+  textTexture1.needsUpdate = true;
+}
+
+function updateCanvas2Text() {
+  context2.clearRect(0, 0, 1024, 512);
+  context2.fillStyle = "rgba(0,0,0,0)";
+  context2.fillRect(0, 0, 1024, 512);
+  context2.textAlign = "left"; // Auf "center" ändern
+  context2.textBaseline = "middle";
+  
+  // Schatten-Eigenschaften für Titel
+  context2.shadowColor = "rgba(0, 0, 0, 0.5)";
+  context2.shadowBlur = 5;
+  context2.shadowOffsetX = 1;
+  context2.shadowOffsetY = 1;
+  
+  // Hauptüberschrift mit dynamischer Opacity
+  const titleFontSize = getResponsiveSize(42);
+  const subtitleFontSize = getResponsiveSize(24);
+  context2.fillStyle = `rgba(255,255,255,${titleOpacities[1]})`;
+  context2.font = `${titleFontSize}px 'IBM Plex Mono'`;
+  const centerX = 1024 / 4.5;
+  const centerY = 512 / 1.25;
+  context2.fillText("Code & Data", centerX, centerY - 50);
+  
+  // Untertext mit Typewriter-Effekt UND Opacity
+  context2.fillStyle = `rgba(255,255,255,${subtitleOpacities[1]})`;
+  context2.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
+  
+  const subtitle1 = subtitleTexts[1][0].substring(0, subtitleProgress[1]);
+  context2.fillText(subtitle1, centerX, centerY);
+  
+  if (subtitleProgress[1] >= subtitleTexts[1][0].length) {
+    const subtitle2 = subtitleTexts[1][1].substring(0, subtitleProgress[1] - subtitleTexts[1][0].length);
+    context2.fillText(subtitle2, centerX, centerY + 35);
+  }
+  
+  // Zurücksetzen des Schattens
+  context2.shadowColor = "transparent";
+  
+  textTexture2.needsUpdate = true;
+}
+
+function updateCanvas3Text() {
+  context3.clearRect(0, 0, 1024, 512);
+  context3.fillStyle = "rgba(0,0,0,0)";
+  context3.fillRect(0, 0, 1024, 512);
+  context3.textAlign = "left"; // Auf "center" ändern
+  context3.textBaseline = "middle";
+  
+  // Schatten-Eigenschaften für Titel
+  context3.shadowColor = "rgba(0, 0, 0, 0.5)";
+  context3.shadowBlur = 5;
+  context3.shadowOffsetX = 1;
+  context3.shadowOffsetY = 1;
+  
+  // Hauptüberschrift mit dynamischer Opacity
+  const titleFontSize = getResponsiveSize(42);
+  const subtitleFontSize = getResponsiveSize(24);
+  context3.fillStyle = `rgba(255,255,255,${titleOpacities[2]})`;
+  context3.font = `${titleFontSize}px 'IBM Plex Mono'`;
+  const centerX = 1024 / 4.5;
+  const centerY = 512 / 1.25;
+  context3.fillText("Website Projects", centerX, centerY - 50);
+  
+  // Untertext mit Typewriter-Effekt UND Opacity
+  context3.fillStyle = `rgba(255,255,255,${subtitleOpacities[2]})`;
+  context3.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
+  
+  const subtitle1 = subtitleTexts[2][0].substring(0, subtitleProgress[2]);
+  context3.fillText(subtitle1, centerX, centerY);
+  
+  if (subtitleProgress[2] >= subtitleTexts[2][0].length) {
+    const subtitle2 = subtitleTexts[2][1].substring(0, subtitleProgress[2] - subtitleTexts[2][0].length);
+    context3.fillText(subtitle2, centerX, centerY + 35);
+  }
+  
+  // Zurücksetzen des Schattens
+  context3.shadowColor = "transparent";
+  
+  textTexture3.needsUpdate = true;
+}
+
+function updateCanvas4Text() {
+  context4.clearRect(0, 0, 1024, 512);
+  context4.fillStyle = "rgba(0,0,0,0)";
+  context4.fillRect(0, 0, 1024, 512);
+  context4.textAlign = "left"; // Auf "center" ändern
+  context4.textBaseline = "middle";
+  
+  // Schatten-Eigenschaften für Titel
+  context4.shadowColor = "rgba(0, 0, 0, 0.5)";
+  context4.shadowBlur = 5;
+  context4.shadowOffsetX = 1;
+  context4.shadowOffsetY = 1;
+  
+  // Hauptüberschrift mit dynamischer Opacity
+  const titleFontSize = getResponsiveSize(42);
+  const subtitleFontSize = getResponsiveSize(24);
+  context4.fillStyle = `rgba(255,255,255,${titleOpacities[3]})`;
+  context4.font = `${titleFontSize}px 'IBM Plex Mono'`;
+  const centerX = 1024 / 4.5;
+  const centerY = 512 / 1.25;
+  context4.fillText("Photo & Video", centerX, centerY - 50);
+  
+  // Untertext mit Typewriter-Effekt UND Opacity
+  context4.fillStyle = `rgba(255,255,255,${subtitleOpacities[3]})`;
+  context4.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
+  
+  const subtitle1 = subtitleTexts[3][0].substring(0, subtitleProgress[3]);
+  context4.fillText(subtitle1, centerX, centerY);
+  
+  if (subtitleProgress[3] >= subtitleTexts[3][0].length) {
+    const subtitle2 = subtitleTexts[3][1].substring(0, subtitleProgress[3] - subtitleTexts[3][0].length);
+    context4.fillText(subtitle2, centerX, centerY + 35);
+    
+    if (subtitleProgress[3] >= subtitleTexts[3][0].length + subtitleTexts[3][1].length) {
+      const subtitle3 = subtitleTexts[3][2].substring(0, subtitleProgress[3] - subtitleTexts[3][0].length - subtitleTexts[3][1].length);
+      context4.fillText(subtitle3, centerX, centerY + 70);
+    }
+  }
+  
+  // Zurücksetzen des Schattens
+  context4.shadowColor = "transparent";
+  
+  textTexture4.needsUpdate = true;
+}
+
+function updateCanvas5Text() {
+  context5.clearRect(0, 0, 1024, 512);
+  context5.fillStyle = "rgba(0,0,0,0)";
+  context5.fillRect(0, 0, 1024, 512);
+  context5.textAlign = "left"; // Auf "center" ändern
+  context5.textBaseline = "middle";
+  
+  // Schatten-Eigenschaften für Titel
+  context5.shadowColor = "rgba(0, 0, 0, 0.5)";
+  context5.shadowBlur = 5;
+  context5.shadowOffsetX = 1;
+  context5.shadowOffsetY = 1;
+  
+  // Hauptüberschrift mit dynamischer Opacity
+  const titleFontSize = getResponsiveSize(42);
+  const subtitleFontSize = getResponsiveSize(24);
+  context5.fillStyle = `rgba(255,255,255,${titleOpacities[4]})`;
+  context5.font = `${titleFontSize}px 'IBM Plex Mono'`;
+  const centerX = 1024 / 4.5;
+  const centerY = 512 / 1.25;
+  context5.fillText("About me", centerX, centerY - 50);
+  
+  // Untertext mit Typewriter-Effekt UND Opacity
+  context5.fillStyle = `rgba(255,255,255,${subtitleOpacities[4]})`;
+  context5.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
+  
+  const subtitle1 = subtitleTexts[4][0].substring(0, subtitleProgress[4]);
+  context5.fillText(subtitle1, centerX, centerY);
+  
+  if (subtitleProgress[4] >= subtitleTexts[4][0].length) {
+    const subtitle2 = subtitleTexts[4][1].substring(0, subtitleProgress[4] - subtitleTexts[4][0].length);
+    context5.fillText(subtitle2, centerX, centerY + 35);
+  }
+  
+  // Zurücksetzen des Schattens
+  context5.shadowColor = "transparent";
+  
+  textTexture5.needsUpdate = true;
+}
 </script>
 
 <style>

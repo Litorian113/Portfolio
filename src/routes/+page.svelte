@@ -54,7 +54,8 @@
                     class:active={currentSection === 'design-work'} 
                     on:click={() => navigateTo('design-work')}
                 >
-                    Design Work
+                    <span class="full-text">Design Work</span>
+                    <span class="short-text">Design</span>
                 </button>
             </li>
             <li>
@@ -62,7 +63,8 @@
                     class:active={currentSection === 'code-data'} 
                     on:click={() => navigateTo('code-data')}
                 >
-                    Code & Data
+                    <span class="full-text">Code & Data</span>
+                    <span class="short-text">Code</span>
                 </button>
             </li>
             <li>
@@ -70,7 +72,8 @@
                     class:active={currentSection === 'website-projects'} 
                     on:click={() => navigateTo('website-projects')}
                 >
-                    Website Projects
+                    <span class="full-text">Website Projects</span>
+                    <span class="short-text">Website</span>
                 </button>
             </li>
             <li>
@@ -78,7 +81,8 @@
                     class:active={currentSection === 'photo-video'} 
                     on:click={() => navigateTo('photo-video')}
                 >
-                    Photo & Video
+                    <span class="full-text">Photo & Video</span>
+                    <span class="short-text">Photo</span>
                 </button>
             </li>
             <li>
@@ -86,7 +90,8 @@
                     class:active={currentSection === 'about-me'} 
                     on:click={() => navigateTo('about-me')}
                 >
-                    About me
+                    <span class="full-text">About me</span>
+                    <span class="short-text">Me</span>
                 </button>
             </li>
         </ul>
@@ -196,5 +201,63 @@
     .header-text:hover .hover-text {
         opacity: 1;
         transform: translateX(0);
+    }
+    
+    /* Neue Styles für mobile Navigation */
+    .short-text {
+        display: none;
+    }
+    
+    .full-text {
+        display: inline;
+    }
+    
+    /* Media Query für mobile Geräte anpassen */
+    @media (max-width: 768px) {
+        .side-navigation {
+            right: 10px;
+            top: 20px; /* Statt 50% - jetzt oben */
+            transform: none; /* translateY(-50%) entfernen */
+        }
+        
+        .side-navigation ul {
+            gap: 8px;
+        }
+        
+        .side-navigation button {
+            padding: 10px 12px;
+            width: 80px; /* Feste Breite für alle Buttons */
+            text-align: center;
+        }
+        
+        .short-text {
+            display: inline;
+        }
+        
+        .full-text {
+            display: none;
+        }
+    }
+    
+    /* Extra-kleine Bildschirme */
+    @media (max-width: 360px) {
+        .side-navigation {
+            right: 5px;
+            top: 15px; /* Etwas näher am oberen Rand für sehr kleine Bildschirme */
+        }
+        
+        .side-navigation button {
+            padding: 8px 8px;
+            width: 70px; /* Etwas schmaler aber immer noch einheitlich */
+            font-size: 14px;
+        }
+    }
+    
+    /* Stärkeres Highlight für den aktiven Button auf mobilen Geräten */
+    @media (max-width: 768px) {
+        .side-navigation button.active {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
     }
 </style>
