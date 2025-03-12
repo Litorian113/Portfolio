@@ -474,7 +474,11 @@
       
       updateCanvas4Text(); // Initialen Text setzen
 
-      const textMaterial4 = new THREE.MeshBasicMaterial({ map: textTexture4, transparent: true });
+      const textMaterial4 = new THREE.MeshBasicMaterial({ 
+        map: textTexture4, 
+        transparent: true,
+        alphaTest: 0.01 // Füge alphaTest hinzu
+      });
       const textGeometry4 = new THREE.PlaneGeometry(4, 2);
       const textMesh4 = new THREE.Mesh(textGeometry4, textMaterial4);
       textMesh4.position.set(0, 0.6, -18);
@@ -498,7 +502,11 @@
       
       updateCanvas5Text(); // Initialen Text setzen
 
-      const textMaterial5 = new THREE.MeshBasicMaterial({ map: textTexture5, transparent: true });
+      const textMaterial5 = new THREE.MeshBasicMaterial({ 
+        map: textTexture5, 
+        transparent: true,
+        alphaTest: 0.01 // Füge alphaTest hinzu
+      });
       const textGeometry5 = new THREE.PlaneGeometry(4, 2);
       const textMesh5 = new THREE.Mesh(textGeometry5, textMaterial5);
       textMesh5.position.set(0, 0.6, -28.5);
@@ -567,16 +575,16 @@
 
       // Vier Cover-Gruppen erstellen
       const coverGroup1 = createCoverGroup(cover3, hover3,  3,  0.65, -5.5, 1.2,  3);
-      coverGroup1.userData.project = 'iceAgeMammals'; // Hier fügen wir den Projektnamen hinzu
+      coverGroup1.userData.project = 'earthquake'; // Oben links: game statt iceAgeMammals
       
       const coverGroup2 = createCoverGroup(cover2, hover2,  3, -0.65, -5.5, 1.2,  3);
-      coverGroup2.userData.project = 'hybridWallet'; // Hier fügen wir den Projektnamen hinzu
+      coverGroup2.userData.project = 'migrants'; // Oben rechts: earthquake statt hybridWallet
       
       const coverGroup3 = createCoverGroup(cover1, hover1, -3,  0.65, -5.5, -1.2, -3);
-      coverGroup3.userData.project = 'nass';
+      coverGroup3.userData.project = 'game'; // Unten links: karincruises statt nass
       
       const coverGroup4 = createCoverGroup(cover4, hover4, -3, -0.65, -5.5, -1.2, -3);
-      coverGroup4.userData.project = 'bwegt';
+      coverGroup4.userData.project = 'karincruises'; // Unten rechts: migrants statt bwegt
 
       scene.add(coverGroup1);
       scene.add(coverGroup2);
@@ -669,7 +677,11 @@
       const pngTextureFoto = textureLoader.load('/foto-cover.png');
       pngTextureFoto.colorSpace = THREE.SRGBColorSpace;
       const pngGeometryFoto = new THREE.PlaneGeometry(3, 2);
-      const pngMaterialFoto = new THREE.MeshBasicMaterial({ map: pngTextureFoto, transparent: true });
+      const pngMaterialFoto = new THREE.MeshBasicMaterial({ 
+        map: pngTextureFoto, 
+        transparent: true,
+        alphaTest: 0.01 // Diese Zeile hinzufügen
+      });
       const pngMeshFoto = new THREE.Mesh(pngGeometryFoto, pngMaterialFoto);
       pngMeshFoto.position.set(3, 0, -22.5);
       pngMeshFoto.userData.finalX = 0;
@@ -682,13 +694,20 @@
       const pngTextureMe = textureLoader.load('/photo-video.png');
       pngTextureMe.colorSpace = THREE.SRGBColorSpace;
       const pngGeometryMe = new THREE.PlaneGeometry(3, 2);
-      const pngMaterialMe = new THREE.MeshBasicMaterial({ map: pngTextureMe, transparent: true });
+      const pngMaterialMe = new THREE.MeshBasicMaterial({ 
+        map: pngTextureMe, 
+        transparent: true,
+        alphaTest: 0.01 // Diese Zeile hinzufügen
+      });
       const pngMeshMe = new THREE.Mesh(pngGeometryMe, pngMaterialMe);
       pngMeshMe.position.set(3, 0, -33);
       pngMeshMe.userData.finalX = 0;
       pngMeshMe.userData.offscreenX = 3;
       scene.add(pngMeshMe);
       imageMeshes.push(pngMeshMe);
+      
+      // Erstelle Partikelsystem
+      animateParticles = createParticleSystem();
    }
 
 
@@ -718,10 +737,19 @@
                         clickedObj.userData.parentGroup.userData.project : 
                         clickedObj.userData.project;
     
+    // Aktualisierte Projekt-Zuordnungen
     if (projectName === 'nass') {
       openNassProject();
     } else if (projectName === 'bwegt') {
       openBwegtProject();
+    } else if (projectName === 'game') {
+      openGameProject();
+    } else if (projectName === 'earthquake') {
+      openEarthquakeProject();
+    } else if (projectName === 'karincruises') {
+      openKarinCruisesProject();
+    } else if (projectName === 'migrants') {
+      openMigrantsProject();
     } else if (projectName === 'iceAgeMammals') {
       openIceAgeMammalsProject();
     } else if (projectName === 'hybridWallet') {
@@ -748,6 +776,26 @@ function openIceAgeMammalsProject() {
 function openHybridWalletProject() {
   const { x, y, z } = camera.position;
   goto(`/project/hybridWallet?cx=${x}&cy=${y}&cz=${z}`);
+}
+
+function openGameProject() {
+  const { x, y, z } = camera.position;
+  goto(`/project/game?cx=${x}&cy=${y}&cz=${z}`);
+}
+
+function openEarthquakeProject() {
+  const { x, y, z } = camera.position;
+  goto(`/project/earthquake?cx=${x}&cy=${y}&cz=${z}`);
+}
+
+function openKarinCruisesProject() {
+  const { x, y, z } = camera.position;
+  goto(`/project/karincruises?cx=${x}&cy=${y}&cz=${z}`);
+}
+
+function openMigrantsProject() {
+  const { x, y, z } = camera.position;
+  goto(`/project/migrants?cx=${x}&cy=${y}&cz=${z}`);
 }
 
    // ----------------------------------------------------------------------------
@@ -874,8 +922,9 @@ function openHybridWalletProject() {
                         intersects[0].object.userData.parentGroup.userData.project : 
                         intersects[0].object.userData.project;
     
-    // Überprüfe, ob das Objekt einem Projekt zugeordnet ist
-    if (['nass', 'bwegt', 'iceAgeMammals', 'hybridWallet'].includes(projectName)) {
+    // Überprüfe, ob das Objekt einem Projekt zugeordnet ist (alle Projekte einbeziehen)
+    if (['nass', 'bwegt', 'iceAgeMammals', 'hybridWallet', 
+          'game', 'earthquake', 'karincruises', 'migrants'].includes(projectName)) {
       container.style.cursor = 'pointer';
     } else {
       container.style.cursor = 'default';
@@ -982,6 +1031,9 @@ function openHybridWalletProject() {
   updateCoverGroupPositions();
   updateCurrentSection();
   updateTitleOpacitiesAndStartTyping(); // Neue Funktion hinzufügen
+  if (animateParticles) {
+    animateParticles();
+  }
   renderer.render(scene, camera);
 }
 
@@ -1066,35 +1118,57 @@ function updateTitleOpacitiesAndStartTyping() {
     { station: 12, titleIndex: 4 }  // About me
   ];
 
-  // Reset alle Titel-Opacities auf 0.4
-  titleOpacities = titleOpacities.map(() => 0.4);
+  // Findet den aktuell aktiven Titelindex basierend auf der Station
+  const activeMatch = stationToTitleMap.find(item => item.station === currentStation);
+  const activeIndex = activeMatch ? activeMatch.titleIndex : -1;
   
-  // Wenn die Station gewechselt hat
+  // Aktualisiere alle Title-Opacities
+  for (let i = 0; i < titleOpacities.length; i++) {
+    titleOpacities[i] = (i === activeIndex) ? 1.0 : 0.4;
+  }
+  
+  // Stationswechsel erkennen
   if (previousStation !== currentStation) {
-    // Finde den Index der vorherigen Station, falls vorhanden
+    // Station wurde gewechselt, jetzt:
+    console.log(`Station gewechselt: ${previousStation} -> ${currentStation}`);
+    
+    // 1. Alten Typewriter stoppen
+    typingInProgress = false;
+    
+    // 2. Alle vorherigen Untertitel ausblenden
     const prevMatch = stationToTitleMap.find(item => item.station === previousStation);
     if (prevMatch) {
-      // Starte das Ausblenden der Station, die wir verlassen
-      fadeOutSubtitle(prevMatch.titleIndex);
+      const prevIndex = prevMatch.titleIndex;
+      // Sofort ausblenden ohne Animation
+      subtitleOpacities[prevIndex] = 0;
+      // Sofort den Fortschritt zurücksetzen
+      subtitleProgress[prevIndex] = 0;
     }
+    
+    // 3. Wenn eine aktive Station vorhanden ist
+    if (activeIndex >= 0) {
+      // Sofort einblenden ohne Animation
+      subtitleOpacities[activeIndex] = 1;
+      // Sofort den Fortschritt zurücksetzen
+      subtitleProgress[activeIndex] = 0;
+      
+      // Mit leichter Verzögerung den Typewriter starten
+      setTimeout(() => {
+        if (currentStation === stationToTitleMap.find(item => item.titleIndex === activeIndex)?.station) {
+          startTypewriterEffect(activeIndex);
+        }
+      }, 300);
+    }
+    
+    // Aktualisiere die vorherige Station
     previousStation = currentStation;
-  }
-
-  // Finde die entsprechende Station und setze ihre Opacity auf 1.0
-  const match = stationToTitleMap.find(item => item.station === currentStation);
-  if (match) {
-    titleOpacities[match.titleIndex] = 1.0;
-    
-    // Faden wir die aktuelle Station ein
-    fadeInSubtitle(match.titleIndex);
-    
-    // Starte Typewriter-Effekt, wenn wir ankommen und er noch nicht gestartet wurde
-    if (subtitleProgress[match.titleIndex] === 0 && !typingInProgress) {
-      startTypewriterEffect(match.titleIndex);
-    }
+  } 
+  // Wenn keine Station gewechselt wurde, aber der Text noch nicht gestartet ist
+  else if (activeIndex >= 0 && subtitleProgress[activeIndex] === 0 && !typingInProgress) {
+    startTypewriterEffect(activeIndex);
   }
   
-  // Aktualisiere alle Canvas-Texte
+  // Immer alle Canvas-Texte aktualisieren
   updateCanvas1Text();
   updateCanvas2Text();
   updateCanvas3Text();
@@ -1102,27 +1176,14 @@ function updateTitleOpacitiesAndStartTyping() {
   updateCanvas5Text();
 }
 
-// Neue Funktionen für das Ein- und Ausblenden
-function fadeOutSubtitle(index) {
-  // Starte GSAP-Animation zum sanften Ausblenden
-  gsap.to(subtitleOpacities, {
-    [index]: 0, // Setze die Opacity für diesen Index auf 0
-    duration: 0.8,
-    ease: "power1.out",
-    onComplete: () => {
-      // Erst nach dem Ausblenden den Progress zurücksetzen
-      subtitleProgress[index] = 0;
-    }
-  });
+// Die fadeIn/fadeOut Funktionen können wir entfernen oder vereinfacht lassen:
+function fadeInSubtitle(index) {
+  subtitleOpacities[index] = 1;
 }
 
-function fadeInSubtitle(index) {
-  // Starte GSAP-Animation zum sanften Einblenden
-  gsap.to(subtitleOpacities, {
-    [index]: 1, // Setze die Opacity für diesen Index auf 1
-    duration: 0.5,
-    ease: "power1.in"
-  });
+function fadeOutSubtitle(index) {
+  subtitleOpacities[index] = 0;
+  subtitleProgress[index] = 0;
 }
 
 // Füge diese Typewriter-Funktionen hinzu:
@@ -1288,7 +1349,7 @@ function updateCanvas3Text() {
 
 function updateCanvas4Text() {
   context4.clearRect(0, 0, 1024, 512);
-  context4.fillStyle = "rgba(0,0,0,0)";
+  context4.fillStyle = "rgba(0,0,0,0)"; // Stellt sicher, dass es 100% transparent ist
   context4.fillRect(0, 0, 1024, 512);
   context4.textAlign = "left"; // Auf "center" ändern
   context4.textBaseline = "middle";
@@ -1333,7 +1394,7 @@ function updateCanvas4Text() {
 
 function updateCanvas5Text() {
   context5.clearRect(0, 0, 1024, 512);
-  context5.fillStyle = "rgba(0,0,0,0)";
+  context5.fillStyle = "rgba(0,0,0,0)"; // Stellt sicher, dass es 100% transparent ist
   context5.fillRect(0, 0, 1024, 512);
   context5.textAlign = "left"; // Auf "center" ändern
   context5.textBaseline = "middle";
@@ -1370,6 +1431,96 @@ function updateCanvas5Text() {
   
   textTexture5.needsUpdate = true;
 }
+
+// Füge diese Funktion in initScene() ein, nach der Initialisierung der Szene
+function createParticleSystem() {
+  const particleCount = 2000;
+  
+  // Geometrie erstellen
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  const velocities = [];
+  
+  // Zufällige Positionen - NUR auf den Seiten, nicht in der Mitte
+  for (let i = 0; i < particleCount; i++) {
+    const i3 = i * 3;
+    const side = Math.random() > 0.5 ? 1 : -1;
+    
+    // Positioniere Partikel weiter außen (12-20 Einheiten vom Zentrum)
+    positions[i3] = side * (12 + Math.random() * 8);
+    
+    // Vertikale Position - etwas weiter verteilt für bessere Raumfüllung
+    positions[i3 + 1] = Math.random() * 12 - 6;
+    
+    // Z-Position entlang des Flurs
+    positions[i3 + 2] = (Math.random() * 60) - 45;
+    
+    // Geschwindigkeiten speichern
+    velocities.push({
+      x: (Math.random() - 0.5) * 0.008, // Etwas langsamere Bewegung
+      y: (Math.random() - 0.5) * 0.008,
+      z: (Math.random() - 0.5) * 0.015
+    });
+  }
+  
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  
+  // Dunkleres Material mit runderen Punkten
+  const material = new THREE.PointsMaterial({
+    color: 0x333344,    // Deutlich dunklere Farbe
+    size: 0.3,          // Größere Partikel für mehr Rundheit
+    transparent: true,
+    opacity: 0.6,       // Geringere Deckkraft für subtileren Effekt
+    sizeAttenuation: true,
+    blending: THREE.AdditiveBlending  // Additive Blending für weichere, rundere Erscheinung
+  });
+  
+  const particles = new THREE.Points(geometry, material);
+  scene.add(particles);
+  
+  function animateParticles() {
+    const positions = particles.geometry.attributes.position.array;
+    
+    for (let i = 0; i < particleCount; i++) {
+      const i3 = i * 3;
+      
+      positions[i3] += velocities[i].x;
+      positions[i3 + 1] += velocities[i].y + Math.sin(Date.now() * 0.001 + i) * 0.004;
+      positions[i3 + 2] += velocities[i].z;
+      
+      // Grenzen prüfen und zurücksetzen
+      // X-Position: Halte Partikel an den Seiten
+      if (positions[i3] > 0 && positions[i3] < 12) {
+        positions[i3] = 12 + Math.random() * 8;
+      } else if (positions[i3] < 0 && positions[i3] > -12) {
+        positions[i3] = -12 - Math.random() * 8;
+      }
+      
+      // Weitere Grenzen wie zuvor
+      if (Math.abs(positions[i3]) > 25) {
+        const side = positions[i3] > 0 ? 1 : -1;
+        positions[i3] = side * (12 + Math.random() * 8);
+      }
+      
+      if (Math.abs(positions[i3 + 1]) > 6) {
+        positions[i3 + 1] = Math.sign(positions[i3 + 1]) * 6 * 0.8;
+      }
+      
+      if (positions[i3 + 2] > 15) {
+        positions[i3 + 2] = -45;
+      } else if (positions[i3 + 2] < -45) {
+        positions[i3 + 2] = 15;
+      }
+    }
+    
+    particles.geometry.attributes.position.needsUpdate = true;
+  }
+  
+  return animateParticles;
+}
+
+// Speichere die Funktion zur Partikelanimation
+let animateParticles;
 </script>
 
 <style>
