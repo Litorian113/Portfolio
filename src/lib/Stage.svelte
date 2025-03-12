@@ -686,10 +686,9 @@
       pngMeshFoto.position.set(3, 0, -22.5);
       pngMeshFoto.userData.finalX = 0;
       pngMeshFoto.userData.offscreenX = 3;
+      pngMeshFoto.userData.project = 'photovideo'; // Dieser Eintrag ist neu
       scene.add(pngMeshFoto);
       imageMeshes.push(pngMeshFoto);
-
-
 
       const pngTextureMe = textureLoader.load('/photo-video.png');
       pngTextureMe.colorSpace = THREE.SRGBColorSpace;
@@ -703,6 +702,7 @@
       pngMeshMe.position.set(3, 0, -33);
       pngMeshMe.userData.finalX = 0;
       pngMeshMe.userData.offscreenX = 3;
+      pngMeshMe.userData.project = 'aboutme'; // Dieser Eintrag ist neu
       scene.add(pngMeshMe);
       imageMeshes.push(pngMeshMe);
       
@@ -737,7 +737,7 @@
                         clickedObj.userData.parentGroup.userData.project : 
                         clickedObj.userData.project;
     
-    // Aktualisierte Projekt-Zuordnungen
+    // Aktualisierte Projekt-Zuordnungen mit den zwei neuen Projekten
     if (projectName === 'nass') {
       openNassProject();
     } else if (projectName === 'bwegt') {
@@ -754,6 +754,10 @@
       openIceAgeMammalsProject();
     } else if (projectName === 'hybridWallet') {
       openHybridWalletProject();
+    } else if (projectName === 'photovideo') {
+      openPhotoVideoProject();
+    } else if (projectName === 'aboutme') {
+      openAboutMeProject();
     }
   }
 }
@@ -796,6 +800,16 @@ function openKarinCruisesProject() {
 function openMigrantsProject() {
   const { x, y, z } = camera.position;
   goto(`/project/migrants?cx=${x}&cy=${y}&cz=${z}`);
+}
+
+function openPhotoVideoProject() {
+  const { x, y, z } = camera.position;
+  goto(`/project/photovideo?cx=${x}&cy=${y}&cz=${z}`);
+}
+
+function openAboutMeProject() {
+  const { x, y, z } = camera.position;
+  goto(`/project/aboutme?cx=${x}&cy=${y}&cz=${z}`);
 }
 
    // ----------------------------------------------------------------------------
@@ -922,9 +936,10 @@ function openMigrantsProject() {
                         intersects[0].object.userData.parentGroup.userData.project : 
                         intersects[0].object.userData.project;
     
-    // Überprüfe, ob das Objekt einem Projekt zugeordnet ist (alle Projekte einbeziehen)
+    // Alle Projekttypen einschließlich der neuen
     if (['nass', 'bwegt', 'iceAgeMammals', 'hybridWallet', 
-          'game', 'earthquake', 'karincruises', 'migrants'].includes(projectName)) {
+          'game', 'earthquake', 'karincruises', 'migrants',
+          'photovideo', 'aboutme'].includes(projectName)) {
       container.style.cursor = 'pointer';
     } else {
       container.style.cursor = 'default';
