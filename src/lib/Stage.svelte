@@ -4,6 +4,9 @@
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
     import { browser } from '$app/environment';
+    import { ProjectMeshFactory } from '$lib/meshes/ProjectMeshFactory.js';
+    import { CoverGroupFactory } from '$lib/meshes/CoverGroupFactory.js';
+    import { ParticleSystem } from '$lib/effects/ParticleSystem.js';
 
     export let cx = 0;
     export let cy = 0;
@@ -107,6 +110,13 @@
     
 
     let initialPositionSet = false;
+
+    // Variablen für die Factories
+    let projectMeshFactory;
+    let coverGroupFactory;
+
+    // Partikelsystem-Variable hinzufügen
+    let particleSystem;
 
     // Funktion zum Hinzufügen des Wheel-Event-Listeners
     function addWheelListener() {
@@ -222,6 +232,11 @@
         container.removeEventListener('touchstart', handleTouchStart);
         container.removeEventListener('touchmove', handleTouchMove);
         container.removeEventListener('touchend', handleTouchEnd);
+
+        // Partikelsystem aufräumen
+        if (particleSystem) {
+          particleSystem.dispose();
+        }
       }
       clearInterval(textUpdateInterval);
 
@@ -363,13 +378,13 @@ function loadAppropriateTextures() {
         newTexture.colorSpace = THREE.SRGBColorSpace;
         
         if (isMobile) {
-          // Für mobile Geräte: Passe die Geometrie an das hochformatige Bild an
-          // Sichere die alte Position und Daten
+          // Für mobile Geräte: Passe die Geometrie an das 9:16 Seitenverhältnis an
           const oldPosition = mesh.position.clone();
           const userData = {...mesh.userData};
           
-          // Erstelle neue hochformatige Geometrie (2:3 statt 3:2)
-          const newGeometry = new THREE.PlaneGeometry(2, 3);
+          // Erstelle neue hochformatige Geometrie mit 9:16 Verhältnis
+          // Bei Breite 2 wird Höhe: 2 * (16/9) = 3.56
+          const newGeometry = new THREE.PlaneGeometry(2, 2 * (16/9));
           
           // Neue Material mit der angepassten Textur
           const newMaterial = new THREE.MeshBasicMaterial({ 
@@ -503,8 +518,9 @@ function loadAppropriateTextures() {
     //   gridHelper2.position.set(20, 0, 0);
     //   scene.add(gridHelper2);
 
-
-
+      // Factories initialisieren
+      projectMeshFactory = new ProjectMeshFactory(scene, isMobile);
+      coverGroupFactory = new CoverGroupFactory(scene, isMobile);
 
       // --------------------------------------------------------
       // 1) ERSTER TEXT (Canvas: "Hello., I'm Franz.")
@@ -761,8 +777,12 @@ function loadAppropriateTextures() {
     pngTexture4.colorSpace = THREE.SRGBColorSpace;
     currentTextures.bild4 = pngTexture4;
     
-    // Erstelle die Mesh-Objekte wie gehabt
-    const pngGeometry1 = new THREE.PlaneGeometry(3, 2);
+    // Erstelle die Mesh-Objekte mit der entsprechenden Geometrie je nach Gerätegröße
+    const aspectRatio = isMobile ? 9/16 : 3/2;
+    const width = isMobile ? 2 : 3;
+    const height = isMobile ? 2 * (16/9) : 2;  // 9:16 Verhältnis für Mobile
+
+    const pngGeometry1 = new THREE.PlaneGeometry(width, height);
     const pngMaterial1 = new THREE.MeshBasicMaterial({
       map: pngTexture1,
       transparent: true,
@@ -815,6 +835,14 @@ function loadAppropriateTextures() {
     scene.add(pngMesh4);
     imageMeshes.push(pngMesh4);
 
+
+    if (isMobile) {
+  pngMesh1.scale.set(0.55, 0.55, 0.55);
+  pngMesh2.scale.set(0.55, 0.55, 0.55);
+  pngMesh3.scale.set(0.55, 0.55, 0.55);
+  pngMesh4.scale.set(0.55, 0.55, 0.55);
+
+}
       const pngTexturePC1 = textureLoader.load('/Website1.png');
       pngTexturePC1.colorSpace = THREE.SRGBColorSpace;
       const pngGeometryPC1 = new THREE.PlaneGeometry(2.8, 3.4);
@@ -874,8 +902,13 @@ function loadAppropriateTextures() {
       scene.add(pngMeshMe);
       imageMeshes.push(pngMeshMe);
       
-      // Erstelle Partikelsystem
-      animateParticles = createParticleSystem();
+      // Partikelsystem initialisieren
+      particleSystem = new ParticleSystem(THREE, scene, {
+        particleCount: isMobileDevice() ? 1000 : 2000, // Weniger Partikel auf Mobilgeräten
+        particleColor: 0x333344,
+        particleSize: 0.3,
+        particleOpacity: 0.6
+      });
    }
 
 
@@ -1214,8 +1247,8 @@ function openAboutMeProject() {
   updateCoverGroupPositions();
   updateCurrentSection();
   updateTitleOpacitiesAndStartTyping(); // Neue Funktion hinzufügen
-  if (animateParticles) {
-    animateParticles();
+  if (particleSystem) {
+    particleSystem.animate();
   }
   renderer.render(scene, camera);
 }
@@ -1617,96 +1650,6 @@ function updateCanvas5Text() {
   
   textTexture5.needsUpdate = true;
 }
-
-// Füge diese Funktion in initScene() ein, nach der Initialisierung der Szene
-function createParticleSystem() {
-  const particleCount = 2000;
-  
-  // Geometrie erstellen
-  const geometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(particleCount * 3);
-  const velocities = [];
-  
-  // Zufällige Positionen - NUR auf den Seiten, nicht in der Mitte
-  for (let i = 0; i < particleCount; i++) {
-    const i3 = i * 3;
-    const side = Math.random() > 0.5 ? 1 : -1;
-    
-    // Positioniere Partikel weiter außen (12-20 Einheiten vom Zentrum)
-    positions[i3] = side * (12 + Math.random() * 8);
-    
-    // Vertikale Position - etwas weiter verteilt für bessere Raumfüllung
-    positions[i3 + 1] = Math.random() * 12 - 6;
-    
-    // Z-Position entlang des Flurs
-    positions[i3 + 2] = (Math.random() * 60) - 45;
-    
-    // Geschwindigkeiten speichern
-    velocities.push({
-      x: (Math.random() - 0.5) * 0.008, // Etwas langsamere Bewegung
-      y: (Math.random() - 0.5) * 0.008,
-      z: (Math.random() - 0.5) * 0.015
-    });
-  }
-  
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  
-  // Dunkleres Material mit runderen Punkten
-  const material = new THREE.PointsMaterial({
-    color: 0x333344,    // Deutlich dunklere Farbe
-    size: 0.3,          // Größere Partikel für mehr Rundheit
-    transparent: true,
-    opacity: 0.6,       // Geringere Deckkraft für subtileren Effekt
-    sizeAttenuation: true,
-    blending: THREE.AdditiveBlending  // Additive Blending für weichere, rundere Erscheinung
-  });
-  
-  const particles = new THREE.Points(geometry, material);
-  scene.add(particles);
-  
-  function animateParticles() {
-    const positions = particles.geometry.attributes.position.array;
-    
-    for (let i = 0; i < particleCount; i++) {
-      const i3 = i * 3;
-      
-      positions[i3] += velocities[i].x;
-      positions[i3 + 1] += velocities[i].y + Math.sin(Date.now() * 0.001 + i) * 0.004;
-      positions[i3 + 2] += velocities[i].z;
-      
-      // Grenzen prüfen und zurücksetzen
-      // X-Position: Halte Partikel an den Seiten
-      if (positions[i3] > 0 && positions[i3] < 12) {
-        positions[i3] = 12 + Math.random() * 8;
-      } else if (positions[i3] < 0 && positions[i3] > -12) {
-        positions[i3] = -12 - Math.random() * 8;
-      }
-      
-      // Weitere Grenzen wie zuvor
-      if (Math.abs(positions[i3]) > 25) {
-        const side = positions[i3] > 0 ? 1 : -1;
-        positions[i3] = side * (12 + Math.random() * 8);
-      }
-      
-      if (Math.abs(positions[i3 + 1]) > 6) {
-        positions[i3 + 1] = Math.sign(positions[i3 + 1]) * 6 * 0.8;
-      }
-      
-      if (positions[i3 + 2] > 15) {
-        positions[i3 + 2] = -45;
-      } else if (positions[i3 + 2] < -45) {
-        positions[i3 + 2] = 15;
-      }
-    }
-    
-    particles.geometry.attributes.position.needsUpdate = true;
-  }
-  
-  return animateParticles;
-}
-
-// Speichere die Funktion zur Partikelanimation
-let animateParticles;
 </script>
 
 <style>
