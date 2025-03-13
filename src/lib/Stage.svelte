@@ -297,6 +297,130 @@
             (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)));
     }
 
+    // Füge diese Variablen zu den vorhandenen hinzu
+    let isMobile = false;
+    let currentTextures = {
+      bild1: null,
+      bild2: null, 
+      bild3: null,
+      bild4: null
+    };
+    
+    // Diese Funktion zum Überprüfen der Gerätegröße
+    function checkDeviceSize() {
+      const wasAlreadyMobile = isMobile;
+      isMobile = window.innerWidth <= 768;
+      
+      // Wenn sich der Status geändert hat, lade die Bilder neu
+      if (wasAlreadyMobile !== isMobile && scene) {
+        loadAppropriateTextures();
+      }
+    }
+    
+    // Verbesserte Version der loadAppropriateTextures-Funktion:
+function loadAppropriateTextures() {
+  if (!THREE || !scene) return;
+  
+  const textureLoader = new THREE.TextureLoader();
+  const texturePaths = {
+    desktop: {
+      bild1: '/Bild1.png',
+      bild2: '/Bild2.png',
+      bild3: '/Bild3.png',
+      bild4: '/Bild4.png'
+    },
+    mobile: {
+      bild1: '/mobile/Bild1-mobile.png',
+      bild2: '/mobile/Bild2-mobile.png',
+      bild3: '/mobile/Bild3-mobile.png',
+      bild4: '/mobile/Bild4-mobile.png'
+    }
+  };
+  
+  // Wähle die richtigen Pfade basierend auf Gerätegröße
+  const paths = isMobile ? texturePaths.mobile : texturePaths.desktop;
+  
+  // Strukturierte Map für Projekt-zu-Textur-Beziehungen
+  const projectTextureMap = {
+    'nass': { texture: 'bild1', meshIndex: imageMeshes.findIndex(m => m.userData.project === 'nass') },
+    'bwegt': { texture: 'bild2', meshIndex: imageMeshes.findIndex(m => m.userData.project === 'bwegt') },
+    'iceAgeMammals': { texture: 'bild3', meshIndex: imageMeshes.findIndex(m => m.userData.project === 'iceAgeMammals') },
+    'hybridWallet': { texture: 'bild4', meshIndex: imageMeshes.findIndex(m => m.userData.project === 'hybridWallet') }
+  };
+  
+  // Texturen für alle Projekte aktualisieren
+  Object.entries(projectTextureMap).forEach(([project, info]) => {
+    const { texture, meshIndex } = info;
+    if (meshIndex >= 0) {
+      const mesh = imageMeshes[meshIndex];
+      
+      // Lade die neue Textur
+      textureLoader.load(paths[texture], newTexture => {
+        newTexture.colorSpace = THREE.SRGBColorSpace;
+        
+        if (isMobile) {
+          // Für mobile Geräte: Passe die Geometrie an das hochformatige Bild an
+          // Sichere die alte Position und Daten
+          const oldPosition = mesh.position.clone();
+          const userData = {...mesh.userData};
+          
+          // Erstelle neue hochformatige Geometrie (2:3 statt 3:2)
+          const newGeometry = new THREE.PlaneGeometry(2, 3);
+          
+          // Neue Material mit der angepassten Textur
+          const newMaterial = new THREE.MeshBasicMaterial({ 
+            map: newTexture,
+            transparent: true,
+            toneMapped: false
+          });
+          
+          // Ersetze die alte Geometrie und Material
+          mesh.geometry.dispose();
+          mesh.material.dispose();
+          mesh.geometry = newGeometry;
+          mesh.material = newMaterial;
+          
+          // Position und Daten wiederherstellen
+          mesh.position.copy(oldPosition);
+          // Bei Hochformat-Bildern leicht nach oben verschieben, damit sie besser im Blickfeld sind
+          mesh.position.y = 0.5; 
+          mesh.userData = userData;
+          
+        } else {
+          // Für Desktop: Setze nur die Textur und stelle Originalproportionen wieder her
+          // Sichere die alte Position und Daten
+          const oldPosition = mesh.position.clone();
+          const userData = {...mesh.userData};
+          
+          // Erstelle neue Querformat-Geometrie (3:2)
+          const newGeometry = new THREE.PlaneGeometry(3, 2);
+          
+          // Neue Material mit der angepassten Textur
+          const newMaterial = new THREE.MeshBasicMaterial({ 
+            map: newTexture,
+            transparent: true,
+            toneMapped: false
+          });
+          
+          // Ersetze die alte Geometrie und Material
+          mesh.geometry.dispose();
+          mesh.material.dispose();
+          mesh.geometry = newGeometry;
+          mesh.material = newMaterial;
+          
+          // Position und Daten wiederherstellen
+          mesh.position.copy(oldPosition);
+          mesh.position.y = 0; // Y-Position zurücksetzen
+          mesh.userData = userData;
+        }
+        
+        // Speichere die aktuelle Textur
+        currentTextures[texture] = newTexture;
+      });
+    }
+  });
+}
+
     function initScene() {
       // Szene und Hintergrund
       scene = new THREE.Scene();
@@ -595,13 +719,50 @@
 
       // --------------------------------------------------------
     // 4) WEITERE BILDER (z. B. Earthquake, Nass1, Bwegt1)
-    const pngTexture1 = textureLoader.load('/Bild2.png'); // Bild1 für nass
+    // Verwende den bereits existierenden textureLoader statt ihn neu zu deklarieren
+    // const textureLoader = new THREE.TextureLoader(); <- Diese Zeile entfernen!
+
+    // Prüfe die aktuelle Gerätegröße
+    checkDeviceSize();
+    
+    // Wähle die richtigen Pfade basierend auf Gerätegröße
+    const texturePaths = isMobile ? 
+      {
+        bild1: '/mobile/Bild1-mobile.png',
+        bild2: '/mobile/Bild2-mobile.png',
+        bild3: '/mobile/Bild3-mobile.png',
+        bild4: '/mobile/Bild4-mobile.png'
+      } : 
+      {
+        bild1: '/Bild1.png',
+        bild2: '/Bild2.png',
+        bild3: '/Bild3.png',
+        bild4: '/Bild4.png'
+      };
+    
+    // Lade die initialen Texturen
+    const pngTexture1 = textureLoader.load(texturePaths.bild1);
     pngTexture1.colorSpace = THREE.SRGBColorSpace;
+    currentTextures.bild1 = pngTexture1;
+    
+    const pngTexture2 = textureLoader.load(texturePaths.bild2);
+    pngTexture2.colorSpace = THREE.SRGBColorSpace;
+    currentTextures.bild2 = pngTexture2;
+    
+    const pngTexture3 = textureLoader.load(texturePaths.bild3);
+    pngTexture3.colorSpace = THREE.SRGBColorSpace;
+    currentTextures.bild3 = pngTexture3;
+    
+    const pngTexture4 = textureLoader.load(texturePaths.bild4);
+    pngTexture4.colorSpace = THREE.SRGBColorSpace;
+    currentTextures.bild4 = pngTexture4;
+    
+    // Erstelle die Mesh-Objekte wie gehabt
     const pngGeometry1 = new THREE.PlaneGeometry(3, 2);
     const pngMaterial1 = new THREE.MeshBasicMaterial({
-    map: pngTexture1,
-    transparent: true,
-    toneMapped: false
+      map: pngTexture1,
+      transparent: true,
+      toneMapped: false
     });
     const pngMesh1 = new THREE.Mesh(pngGeometry1, pngMaterial1);
     pngMesh1.position.set(-3, 0, 15);
@@ -610,11 +771,12 @@
     pngMesh1.userData.project = 'nass'; // Nass-Projekt
     scene.add(pngMesh1);
     imageMeshes.push(pngMesh1);
-
-    const pngTexture2 = textureLoader.load('/Bild1.png'); // Bild2 für bwegt
-    pngTexture2.colorSpace = THREE.SRGBColorSpace;
+    
     const pngGeometry2 = new THREE.PlaneGeometry(3, 2);
-    const pngMaterial2 = new THREE.MeshBasicMaterial({ map: pngTexture2, transparent: true });
+    const pngMaterial2 = new THREE.MeshBasicMaterial({ 
+      map: pngTexture2, 
+      transparent: true 
+    });
     const pngMesh2 = new THREE.Mesh(pngGeometry2, pngMaterial2);
     pngMesh2.position.set(3, 0, 11.5);
     pngMesh2.userData.finalX = 0;
@@ -622,11 +784,12 @@
     pngMesh2.userData.project = 'bwegt'; // Bwegt-Projekt
     scene.add(pngMesh2);
     imageMeshes.push(pngMesh2);
-
-    const pngTexture3 = textureLoader.load('/Bild3.png'); // Bild3 für iceAgeMammals
-    pngTexture3.colorSpace = THREE.SRGBColorSpace;
+    
     const pngGeometry3 = new THREE.PlaneGeometry(3, 2);
-    const pngMaterial3 = new THREE.MeshBasicMaterial({ map: pngTexture3, transparent: true });
+    const pngMaterial3 = new THREE.MeshBasicMaterial({ 
+      map: currentTextures.bild3, 
+      transparent: true 
+    });
     const pngMesh3 = new THREE.Mesh(pngGeometry3, pngMaterial3);
     pngMesh3.position.set(-3, 0, 8);
     pngMesh3.userData.finalX = 0;
@@ -635,10 +798,11 @@
     scene.add(pngMesh3);
     imageMeshes.push(pngMesh3);
 
-    const pngTexture4 = textureLoader.load('/Bild4.png'); // Bild4 für hybridWallet
-    pngTexture4.colorSpace = THREE.SRGBColorSpace;
     const pngGeometry4 = new THREE.PlaneGeometry(3, 2);
-    const pngMaterial4 = new THREE.MeshBasicMaterial({ map: pngTexture4, transparent: true });
+    const pngMaterial4 = new THREE.MeshBasicMaterial({ 
+      map: currentTextures.bild4, 
+      transparent: true 
+    });
     const pngMesh4 = new THREE.Mesh(pngGeometry4, pngMaterial4);
     pngMesh4.position.set(3, 0, 4);
     pngMesh4.userData.finalX = 0;
@@ -1065,6 +1229,9 @@ function openAboutMeProject() {
   
   // Canvas-Texturen aktualisieren
   recreateCanvasTextures();
+  
+  // Prüfe auf Änderungen der Bildschirmgröße und lade ggf. andere Texturen
+  checkDeviceSize();
 }
 
 // Neue Funktion zur Anpassung der TextMesh-Größen

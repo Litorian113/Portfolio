@@ -57,9 +57,73 @@
       };
       
       window.addEventListener('resize', handleResize);
+
+      // Masonry-Layout nach dem Laden der Bilder aktualisieren
+      function resizeMasonryItems() {
+        const grid = document.querySelector('.masonry-gallery');
+        if (!grid) return;
+        
+        const rowHeight = 1;
+        const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-row-gap')) || 10; 
+        
+        const items = document.querySelectorAll('.masonry-item');
+        items.forEach(item => {
+          const img = item.querySelector('img');
+          if (!img || !img.complete) return;
+          
+          const imgHeight = img.getBoundingClientRect().height;
+          // Exakte Berechnung ohne Rundungsfehler
+          const rowSpan = Math.floor(imgHeight / rowHeight) + Math.floor(rowGap / rowHeight);
+          item.style.gridRowEnd = `span ${rowSpan}`;
+        });
+      }
+      
+      // Nach dem Laden aller Bilder Größen neu berechnen
+      const masonryImages = document.querySelectorAll('.masonry-gallery img');
+      let loadedImages = 0;
+      
+      masonryImages.forEach(img => {
+        if (img.complete) {
+          loadedImages++;
+          if (loadedImages === masonryImages.length) {
+            resizeMasonryItems();
+          }
+        } else {
+          img.addEventListener('load', () => {
+            loadedImages++;
+            if (loadedImages === masonryImages.length) {
+              resizeMasonryItems();
+            }
+            resizeMasonryItems(); // Aktualisiere Grid, wenn jedes Bild geladen wird
+          });
+        }
+      });
+      
+      // Bei Resize Größen neu berechnen
+      window.addEventListener('resize', resizeMasonryItems);
+      
+      resizeMasonryItems();
+      setupImageResizeHandlers();
+      
+      // Mehrfache Aktualisierung um sicherzugehen (Browser-Quirks)
+      setTimeout(resizeMasonryItems, 500);
+      setTimeout(resizeMasonryItems, 2000);
+
+      // Nach dem Laden der Bilder das Layout optimieren
+      optimizeMasonryLayout();
+      
+      // Mehrfache Aktualisierung für dynamisch nachgeladene Bilder
+      setTimeout(optimizeMasonryLayout, 1000);
+      setTimeout(optimizeMasonryLayout, 3000);
+
+      // Masonry mehrfach initialisieren, um sicherzustellen, dass es richtig berechnet wird
+      setTimeout(initializeMasonry, 1000);
+      setTimeout(initializeMasonry, 3000);
       
       return () => {
         window.removeEventListener('resize', handleResize);
+        window.removeEventListener('resize', resizeMasonryItems);
+        window.removeEventListener('resize', handleMasonryResize);
       };
     });
   
@@ -178,7 +242,290 @@
         }
       });
     }
-  
+
+    // Masonry-Layout auch aktualisieren, wenn Bilder im Hintergrund nachladen
+    function setupImageResizeHandlers() {
+      window.addEventListener('resize', resizeMasonryItems);
+      
+      const masonryImages = document.querySelectorAll('.masonry-gallery img');
+      masonryImages.forEach((img) => {
+        // Event-Listener für Bilder die noch nicht vollständig geladen sind
+        if (!img.complete) {
+          img.addEventListener('load', () => {
+            resizeMasonryItems();
+            // Manchmal braucht der Browser etwas Zeit für korrekte Berechnungen
+            setTimeout(resizeMasonryItems, 200);
+          });
+        }
+        
+        // Erneute Berechnung bei Änderungen des Bildinhalts
+        img.addEventListener('error', resizeMasonryItems);
+      });
+    }
+
+    function optimizeMasonryLayout() {
+      // Alle Bilder finden
+      const items = document.querySelectorAll('.masonry-item');
+      
+      items.forEach(item => {
+        const img = item.querySelector('img');
+        
+        // Nach dem Laden des Bildes das Seitenverhältnis prüfen
+        if (img.complete) {
+          adjustImageSpan(img, item);
+        } else {
+          img.onload = () => adjustImageSpan(img, item);
+        }
+      });
+      
+      // Nach einer kurzen Verzögerung die Zeilenhöhen neu berechnen
+      setTimeout(resizeMasonryItems, 300);
+    }
+    
+    // Hilfsfunktion zum Anpassen der Spaltenspanne basierend auf dem Seitenverhältnis
+    function adjustImageSpan(img, item) {
+      const aspectRatio = img.naturalWidth / img.naturalHeight;
+      
+      // Querformatbilder bekommen mehr Spalten
+      if (aspectRatio > 1.3) {
+        if (aspectRatio > 2) {
+          // Besonders breite Bilder (Panorama)
+          item.style.gridColumn = 'span 3';
+        } else {
+          // Standard-Querformat
+          item.style.gridColumn = 'span 2';
+        }
+      } else {
+        // Hochformatbilder
+        item.style.gridColumn = 'span 1';
+      }
+    }
+
+    // Neue Masonry-Funktionen für bessere Performance und Layout
+    let masonryReady = false;
+
+    function handleImageLoad(e, index) {
+      const img = e.target;
+      const item = img.parentElement;
+      
+      // Bild-Seitenverhältnis bestimmen
+      const aspectRatio = img.naturalWidth / img.naturalHeight;
+      
+      // Spaltenspanne basierend auf Seitenverhältnis setzen
+      if (aspectRatio > 1.5) {
+        // Sehr breite Bilder
+        item.style.gridColumn = window.innerWidth <= 768 ? 'span 1' : 'span 2';
+      }
+      
+      // Layout neu berechnen, wenn alle Bilder geladen sind
+      setTimeout(() => {
+        if (!masonryReady) {
+          initializeMasonry();
+          masonryReady = true;
+        }
+      }, 100);
+    }
+
+    function initializeMasonry() {
+      // Echtes Masonry-Layout, das immer funktioniert
+      const grid = document.querySelector('.masonry-gallery');
+      if (!grid) return;
+      
+      // Warten, bis alle Bilder geladen sind
+      setTimeout(() => {
+        const items = grid.querySelectorAll('.masonry-item');
+        
+        // Immer genau 3 Spalten auf Desktop, weniger auf mobil
+        const columnCount = window.innerWidth <= 480 ? 2 : 
+                             window.innerWidth <= 768 ? 2 : 3;
+        
+        // Höhen der Spalten initialisieren
+        const columnHeights = Array(columnCount).fill(0);
+        const columnGap = 10; // Gleich wie grid-gap
+        
+        // Breite einer Spalte berechnen (ohne gaps)
+        const gridWidth = grid.clientWidth;
+        const columnWidth = (gridWidth - (columnGap * (columnCount - 1))) / columnCount;
+        
+        // Elemente positionieren
+        items.forEach(item => {
+          // Finde die kürzeste Spalte
+          const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+          
+          // Position berechnen
+          const x = shortestColumnIndex * (columnWidth + columnGap);
+          const y = columnHeights[shortestColumnIndex];
+          
+          // Element positionieren
+          item.style.position = 'absolute';
+          item.style.left = `${x}px`;
+          item.style.top = `${y}px`;
+          item.style.width = `${columnWidth}px`;
+          
+          // Spaltenhöhe aktualisieren
+          columnHeights[shortestColumnIndex] += item.clientHeight + columnGap;
+        });
+        
+        // Containerhöhe anpassen
+        grid.style.height = `${Math.max(...columnHeights)}px`;
+      }, 200);
+    }
+
+    // Beim Fenstergrößenwechsel neu berechnen
+    function handleMasonryResize() {
+      if (masonryReady) {
+        initializeMasonry();
+      }
+    }
+
+    // Ladestatus-Variablen
+    let isLoading = true;
+    let loadProgress = 0;
+    let totalAssets = 0;
+    let loadedAssets = 0;
+    
+    // Füge diese Funktion zur Verfolgung des Ladefortschritts hinzu
+    function trackLoadingProgress() {
+      // Zähle alle Bilder und Videos
+      const images = document.querySelectorAll('img');
+      const videos = document.querySelectorAll('video');
+      totalAssets = images.length + videos.length;
+      
+      // Verfolge den Ladefortschritt für Bilder
+      images.forEach(img => {
+        if (img.complete) {
+          loadedAssets++;
+          updateProgress();
+        } else {
+          img.addEventListener('load', () => {
+            loadedAssets++;
+            updateProgress();
+          });
+          
+          img.addEventListener('error', () => {
+            loadedAssets++;
+            updateProgress();
+          });
+        }
+      });
+      
+      // Verfolge den Ladefortschritt für Videos
+      videos.forEach(video => {
+        video.addEventListener('loadeddata', () => {
+          loadedAssets++;
+          updateProgress();
+        });
+        
+        video.addEventListener('error', () => {
+          loadedAssets++;
+          updateProgress();
+        });
+      });
+      
+      // Falls keine Assets gefunden wurden, verstecke den Loader
+      if (totalAssets === 0) {
+        completeLoading();
+      }
+    }
+    
+    // Aktualisiere den Ladefortschritt
+    function updateProgress() {
+      loadProgress = Math.floor((loadedAssets / totalAssets) * 100);
+      if (loadProgress >= 100) {
+        // Gib etwas zusätzliche Zeit für Rendering
+        setTimeout(completeLoading, 500);
+      }
+    }
+    
+    // Schließe den Ladevorgang ab
+    function completeLoading() {
+      loadProgress = 100;
+      // Sanfte Überblendung mit kleiner Verzögerung
+      setTimeout(() => {
+        isLoading = false;
+      }, 600);
+    }
+    
+    onMount(() => {
+      // Bestehender onMount-Code
+      
+      // Starte den Ladefortschritt-Tracker
+      trackLoadingProgress();
+      
+      // Als Fallback: Nach einer gewissen Zeit auf jeden Fall ausblenden
+      setTimeout(() => {
+        if (isLoading) completeLoading();
+      }, 8000);
+      
+      return () => {
+        // Bestehende Cleanup-Code
+      };
+    });
+
+    function setupOptimizedImageLoading() {
+      // Verbesserte Intersection Observer-Konfiguration
+      const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          
+          const img = entry.target;
+          const dataSrc = img.dataset.src;
+          
+          // Progressive Loading-Strategie
+          if (dataSrc) {
+            // Ersetze kleines Platzhalterbild durch das vollständige Bild
+            const fullImage = new Image();
+            fullImage.onload = () => {
+              img.src = dataSrc;
+              img.classList.add('loaded');
+            };
+            fullImage.src = dataSrc;
+            
+            // Observer entfernen, nachdem das Bild geladen wurde
+            imageObserver.unobserve(img);
+          }
+        });
+      }, {
+        rootMargin: '200px 0px', // 200px Vorladepuffer
+        threshold: 0.01 // Schon bei geringer Sichtbarkeit laden
+      });
+      
+      // Auf alle Bilder anwenden (außer Bilder, die sofort sichtbar sein müssen)
+      document.querySelectorAll('img:not(.priority-image)').forEach(img => {
+        // Kleine Vorschaubilder für alles außer den wichtigsten Bildern verwenden
+        if (!img.classList.contains('priority-image')) {
+          const originalSrc = img.src;
+          const smallSrc = originalSrc.replace(/\.(jpg|jpeg|png)$/, '-small.$1');
+          
+          // Original-URL in data-src speichern
+          img.dataset.src = originalSrc;
+          // Kleines Bild zuerst anzeigen
+          img.src = smallSrc;
+          
+          // Für moderne Browser WebP verwenden, wenn verfügbar
+          if (supportsWebp()) {
+            const webpSrc = originalSrc.replace(/\.(jpg|jpeg|png)$/, '.webp');
+            img.dataset.src = webpSrc;
+          }
+          
+          imageObserver.observe(img);
+        }
+      });
+    }
+
+    // Webp-Unterstützung prüfen
+    function supportsWebp() {
+      const elem = document.createElement('canvas');
+      if (elem.getContext && elem.getContext('2d')) {
+        return elem.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+      }
+      return false;
+    }
+
+    onMount(() => {
+      // Bestehender onMount-Code
+      setupOptimizedImageLoading();
+    });
   </script>
   
   
@@ -193,7 +540,7 @@
         </button>
         </div>
         <div class="heading-container">
-            <h2>What my lens sees</h2>
+            <h2>Seeing the World My Way.</h2>
           </div>
 
 
@@ -232,14 +579,14 @@
         on:click={() => changeVideo(0)}
         aria-label="Street Photography"
       >
-        <span>Taiwan</span>
+        <span>Taipeh</span>
       </button>
       <button 
         class:active={currentVideoIndex === 1}
         on:click={() => changeVideo(1)}
         aria-label="Architecture Photography"
       >
-        <span>Schwäbisch Gmünd</span>
+        <span>London</span>
       </button>
       <button 
         class:active={currentVideoIndex === 2}
@@ -368,6 +715,46 @@
     <source src="/videos/Lang_Final.mp4" type="video/mp4">
     Dein Browser unterstützt keine Videos.
   </video>
+</div>
+
+<!-- Nach dem Company Video Container hinzufügen -->
+<div class="grid-section1">
+  <div class="text-grid1">
+    <FadeInSection>
+      <div>
+        <h4>Feel free to explore</h4>
+        <br>
+        <p class="text-doku">
+          A selection of moments I've captured over the years. Each photograph represents a unique 
+          perspective – from urban landscapes to quiet moments. These images reflect my evolving style 
+          and approach to visual storytelling.
+        </p>
+        <br>
+      </div>
+    </FadeInSection>
+  </div>
+</div>
+
+<!-- Masonry Gallery mit voller Breite -->
+<div class="masonry-container">
+  <div class="masonry-gallery">
+    {#each [
+      'man1.jpeg', 'man2.jpg', 'man3.jpg', 'man4.jpg',
+      'man5.jpg', 'man6.jpg', 'man7.jpg', 'man8.jpg', 'man9.jpg',
+      'man10.jpg', 'man11.jpg', 'man12.jpg', 'man13.jpg',
+      'man15.jpg', 'man16.jpg', 'man17.jpg', 'man18.jpg', 'man19.jpeg',
+      'man20.jpg', 'man21.jpg', 'man22.jpg', 'man23.jpeg', 'man24.jpg', 'man25.jpg', 'man26.jpg'
+    ] as filename}
+      <div class="masonry-item">
+        <img 
+          src={`/mansory/${filename}`} 
+          alt="Photography gallery" 
+          loading="lazy"
+          on:load={handleImageLoad}
+        />
+      </div>
+    {/each}
+  </div>
 </div>
 
   
@@ -1005,4 +1392,49 @@
       margin: 1rem 0 4rem 0;
     }
   }
+
+  /* Masonry Gallery Styles für volle Breite mit 3 Spalten */
+.masonry-container {
+  width: 100%;
+  margin: 2rem 0 7rem 0;
+  grid-column: 1 / span 6; /* Volle Breite im 6er-Grid */
+}
+
+.masonry-gallery {
+  position: relative; /* Wichtig für absolute Positionierung der Kinder */
+  width: 100%;
+}
+
+.masonry-item {
+  position: absolute; /* Wird durch JS gesetzt */
+  overflow: hidden;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.masonry-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.masonry-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .masonry-gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .masonry-gallery {
+    grid-template-columns: 1fr;
+  }
+}
   </style>
