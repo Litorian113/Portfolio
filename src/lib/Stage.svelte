@@ -3,6 +3,7 @@
     import { gsap } from 'gsap'; 
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
+    import { browser } from '$app/environment';
 
     export let cx = 0;
     export let cy = 0;
@@ -129,62 +130,65 @@
 
     onMount(async () => {
       THREE = await import('three');
-      initScene();
-      camera.position.set(cx, cy, cz);
-  initialPositionSet = true;
-  
-  const tolerance = 0.1;
-  const index = cameraStations.findIndex(val => Math.abs(val - cz) < tolerance);
-  if (index >= 0) {
-    currentStation = index;
-    console.log("Set currentStation to", currentStation);
-  } else {
-    currentStation = cameraStations.reduce((prev, curr, i) =>
-      Math.abs(curr - cz) < Math.abs(cameraStations[prev] - cz) ? i : prev, 0);
-    console.log("Fallback: Set currentStation to", currentStation);
-  }
-
-    // Abonniere den $page-Store, um bei URL-Änderungen die Kamera einmalig zu aktualisieren:
-    const unsubscribe = page.subscribe(($page) => {
-    const newCx = Number($page.url.searchParams.get('cx')) || 0;
-    const newCy = Number($page.url.searchParams.get('cy')) || 0;
-    const newCz = Number($page.url.searchParams.get('cz')) || 28.8;
-    // Wenn die URL-Parameter sich geändert haben, setze die Kamera:
-    if (camera && newCz !== cz) {
-      console.log("Updating camera position from URL to", newCx, newCy, newCz);
-      camera.position.set(newCx, newCy, newCz);
-      // Aktualisiere auch currentStation:
-      const idx = cameraStations.findIndex(val => Math.abs(val - newCz) < tolerance);
-      currentStation = idx >= 0 ? idx : cameraStations.reduce((prev, curr, i) =>
-        Math.abs(curr - newCz) < Math.abs(cameraStations[prev] - newCz) ? i : prev, 0);
-    }
-  });
-
-
-      animate();
-
-      // Nur auf der Hauptseite den Wheel-Listener hinzufügen
-      if (isMainPage) {
-        addWheelListener();
-      }
       
-      window.addEventListener('resize', onWindowResize);
-      window.addEventListener('mousemove', onMouseMove, false);
+      // Verzögere die Initialisierung, damit der Browser zuerst die Fenstergröße bestimmen kann
+      setTimeout(() => {
+        initScene();
+        camera.position.set(cx, cy, cz);
+        initialPositionSet = true;
+  
+        const tolerance = 0.1;
+        const index = cameraStations.findIndex(val => Math.abs(val - cz) < tolerance);
+        if (index >= 0) {
+          currentStation = index;
+          console.log("Set currentStation to", currentStation);
+        } else {
+          currentStation = cameraStations.reduce((prev, curr, i) =>
+            Math.abs(curr - cz) < Math.abs(cameraStations[prev] - cz) ? i : prev, 0);
+          console.log("Fallback: Set currentStation to", currentStation);
+        }
 
-      textUpdateInterval = setInterval(() => {
-        currentGreetingIndex = (currentGreetingIndex + 1) % greetings.length;
-        updateCanvasText();
-      }, 2000);
+        // Abonniere den $page-Store, um bei URL-Änderungen die Kamera einmalig zu aktualisieren:
+        const unsubscribe = page.subscribe(($page) => {
+          const newCx = Number($page.url.searchParams.get('cx')) || 0;
+          const newCy = Number($page.url.searchParams.get('cy')) || 0;
+          const newCz = Number($page.url.searchParams.get('cz')) || 28.8;
+          // Wenn die URL-Parameter sich geändert haben, setze die Kamera:
+          if (camera && newCz !== cz) {
+            console.log("Updating camera position from URL to", newCx, newCy, newCz);
+            camera.position.set(newCx, newCy, newCz);
+            // Aktualisiere auch currentStation:
+            const idx = cameraStations.findIndex(val => Math.abs(val - newCz) < tolerance);
+            currentStation = idx >= 0 ? idx : cameraStations.reduce((prev, curr, i) =>
+              Math.abs(curr - newCz) < Math.abs(cameraStations[prev] - newCz) ? i : prev, 0);
+          }
+        });
 
-      // Setze Overflow-Style sofort beim Mounten
-      updateOverflowStyle();
+        animate();
 
-      // Touch-Events für mobile Geräte
-      if (typeof window !== 'undefined') {
-        container.addEventListener('touchstart', handleTouchStart, { passive: false });
-        container.addEventListener('touchmove', handleTouchMove, { passive: false });
-        container.addEventListener('touchend', handleTouchEnd, { passive: false });
-      }
+        // Nur auf der Hauptseite den Wheel-Listener hinzufügen
+        if (isMainPage) {
+          addWheelListener();
+        }
+        
+        window.addEventListener('resize', onWindowResize);
+        window.addEventListener('mousemove', onMouseMove, false);
+
+        textUpdateInterval = setInterval(() => {
+          currentGreetingIndex = (currentGreetingIndex + 1) % greetings.length;
+          updateCanvasText();
+        }, 2000);
+
+        // Setze Overflow-Style sofort beim Mounten
+        updateOverflowStyle();
+
+        // Touch-Events für mobile Geräte
+        if (typeof window !== 'undefined') {
+          container.addEventListener('touchstart', handleTouchStart, { passive: false });
+          container.addEventListener('touchmove', handleTouchMove, { passive: false });
+          container.addEventListener('touchend', handleTouchEnd, { passive: false });
+        }
+      }, 10);
     });
 
     onDestroy(() => {
