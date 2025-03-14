@@ -30,10 +30,10 @@
           <a href="https://www.linkedin.com/in/franzanhaupl/" target="_blank" rel="noopener noreferrer">
             LinkedIn
           </a>
-          <a href="https://github.com/franzos" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/Litorian113" target="_blank" rel="noopener noreferrer">
             GitHub
           </a>
-          <a href="https://www.instagram.com/franzanhaupl/" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.instagram.com/fxma_photography_videography/" target="_blank" rel="noopener noreferrer">
             Instagram
           </a>
         </div>
