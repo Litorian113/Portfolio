@@ -4,6 +4,7 @@
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
+	import Stage from '$lib/Stage.svelte';
   
     $: url = $page.url;
   
@@ -245,6 +246,50 @@
   
   <div class="img-section-4">
     <div class="img-container"><img data-src="/bwegt-doku7.png" alt="Beschreibung des Bildes" src="/placeholder.png" /></div>
+  </div>
+  
+
+  <div class="collaborators-section">
+    <div class="divider-large"></div>
+    
+    <FadeInSection>
+      <div class="collaborators-content">
+        <h4>The People Behind the Project</h4>
+        <div class="collaborators-list">
+          <div class="collaborator">Vivien Cai</div>
+          <div class="collaborator">Rebeka Tot</div>
+          <div class="collaborator">Franz Anhäupl</div>
+        </div>
+        
+        <!-- Neuer Abschnitt für Creative Arsenal -->
+        <div class="creative-arsenal">
+          <h4>Our Creative Arsenal</h4>
+          <p class="arsenal-intro">Crafting this experience with our digital toolbelt:</p>
+          <div class="tools-container">
+            <div class="tool">
+              <span class="tool-name">Figma</span>
+              <span class="tool-role">UI/UX Design</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Miro</span>
+              <span class="tool-role">Collaboration & Ideation</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Stable Diffusion</span>
+              <span class="tool-role">AI Image Generation</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Premiere Pro</span>
+              <span class="tool-role">Video Editing</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">After Effects</span>
+              <span class="tool-role">Motion Design</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </FadeInSection>
   </div>
   
   
@@ -671,4 +716,125 @@
       font-size: 1.2rem;
     }
   }
+
+  .collaborators-section {
+  margin-top: 10rem;
+  margin-bottom: 5rem;
+  width: 100%;
+}
+
+.divider-large {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-bottom: 4rem;
+}
+
+.collaborators-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.collaborators-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.collaborator {
+  color: white;
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 1.3rem;
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .collaborators-section {
+    margin-top: 6rem;
+    margin-bottom: 3rem;
+  }
+  
+  .collaborators-list {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.creative-arsenal {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.arsenal-intro {
+  grid-column: span 4 / span 4;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.creative-arsenal h4 {
+  grid-column: span 4 / span 4;
+}
+
+.tools-container {
+  grid-column: span 4 / span 4;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.tool {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.tool:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
+}
+
+.tool-name {
+  color: #FFCD06;
+  font-family: 'Franz-Plex', mono;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.tool-role {
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 0.9rem;
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .creative-arsenal {
+    margin-top: 3rem;
+  }
+  
+  .tools-container {
+    gap: 1rem;
+  }
+  
+  .tool {
+    padding: 0.8rem 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tools-container {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+}
 </style>
