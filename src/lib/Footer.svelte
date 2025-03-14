@@ -5,36 +5,38 @@
 
 <footer>
   <div class="footer-container">
-    <!-- Linke Spalte: Copyright -->
-    <div class="footer-section">
-      <div class="section-label">Copyright</div>
-      <div class="copyright">
-        © {getCurrentYear()} Franz Anhäupl
+    <div class="footer-content">
+      <!-- Linke Spalte: Copyright -->
+      <div class="footer-section">
+        <div class="section-label">Copyright</div>
+        <div class="copyright">
+          © {getCurrentYear()} Franz Anhäupl
+        </div>
       </div>
-    </div>
-    
-    <!-- Mittlere Spalte: Links -->
-    <div class="footer-section">
-      <div class="section-label">Legal</div>
-      <div class="legal-links">
-        <a href="/imprint">Imprint</a>
-        <a href="/privacy-policy">Privacy Policy</a>
+      
+      <!-- Mittlere Spalte: Links -->
+      <div class="footer-section">
+        <div class="section-label">Legal</div>
+        <div class="legal-links">
+          <a href="/imprint">Imprint</a>
+          <a href="/privacy-policy">Privacy Policy</a>
+        </div>
       </div>
-    </div>
-    
-    <!-- Rechte Spalte: Social Media als Text -->
-    <div class="footer-section">
-      <div class="section-label">Connect</div>
-      <div class="social-links">
-        <a href="https://www.linkedin.com/in/franzanhaupl/" target="_blank" rel="noopener noreferrer">
-          LinkedIn
-        </a>
-        <a href="https://github.com/franzos" target="_blank" rel="noopener noreferrer">
-          GitHub
-        </a>
-        <a href="https://www.instagram.com/franzanhaupl/" target="_blank" rel="noopener noreferrer">
-          Instagram
-        </a>
+      
+      <!-- Rechte Spalte: Social Media als Text -->
+      <div class="footer-section">
+        <div class="section-label">Connect</div>
+        <div class="social-links">
+          <a href="https://www.linkedin.com/in/franzanhaupl/" target="_blank" rel="noopener noreferrer">
+            LinkedIn
+          </a>
+          <a href="https://github.com/franzos" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+          <a href="https://www.instagram.com/franzanhaupl/" target="_blank" rel="noopener noreferrer">
+            Instagram
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -50,18 +52,35 @@
   }
 
   .footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start; /* Ändere zu flex-start für korrekte vertikale Ausrichtung */
+    width: 100%; /* Volle Breite */
+  }
+
+  .footer-content {
+    max-width: 100%; /* Anpassung an Seitenlayout */
+    /* margin: 0 auto; */
+    /* padding: 0 2rem; */
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 6-spaltiges Raster */
+    gap: 2rem;
+  }
+
+  /* Positionierung der Bereiche im 6-spaltigen Grid */
+  .footer-section:nth-child(1) {
+    grid-column: 1 / 3; /* Linker Bereich: Spalte 1-2 */
+  }
+
+  .footer-section:nth-child(2) {
+    grid-column: 3 / 5; /* Mittlerer Bereich: Spalte 3-4 */
+  }
+
+  .footer-section:nth-child(3) {
+    grid-column: 5 / 7; /* Rechter Bereich: Spalte 5-6 */
   }
 
   .footer-section {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Geändert auf linksbündig */
+    align-items: flex-start;
   }
 
   /* Labels über jeder Sektion */
@@ -119,18 +138,14 @@
   /* Mobile Anpassungen */
   @media (max-width: 768px) {
     .footer-container {
-      flex-direction: column;
+      grid-template-columns: 1fr; /* Eine Spalte auf mobilen Geräten */
       gap: 2rem;
     }
 
-    .footer-section {
-      width: 100%;
+    .footer-section:nth-child(1),
+    .footer-section:nth-child(2),
+    .footer-section:nth-child(3) {
+      grid-column: 1; /* Alle Elemente in derselben Spalte */
     }
-    
-    /* Diese Zeilen können entfernt werden, da die Links bereits horizontal sind */
-    /* .social-links {
-      flex-direction: row;
-      gap: 1.5rem;
-    } */
   }
 </style>
