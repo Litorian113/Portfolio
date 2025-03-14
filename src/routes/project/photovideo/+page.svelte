@@ -4,6 +4,7 @@
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
+	import Footer from '$lib/Footer.svelte';
   
     $: url = $page.url;
   
@@ -759,7 +760,7 @@
 
   
 
-
+<Footer />
 
   
 
