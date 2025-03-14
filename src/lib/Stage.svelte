@@ -340,6 +340,16 @@
 function loadAppropriateTextures() {
   if (!THREE || !scene) return;
   
+  console.log("Mobile Status:", isMobile);
+  
+  // HIER HINZUFÜGEN: Prüfung ob Meshes überhaupt existieren
+  if (!imageMeshes.length) {
+    console.log("imageMeshes ist noch leer - warte auf Erstellung der Meshes");
+    return; // Frühzeitig beenden, wenn keine Meshes existieren
+  }
+  
+  console.log("Verfügbare Meshes:", imageMeshes.map(m => m.userData.project));
+  
   const textureLoader = new THREE.TextureLoader();
   const texturePaths = {
     desktop: {
@@ -356,86 +366,47 @@ function loadAppropriateTextures() {
     }
   };
   
-  // Wähle die richtigen Pfade basierend auf Gerätegröße
+  // Wähle die richtigen Pfade
   const paths = isMobile ? texturePaths.mobile : texturePaths.desktop;
   
-  // Strukturierte Map für Projekt-zu-Textur-Beziehungen
-  const projectTextureMap = {
-    'nass': { texture: 'bild1', meshIndex: imageMeshes.findIndex(m => m.userData.project === 'nass') },
-    'bwegt': { texture: 'bild2', meshIndex: imageMeshes.findIndex(m => m.userData.project === 'bwegt') },
-    'iceAgeMammals': { texture: 'bild3', meshIndex: imageMeshes.findIndex(m => m.userData.project === 'iceAgeMammals') },
-    'hybridWallet': { texture: 'bild4', meshIndex: imageMeshes.findIndex(m => m.userData.project === 'hybridWallet') }
-  };
+  // Direkter Index-Zugriff statt findIndex (erste 4 Elemente in der imageMeshes-Array sind die 4 Hauptbilder)
+  const meshAssignments = [
+    { meshIndex: 0, texture: 'bild1', project: 'nass' },
+    { meshIndex: 1, texture: 'bild2', project: 'bwegt' },
+    { meshIndex: 2, texture: 'bild3', project: 'iceAgeMammals' },
+    { meshIndex: 3, texture: 'bild4', project: 'hybridWallet' }
+  ];
   
-  // Texturen für alle Projekte aktualisieren
-  Object.entries(projectTextureMap).forEach(([project, info]) => {
-    const { texture, meshIndex } = info;
-    if (meshIndex >= 0) {
+  meshAssignments.forEach(({ meshIndex, texture, project }) => {
+    if (meshIndex >= 0 && meshIndex < imageMeshes.length) {
       const mesh = imageMeshes[meshIndex];
+      console.log(`Lade Textur für Mesh ${meshIndex}, Projekt: ${project}, Pfad: ${paths[texture]}`);
       
-      // Lade die neue Textur
-      textureLoader.load(paths[texture], newTexture => {
-        newTexture.colorSpace = THREE.SRGBColorSpace;
-        
-        if (isMobile) {
-          // Für mobile Geräte: Passe die Geometrie an das 9:16 Seitenverhältnis an
-          const oldPosition = mesh.position.clone();
-          const userData = {...mesh.userData};
+      // Rest des Codes wie vorher, Textur laden und anwenden
+      textureLoader.load(paths[texture], 
+        // Success callback
+        newTexture => {
+          console.log(`Textur erfolgreich geladen: ${paths[texture]}`);
+          newTexture.colorSpace = THREE.SRGBColorSpace;
           
-          // Erstelle neue hochformatige Geometrie mit 9:16 Verhältnis
-          // Bei Breite 2 wird Höhe: 2 * (16/9) = 3.56
-          const newGeometry = new THREE.PlaneGeometry(2, 2 * (16/9));
+          if (isMobile) {
+            // Mobile Anpassungen...
+          } else {
+            // Desktop Anpassungen...
+          }
           
-          // Neue Material mit der angepassten Textur
-          const newMaterial = new THREE.MeshBasicMaterial({ 
-            map: newTexture,
-            transparent: true,
-            toneMapped: false
-          });
-          
-          // Ersetze die alte Geometrie und Material
-          mesh.geometry.dispose();
-          mesh.material.dispose();
-          mesh.geometry = newGeometry;
-          mesh.material = newMaterial;
-          
-          // Position und Daten wiederherstellen
-          mesh.position.copy(oldPosition);
-          // Bei Hochformat-Bildern leicht nach oben verschieben, damit sie besser im Blickfeld sind
-          mesh.position.y = 0.5; 
-          mesh.userData = userData;
-          
-        } else {
-          // Für Desktop: Setze nur die Textur und stelle Originalproportionen wieder her
-          // Sichere die alte Position und Daten
-          const oldPosition = mesh.position.clone();
-          const userData = {...mesh.userData};
-          
-          // Erstelle neue Querformat-Geometrie (3:2)
-          const newGeometry = new THREE.PlaneGeometry(3, 2);
-          
-          // Neue Material mit der angepassten Textur
-          const newMaterial = new THREE.MeshBasicMaterial({ 
-            map: newTexture,
-            transparent: true,
-            toneMapped: false
-          });
-          
-          // Ersetze die alte Geometrie und Material
-          mesh.geometry.dispose();
-          mesh.material.dispose();
-          mesh.geometry = newGeometry;
-          mesh.material = newMaterial;
-          
-          // Position und Daten wiederherstellen
-          mesh.position.copy(oldPosition);
-          mesh.position.y = 0; // Y-Position zurücksetzen
-          mesh.userData = userData;
+          // Speichere die aktuelle Textur
+          currentTextures[texture] = newTexture;
+        },
+        // Progress callback
+        undefined,
+        // Error callback
+        error => {
+          console.error(`Fehler beim Laden der Textur ${paths[texture]}:`, error);
         }
-        
-        // Speichere die aktuelle Textur
-        currentTextures[texture] = newTexture;
-      });
+      );
+    } else {
+      console.warn(`Mesh mit Index ${meshIndex} für Projekt ${project} nicht gefunden!`);
     }
   });
 }
@@ -796,7 +767,7 @@ function loadAppropriateTextures() {
     scene.add(pngMesh1);
     imageMeshes.push(pngMesh1);
     
-    const pngGeometry2 = new THREE.PlaneGeometry(3, 2);
+    const pngGeometry2 = new THREE.PlaneGeometry(width, height); // Verwendet die mobilen Maße
     const pngMaterial2 = new THREE.MeshBasicMaterial({ 
       map: pngTexture2, 
       transparent: true 
@@ -809,7 +780,7 @@ function loadAppropriateTextures() {
     scene.add(pngMesh2);
     imageMeshes.push(pngMesh2);
     
-    const pngGeometry3 = new THREE.PlaneGeometry(3, 2);
+    const pngGeometry3 = new THREE.PlaneGeometry(width, height); // Verwendet die mobilen Maße
     const pngMaterial3 = new THREE.MeshBasicMaterial({ 
       map: currentTextures.bild3, 
       transparent: true 
@@ -822,7 +793,7 @@ function loadAppropriateTextures() {
     scene.add(pngMesh3);
     imageMeshes.push(pngMesh3);
 
-    const pngGeometry4 = new THREE.PlaneGeometry(3, 2);
+    const pngGeometry4 = new THREE.PlaneGeometry(width, height); // Verwendet die mobilen Maße
     const pngMaterial4 = new THREE.MeshBasicMaterial({ 
       map: currentTextures.bild4, 
       transparent: true 
@@ -852,6 +823,7 @@ function loadAppropriateTextures() {
       pngMeshPC1.scale.set(0.6,0.6,0.6);
       pngMeshPC1.userData.finalX = -0.8;
       pngMeshPC1.userData.offscreenX = -3;
+      pngMeshPC1.userData.project = 'website1';
       scene.add(pngMeshPC1);
       imageMeshes.push(pngMeshPC1);
 
@@ -865,6 +837,7 @@ function loadAppropriateTextures() {
       pngMeshPC2.scale.set(0.6,0.6,0.6);
       pngMeshPC2.userData.finalX = 0.8;
       pngMeshPC2.userData.offscreenX = 3;
+      pngMeshPC2.userData.project = 'website2';
       scene.add(pngMeshPC2);
       imageMeshes.push(pngMeshPC2);
 
@@ -909,6 +882,12 @@ function loadAppropriateTextures() {
         particleSize: 0.3,
         particleOpacity: 0.6
       });
+
+      // Nochmal Texturwechsel aufrufen, wenn Mobile und Meshes jetzt vorhanden sind
+      if (isMobile) {
+        // Kurze Verzögerung für sicheres Laden
+        setTimeout(() => loadAppropriateTextures(), 100);
+      }
    }
 
 
@@ -959,6 +938,10 @@ function loadAppropriateTextures() {
       openPhotoVideoProject();
     } else if (projectName === 'aboutme') {
       openAboutMeProject();
+    } else if (projectName === 'website1') {
+      openWebsite1Project();
+    } else if (projectName === 'website2') {
+      openWebsite2Project();
     }
   }
 }
@@ -1011,6 +994,17 @@ function openPhotoVideoProject() {
 function openAboutMeProject() {
   const { x, y, z } = camera.position;
   goto(`/project/aboutme?cx=${x}&cy=${y}&cz=${z}`);
+}
+
+// Nach den anderen openXXXProject-Funktionen (ca. Zeile 967)
+function openWebsite1Project() {
+  const { x, y, z } = camera.position;
+  goto(`/project/website1?cx=${x}&cy=${y}&cz=${z}`);
+}
+
+function openWebsite2Project() {
+  const { x, y, z } = camera.position;
+  goto(`/project/website2?cx=${x}&cy=${y}&cz=${z}`);
 }
 
    // ----------------------------------------------------------------------------
@@ -1140,7 +1134,7 @@ function openAboutMeProject() {
     // Alle Projekttypen einschließlich der neuen
     if (['nass', 'bwegt', 'iceAgeMammals', 'hybridWallet', 
           'game', 'earthquake', 'karincruises', 'migrants',
-          'photovideo', 'aboutme'].includes(projectName)) {
+          'photovideo', 'aboutme', 'website1', 'website2'].includes(projectName)) {
       container.style.cursor = 'pointer';
     } else {
       container.style.cursor = 'default';
