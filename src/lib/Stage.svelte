@@ -1,4 +1,7 @@
 <script>
+    // Füge den Import für IntroText hinzu
+    import { IntroText } from '$lib/meshes/IntroText.js';
+    // Bestehende Imports...
     import { onMount, onDestroy } from 'svelte';
     import { gsap } from 'gsap'; 
     import { goto } from '$app/navigation';
@@ -7,6 +10,9 @@
     import { ProjectMeshFactory } from '$lib/meshes/ProjectMeshFactory.js';
     import { CoverGroupFactory } from '$lib/meshes/CoverGroupFactory.js';
     import { ParticleSystem } from '$lib/effects/ParticleSystem.js';
+    import { Typewriter } from '$lib/meshes/Typewriter.js';
+    import { ImageUpdater } from '$lib/meshes/ImageUpdater.js';
+    import { CanvasClickHandler } from '$lib/interactions/HandleCanvasClick.js';
 
     export let cx = 0;
     export let cy = 0;
@@ -89,19 +95,12 @@
     const cameraEndZ = -40;
 
     let THREE;
-    let canvas, context, textTexture;
-    let textUpdateInterval;
-    const greetings = ["Hello.", "你好.", "Bonjour.", "Hola.", "안녕하세요.", "Hallo."];
-    let currentGreetingIndex = 0;
 
     // Array für alle "nicht-Cover" Bilder (z.B. Earthquake, Nass1, Bwegt1 usw.)
     let imageMeshes = [];
 
     // Für die Cover nutzen wir Gruppen (jede Gruppe enthält zwei Meshes)
     let coverGroups = [];
-
-    // Raycaster und Maus-Vektor für Hover
-    let raycaster, mouse;
 
     // Scroll-Logik
     let isTransitioning = false;
@@ -117,6 +116,15 @@
 
     // Partikelsystem-Variable hinzufügen
     let particleSystem;
+
+    // Typewriter-Instanz erstellen
+    let typewriter;
+
+    // Neue Variable für IntroText-Instanz
+    let introText;
+
+    // CanvasClickHandler-Instanz
+    let clickHandler;
 
     // Funktion zum Hinzufügen des Wheel-Event-Listeners
     function addWheelListener() {
@@ -143,6 +151,11 @@
       
       // Verzögere die Initialisierung, damit der Browser zuerst die Fenstergröße bestimmen kann
       setTimeout(() => {
+        // Prüfe explizit die Größe vor der Initialisierung
+        checkDeviceSize();
+        console.log("Stage: isMobile vor IntroText-Erstellung:", isMobile);
+        
+        // Rest der Initialisierung
         initScene();
         camera.position.set(cx, cy, cz);
         initialPositionSet = true;
@@ -174,6 +187,31 @@
           }
         });
 
+        // Typewriter und IntroText initialisieren
+        typewriter = new Typewriter();
+        introText = new IntroText(THREE);
+        
+        // Explizit den korrekten Status setzen und erzwingen
+        console.log("Stage: isMobile wird an IntroText übergeben:", isMobile);
+        introText.isMobile = isMobile; // Direkte Zuweisung
+        introText.createMesh(scene);
+        introText.startUpdateInterval(2000);
+        introText.setMobileMode(isMobile); // Sollte die Methode aufrufen
+        
+        // Direkt nach der Erstellung aktualisieren
+        introText.updateCanvasText();
+
+        // CanvasClickHandler initialisieren (nach initScene)
+        clickHandler = new CanvasClickHandler(THREE, {
+          camera: camera,
+          navigateToProject: (projectName, cameraPosition) => {
+            // Diese Funktion leitet zu den entsprechenden Projekten weiter
+            const { x, y, z } = cameraPosition;
+            goto(`/project/${projectName}?cx=${x}&cy=${y}&cz=${z}`);
+          },
+          gsap: gsap // GSAP-Instanz übergeben
+        });
+
         animate();
 
         // Nur auf der Hauptseite den Wheel-Listener hinzufügen
@@ -184,11 +222,6 @@
         window.addEventListener('resize', onWindowResize);
         window.addEventListener('mousemove', onMouseMove, false);
 
-        textUpdateInterval = setInterval(() => {
-          currentGreetingIndex = (currentGreetingIndex + 1) % greetings.length;
-          updateCanvasText();
-        }, 2000);
-
         // Setze Overflow-Style sofort beim Mounten
         updateOverflowStyle();
 
@@ -198,6 +231,7 @@
           container.addEventListener('touchmove', handleTouchMove, { passive: false });
           container.addEventListener('touchend', handleTouchEnd, { passive: false });
         }
+
       }, 10);
     });
 
@@ -238,7 +272,11 @@
           particleSystem.dispose();
         }
       }
-      clearInterval(textUpdateInterval);
+
+      // IntroText bereinigen
+      if (introText) {
+        introText.dispose();
+      }
 
       // Beim Zerstören der Komponente, stelle sicher, dass Overflow wieder aktiviert wird
       if (typeof document !== 'undefined') {
@@ -246,22 +284,6 @@
         document.body.style.overflow = 'auto';
       }
     });
-
-    // Zunächst fügen wir neue Variablen für den Typewriter-Effekt hinzu
-    // Diese in den Script-Teil einfügen
-    let typingInProgress = false;
-    let subtitleProgress = [0, 0, 0, 0, 0]; // Fortschritt des Typewriter-Effekts für alle 5 Stationen
-    let titleOpacities = [0.4, 0.4, 0.4, 0.4, 0.4]; // Standard-Opacity für Überschriften
-    let subtitleTexts = [
-      ['A selection of interaction design projects', 'created during my studies at HfG Schwäbisch Gmünd.'],
-      ['A collection of coded projects from my', 'studies and personal explorations.'],
-      ['Freelance web projects developed for', 'small and medium-sized businesses.'],
-      ['Visual work from years of experience as a', 'professional photographer, spanning commercial', 'and personal projects.'],
-      ['A glimpse into who I am and', 'what drives my creative journey.']
-    ];
-
-    // Füge diese Variable zu den bestehenden Variablen für den Typewriter-Effekt hinzu
-    let subtitleOpacities = [1, 1, 1, 1, 1]; // Opacity für jeden Untertext
 
     // 1. Diese Variablen müssen außerhalb von initScene() deklariert werden:
     let context1, context2, context3, context4, context5;
@@ -330,12 +352,26 @@
       const wasAlreadyMobile = isMobile;
       isMobile = window.innerWidth <= 768;
       
-      // Wenn sich der Status geändert hat, lade die Bilder neu
+      // Wenn sich der Status geändert hat, führe Anpassungen durch
       if (wasAlreadyMobile !== isMobile && scene) {
+        console.log(`Gerätestatus geändert: ${wasAlreadyMobile ? 'Desktop' : 'Mobile'} -> ${isMobile ? 'Mobile' : 'Desktop'}`);
+        
+        // Texturen neu laden
         loadAppropriateTextures();
+        
+        // TextMeshes anpassen
+        adjustTextMeshSizes();
+        
+        // Canvas-Texturen aktualisieren
+        recreateCanvasTextures();
+        
+        // Neuen mobilen Status an IntroText übergeben
+        if (introText) {
+          introText.setMobileMode(isMobile);
+        }
       }
     }
-    
+
     // Verbesserte Version der loadAppropriateTextures-Funktion:
 function loadAppropriateTextures() {
   if (!THREE || !scene) return;
@@ -428,7 +464,11 @@ function loadAppropriateTextures() {
     //   camera.position.set(0, 0, cameraStartZ);
 
       // Renderer
-      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer = new THREE.WebGLRenderer({ 
+        antialias: true, 
+        alpha: true,
+        preserveDrawingBuffer: true
+      });
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
       container.appendChild(renderer.domElement);
@@ -437,10 +477,6 @@ function loadAppropriateTextures() {
       renderer.toneMapping = THREE.NoToneMapping;
       renderer.toneMappingExposure = 1.0;
       renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-      // Raycaster & Maus-Vektor
-      raycaster = new THREE.Raycaster();
-      mouse = new THREE.Vector2();
 
       // Für mobile Geräte: Reduziere die Render-Qualität für bessere Performance
       if (isMobileDevice()) {
@@ -477,39 +513,10 @@ function loadAppropriateTextures() {
       backWall.position.set(0, 0, -40);
       scene.add(backWall);
 
-      // GridHelper links
-    //   const gridHelper = new THREE.GridHelper(20, 5, 0x707070, 0x707070);
-    //   gridHelper.rotation.z = -Math.PI / 2;
-    //   gridHelper.position.set(-20, 0, -30);
-    //   scene.add(gridHelper);
-
-      // GridHelper rechts
-    //   const gridHelper2 = new THREE.GridHelper(20, 20, 0x707070, 0x707070);
-    //   gridHelper2.rotation.z = -Math.PI / 2;
-    //   gridHelper2.position.set(20, 0, 0);
-    //   scene.add(gridHelper2);
 
       // Factories initialisieren
       projectMeshFactory = new ProjectMeshFactory(scene, isMobile);
       coverGroupFactory = new CoverGroupFactory(scene, isMobile);
-
-      // --------------------------------------------------------
-      // 1) ERSTER TEXT (Canvas: "Hello., I'm Franz.")
-      canvas = document.createElement('canvas');
-      const ratio = window.devicePixelRatio || 1;
-      canvas.width = 1024 * ratio;
-      canvas.height = 512 * ratio;
-      context = canvas.getContext('2d');
-      context.scale(ratio, ratio);
-
-      textTexture = new THREE.CanvasTexture(canvas);
-      updateCanvasText();
-
-      const textMaterial = new THREE.MeshBasicMaterial({ map: textTexture, transparent: true });
-      const textGeometry = new THREE.PlaneGeometry(4, 2);
-      textMesh = new THREE.Mesh(textGeometry, textMaterial);
-      textMesh.position.set(0, 0, 26.5);
-      scene.add(textMesh);
 
 
             // --------------------------------------------------------
@@ -532,6 +539,11 @@ function loadAppropriateTextures() {
       textMesh1.position.set(0, 0.6, 18.5);
       scene.add(textMesh1);
 
+      // Bessere Filter-Einstellungen für Text
+      textTexture1.magFilter = THREE.NearestFilter; // Schärferes Rendering bei Vergrößerung
+      textTexture1.minFilter = THREE.LinearFilter; // Glättung bei Verkleinerung
+      textTexture1.anisotropy = renderer.capabilities.getMaxAnisotropy(); // Maximale Anisotropie
+
       // --------------------------------------------------------
       // 2) Code und Data
       const canvas2 = document.createElement('canvas');
@@ -552,6 +564,11 @@ function loadAppropriateTextures() {
       textMesh2.position.set(0, 0.6, -0.5);
       scene.add(textMesh2);
 
+            // Bessere Filter-Einstellungen für Text
+      textTexture2.magFilter = THREE.NearestFilter; // Schärferes Rendering bei Vergrößerung
+      textTexture2.minFilter = THREE.LinearFilter; // Glättung bei Verkleinerung
+      textTexture2.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
       // --------------------------------------------------------
       // 3) Website projects
       const canvas3 = document.createElement('canvas');
@@ -571,6 +588,11 @@ function loadAppropriateTextures() {
       const textMesh3 = new THREE.Mesh(textGeometry3, textMaterial3);
       textMesh3.position.set(0, 0.6, -9);
       scene.add(textMesh3);
+
+            // Bessere Filter-Einstellungen für Text
+            textTexture3.magFilter = THREE.NearestFilter; // Schärferes Rendering bei Vergrößerung
+      textTexture3.minFilter = THREE.LinearFilter; // Glättung bei Verkleinerung
+      textTexture3.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
 
 
@@ -599,6 +621,11 @@ function loadAppropriateTextures() {
       textMesh4.position.set(0, 0.6, -18);
       scene.add(textMesh4);
 
+            // Bessere Filter-Einstellungen für Text
+            textTexture4.magFilter = THREE.NearestFilter; // Schärferes Rendering bei Vergrößerung
+      textTexture4.minFilter = THREE.LinearFilter; // Glättung bei Verkleinerung
+      textTexture4.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
 
 
 
@@ -626,6 +653,11 @@ function loadAppropriateTextures() {
       const textMesh5 = new THREE.Mesh(textGeometry5, textMaterial5);
       textMesh5.position.set(0, 0.6, -28.5);
       scene.add(textMesh5);
+
+            // Bessere Filter-Einstellungen für Text
+            textTexture5.magFilter = THREE.NearestFilter; // Schärferes Rendering bei Vergrößerung
+      textTexture5.minFilter = THREE.LinearFilter; // Glättung bei Verkleinerung
+      textTexture5.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
 
       
@@ -888,185 +920,169 @@ function loadAppropriateTextures() {
         // Kurze Verzögerung für sicheres Laden
         setTimeout(() => loadAppropriateTextures(), 100);
       }
+
+      // TextMesh-Größen basierend auf Gerätegröße anpassen
+      adjustTextMeshSizes();
    }
 
-
-
-
-
-
-
-
-
+   // Die alte handleCanvasClick-Funktion kann durch diese ersetzt werden:
    function handleCanvasClick(event) {
-  // Normalisierte Mauskoordinaten berechnen
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-  raycaster.setFromCamera(mouse, camera);
-
-  // Überprüfe sowohl Cover-Gruppen als auch die imageMeshes (für einzelne Bilder)
-  const clickableObjects = [
-    ...coverGroups.map(group => group.userData.defaultMesh),
-    ...imageMeshes
-  ];
-  const intersects = raycaster.intersectObjects(clickableObjects, false);
-
-  if (intersects.length > 0) {
-    const clickedObj = intersects[0].object;
-    const projectName = clickedObj.userData.parentGroup ? 
-                        clickedObj.userData.parentGroup.userData.project : 
-                        clickedObj.userData.project;
-    
-    // Aktualisierte Projekt-Zuordnungen mit den zwei neuen Projekten
-    if (projectName === 'nass') {
-      openNassProject();
-    } else if (projectName === 'bwegt') {
-      openBwegtProject();
-    } else if (projectName === 'game') {
-      openGameProject();
-    } else if (projectName === 'earthquake') {
-      openEarthquakeProject();
-    } else if (projectName === 'karincruises') {
-      openKarinCruisesProject();
-    } else if (projectName === 'migrants') {
-      openMigrantsProject();
-    } else if (projectName === 'iceAgeMammals') {
-      openIceAgeMammalsProject();
-    } else if (projectName === 'hybridWallet') {
-      openHybridWalletProject();
-    } else if (projectName === 'photovideo') {
-      openPhotoVideoProject();
-    } else if (projectName === 'aboutme') {
-      openAboutMeProject();
-    } else if (projectName === 'website1') {
-      openWebsite1Project();
-    } else if (projectName === 'website2') {
-      openWebsite2Project();
+      if (clickHandler) {
+        clickHandler.handleClick(event, coverGroups, imageMeshes);
+      }
     }
+
+   // Optional: Auch die onMouseMove-Funktion könnte aktualisiert werden:
+   function onMouseMove(event) {
+      if (clickHandler) {
+        clickHandler.handleHover(event, coverGroups, imageMeshes, container);
+      }
+    }
+
+   // ----------------------------------------------------------------------------
+   // Canvas-Update-Funktionen für die einzelnen Abschnitte
+   // ----------------------------------------------------------------------------
+   function updateCanvas1Text() {
+  // Wenn typewriter existiert, nutze dessen Methode, sonst direkte Implementierung
+  if (typewriter && context1 && textTexture1) {
+    typewriter.updateCanvas1Text(context1, textTexture1);
+  } else if (context1 && textTexture1) {
+    // Einfache Titel-Darstellung ohne Typewriter-Effekt für die Initialisierung
+    context1.clearRect(0, 0, 1024, 512);
+    context1.fillStyle = "rgba(0,0,0,0)";
+    context1.fillRect(0, 0, 1024, 512);
+    context1.textAlign = "left";
+    context1.textBaseline = "middle";
+    
+    context1.shadowColor = "rgba(0, 0, 0, 0.5)";
+    context1.shadowBlur = 5;
+    context1.shadowOffsetX = 1;
+    context1.shadowOffsetY = 1;
+    
+    const titleFontSize = getResponsiveSize(42);
+    context1.fillStyle = "rgba(255,255,255,0.4)";
+    context1.font = `${titleFontSize}px 'IBM Plex Mono'`;
+    
+    const centerX = 1024 / 4.5;
+    const centerY = 512 / 1.25;
+    context1.fillText("Design Work", centerX, centerY - 50);
+    
+    context1.shadowColor = "transparent";
+    textTexture1.needsUpdate = true;
   }
 }
 
-function openBwegtProject() {
-  const { x, y, z } = camera.position;
-  goto(`/project/bwegt?cx=${x}&cy=${y}&cz=${z}`);
+function updateCanvas2Text() {
+  if (typewriter && context2 && textTexture2) {
+    typewriter.updateCanvas2Text(context2, textTexture2);
+  } else if (context2 && textTexture2) {
+    context2.clearRect(0, 0, 1024, 512);
+    context2.fillStyle = "rgba(0,0,0,0)";
+    context2.fillRect(0, 0, 1024, 512);
+    context2.textAlign = "left";
+    context2.textBaseline = "middle";
+    
+    context2.shadowColor = "rgba(0, 0, 0, 0.5)";
+    context2.shadowBlur = 5;
+    context2.shadowOffsetX = 1;
+    context2.shadowOffsetY = 1;
+    
+    const titleFontSize = getResponsiveSize(42);
+    context2.fillStyle = "rgba(255,255,255,0.4)";
+    context2.font = `${titleFontSize}px 'IBM Plex Mono'`;
+    
+    const centerX = 1024 / 4.5;
+    const centerY = 512 / 1.25;
+    context2.fillText("Code & Data", centerX, centerY - 50);
+    
+    context2.shadowColor = "transparent";
+    textTexture2.needsUpdate = true;
+  }
 }
 
-function openNassProject() {
-  const { x, y, z } = camera.position;
-  goto(`/project/nass?cx=${x}&cy=${y}&cz=${z}`);
+function updateCanvas3Text() {
+  if (typewriter && context3 && textTexture3) {
+    typewriter.updateCanvas3Text(context3, textTexture3);
+  } else if (context3 && textTexture3) {
+    context3.clearRect(0, 0, 1024, 512);
+    context3.fillStyle = "rgba(0,0,0,0)";
+    context3.fillRect(0, 0, 1024, 512);
+    context3.textAlign = "left";
+    context3.textBaseline = "middle";
+    
+    context3.shadowColor = "rgba(0, 0, 0, 0.5)";
+    context3.shadowBlur = 5;
+    context3.shadowOffsetX = 1;
+    context3.shadowOffsetY = 1;
+    
+    const titleFontSize = getResponsiveSize(42);
+    context3.fillStyle = "rgba(255,255,255,0.4)";
+    context3.font = `${titleFontSize}px 'IBM Plex Mono'`;
+    
+    const centerX = 1024 / 4.5;
+    const centerY = 512 / 1.25;
+    context3.fillText("Website Projects", centerX, centerY - 50);
+    
+    context3.shadowColor = "transparent";
+    textTexture3.needsUpdate = true;
+  }
 }
 
-function openIceAgeMammalsProject() {
-  const { x, y, z } = camera.position;
-  goto(`/project/iceAgeMammals?cx=${x}&cy=${y}&cz=${z}`);
+function updateCanvas4Text() {
+  if (typewriter && context4 && textTexture4) {
+    typewriter.updateCanvas4Text(context4, textTexture4);
+  } else if (context4 && textTexture4) {
+    context4.clearRect(0, 0, 1024, 512);
+    context4.fillStyle = "rgba(0,0,0,0)";
+    context4.fillRect(0, 0, 1024, 512);
+    context4.textAlign = "left";
+    context4.textBaseline = "middle";
+    
+    context4.shadowColor = "rgba(0, 0, 0, 0.5)";
+    context4.shadowBlur = 5;
+    context4.shadowOffsetX = 1;
+    context4.shadowOffsetY = 1;
+    
+    const titleFontSize = getResponsiveSize(42);
+    context4.fillStyle = "rgba(255,255,255,0.4)";
+    context4.font = `${titleFontSize}px 'IBM Plex Mono'`;
+    
+    const centerX = 1024 / 4.5;
+    const centerY = 512 / 1.25;
+    context4.fillText("Photo & Video", centerX, centerY - 50);
+    
+    context4.shadowColor = "transparent";
+    textTexture4.needsUpdate = true;
+  }
 }
 
-function openHybridWalletProject() {
-  const { x, y, z } = camera.position;
-  goto(`/project/hybridWallet?cx=${x}&cy=${y}&cz=${z}`);
+function updateCanvas5Text() {
+  if (typewriter && context5 && textTexture5) {
+    typewriter.updateCanvas5Text(context5, textTexture5);
+  } else if (context5 && textTexture5) {
+    context5.clearRect(0, 0, 1024, 512);
+    context5.fillStyle = "rgba(0,0,0,0)";
+    context5.fillRect(0, 0, 1024, 512);
+    context5.textAlign = "left";
+    context5.textBaseline = "middle";
+    
+    context5.shadowColor = "rgba(0, 0, 0, 0.5)";
+    context5.shadowBlur = 5;
+    context5.shadowOffsetX = 1;
+    context5.shadowOffsetY = 1;
+    
+    const titleFontSize = getResponsiveSize(42);
+    context5.fillStyle = "rgba(255,255,255,0.4)";
+    context5.font = `${titleFontSize}px 'IBM Plex Mono'`;
+    
+    const centerX = 1024 / 4.5;
+    const centerY = 512 / 1.25;
+    context5.fillText("About me", centerX, centerY - 50);
+    
+    context5.shadowColor = "transparent";
+    textTexture5.needsUpdate = true;
+  }
 }
-
-function openGameProject() {
-  const { x, y, z } = camera.position;
-  goto(`/project/game?cx=${x}&cy=${y}&cz=${z}`);
-}
-
-function openEarthquakeProject() {
-  const { x, y, z } = camera.position;
-  goto(`/project/earthquake?cx=${x}&cy=${y}&cz=${z}`);
-}
-
-function openKarinCruisesProject() {
-  const { x, y, z } = camera.position;
-  goto(`/project/karincruises?cx=${x}&cy=${y}&cz=${z}`);
-}
-
-function openMigrantsProject() {
-  const { x, y, z } = camera.position;
-  goto(`/project/migrants?cx=${x}&cy=${y}&cz=${z}`);
-}
-
-function openPhotoVideoProject() {
-  const { x, y, z } = camera.position;
-  goto(`/project/photovideo?cx=${x}&cy=${y}&cz=${z}`);
-}
-
-function openAboutMeProject() {
-  const { x, y, z } = camera.position;
-  goto(`/project/aboutme?cx=${x}&cy=${y}&cz=${z}`);
-}
-
-// Nach den anderen openXXXProject-Funktionen (ca. Zeile 967)
-function openWebsite1Project() {
-  const { x, y, z } = camera.position;
-  goto(`/project/website1?cx=${x}&cy=${y}&cz=${z}`);
-}
-
-function openWebsite2Project() {
-  const { x, y, z } = camera.position;
-  goto(`/project/website2?cx=${x}&cy=${y}&cz=${z}`);
-}
-
-   // ----------------------------------------------------------------------------
-   // Aktualisiert den Canvas-Text ("Hello..., I'm Franz...")
-   // ----------------------------------------------------------------------------
-   function updateCanvasText() {
-      context.clearRect(0, 0, 1024, 512);
-      context.fillStyle = "rgba(0,0,0,0)";
-      context.fillRect(0, 0, 1024, 512);
-      context.textAlign = "left";
-      context.textBaseline = "middle";
-      
-      // Schatten-Eigenschaften für besseren Kontrast
-      context.shadowColor = "rgba(0, 0, 0, 0.6)";
-      context.shadowBlur = 8;
-      context.shadowOffsetX = 1;
-      context.shadowOffsetY = 1;
-      
-      context.fillStyle = "white";
-      // Rest der Funktion bleibt unverändert...
-      
-      const lines = [
-         greetings[currentGreetingIndex],
-         "i'm",
-         "Franz.",
-         "",
-         "a product-design student passionated",
-         "about crafting intuitive and enganging digital",
-         "experience, bringing digital worlds to life",
-         "through user-centered design."
-      ];
-
-
-      let maxWidth = 0;
-      for (let i = 0; i < lines.length; i++) {
-         if (i < 3) {
-            context.font = "56px 'IBM Plex Mono'";
-         } else {
-            context.font = "32px 'IBM Plex Mono'";
-         }
-         const w = context.measureText(lines[i]).width;
-         if (w > maxWidth) maxWidth = w;
-      }
-
-      const margin = (1024 - maxWidth) / 2;
-      let currentY = 60;
-      for (let i = 0; i < lines.length; i++) {
-         if (i < 3) {
-            context.font = "56px 'IBM Plex Mono'";
-            context.fillText(lines[i], margin, currentY);
-            currentY += 60;
-         } else {
-            context.font = "32px 'IBM Plex Mono'";
-            context.fillText(lines[i], margin, currentY);
-            currentY += 48;
-         }
-      }
-      textTexture.needsUpdate = true;
-      
-      // Am Ende die Shadow-Eigenschaft zurücksetzen
-      context.shadowColor = "transparent";
-   }
 
    // ----------------------------------------------------------------------------
    // SCROLL-LOGIK
@@ -1111,136 +1127,27 @@ function openWebsite2Project() {
    }
 
    // ----------------------------------------------------------------------------
-   // MOUSEMOVE -> Raycasting -> HOVER-LOGIK (für Cover-Gruppen)
-   // ----------------------------------------------------------------------------
-   function onMouseMove(event) {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  raycaster.setFromCamera(mouse, camera);
-  // Klickbare Objekte: sowohl Cover-Gruppen als auch einzelne Bilder
-  const clickableObjects = [
-    ...coverGroups.map(group => group.userData.defaultMesh),
-    ...imageMeshes
-  ];
-  const intersects = raycaster.intersectObjects(clickableObjects, false);
-
-  // Hier den Cursor setzen:
-  if (intersects.length > 0) {
-    const projectName = intersects[0].object.userData.parentGroup ? 
-                        intersects[0].object.userData.parentGroup.userData.project : 
-                        intersects[0].object.userData.project;
-    
-    // Alle Projekttypen einschließlich der neuen
-    if (['nass', 'bwegt', 'iceAgeMammals', 'hybridWallet', 
-          'game', 'earthquake', 'karincruises', 'migrants',
-          'photovideo', 'aboutme', 'website1', 'website2'].includes(projectName)) {
-      container.style.cursor = 'pointer';
-    } else {
-      container.style.cursor = 'default';
-    }
-  } else {
-    container.style.cursor = 'default';
-  }
-
-  // Dein bestehender Hover-Logik-Code
-  if (intersects.length === 0) {
-    coverGroups.forEach(group => {
-      setCoverGroupState(group, "default");
-    });
-  } else {
-    const hoveredDefault = intersects[0].object;
-    const hoveredGroup = hoveredDefault.userData.parentGroup;
-    coverGroups.forEach(group => {
-      if (group === hoveredGroup) {
-        setCoverGroupState(group, "hover");
-      } else {
-        setCoverGroupState(group, "gray");
-      }
-    });
-  }
-}
-
-
-   // Setzt den Zustand einer Cover-Gruppe:
-   // "hover": Hover-Gruppen: hoverMesh.opacity → 1, defaultMesh.opacity → 0.5, Farbe Weiß
-   // "gray": Andere: hoverMesh.opacity → 0, defaultMesh.opacity → 1, Farbe grau (0.5)
-   // "default": Standard (kein Hover): hoverMesh.opacity → 0, defaultMesh.opacity → 1, Farbe Weiß
-   function setCoverGroupState(group, state) {
-      if (state === "hover") {
-         gsap.to(group.userData.hoverMesh.material, { opacity: 1, duration: 0.6, ease: "power1.inOut" });
-         gsap.to(group.userData.defaultMesh.material, { opacity: 0, duration: 0.6, ease: "power1.inOut" });
-         gsap.to(group.userData.defaultMesh.material.color, { r: 1, g: 1, b: 1, duration: 0.6, ease: "power1.inOut" });
-      } else if (state === "gray") {
-         gsap.to(group.userData.hoverMesh.material, { opacity: 0, duration: 0.6, ease: "power1.inOut" });
-         gsap.to(group.userData.defaultMesh.material, { opacity: 1, duration: 0.6, ease: "power1.inOut" });
-         gsap.to(group.userData.defaultMesh.material.color, { r: 0.3, g: 0.3, b: 0.3, duration: 0.6, ease: "power1.inOut" });
-      } else if (state === "default") {
-         gsap.to(group.userData.hoverMesh.material, { opacity: 0, duration: 0.6, ease: "power1.inOut" });
-         gsap.to(group.userData.defaultMesh.material, { opacity: 1, duration: 0.6, ease: "power1.inOut" });
-         gsap.to(group.userData.defaultMesh.material.color, { r: 1, g: 1, b: 1, duration: 0.6, ease: "power1.inOut" });
-      }
-   }
-
-   // ----------------------------------------------------------------------------
-   // Distanz-basiertes Opacity-Fading (für alle Bilder)
-   // ----------------------------------------------------------------------------
-   function updateAllImages() {
-      const dMin = 2;
-      const dMax = 20;
-      imageMeshes.forEach(mesh => {
-         const dist = Math.abs(camera.position.z - mesh.position.z);
-         let opacity;
-         if (dist <= dMin) {
-            opacity = 1;
-         } else if (dist >= dMax) {
-            opacity = 0;
-         } else {
-            const t = (dist - dMin) / (dMax - dMin);
-            opacity = 0.7 - t * (1 - 0.1);
-         }
-         mesh.material.opacity = opacity;
-      });
-   }
-
-   // ----------------------------------------------------------------------------
-   // Distanz-basiertes X-Sliding (für alle Bilder)
-   // ----------------------------------------------------------------------------
-   function updateImagePositions() {
-      const threshold = 3;
-      imageMeshes.forEach(mesh => {
-         const dist = Math.abs(camera.position.z - mesh.position.z);
-         if (dist < threshold) {
-            gsap.to(mesh.position, { x: mesh.userData.finalX, duration: 1.2, ease: "power1.out" });
-         } else {
-            gsap.to(mesh.position, { x: mesh.userData.offscreenX, duration: 1.2, ease: "power1.out" });
-         }
-      });
-   }
-   function updateCoverGroupPositions() {
-  const threshold = 3;
-  coverGroups.forEach(group => {
-    const dist = Math.abs(camera.position.z - group.position.z);
-    if (dist < threshold) {
-      gsap.to(group.position, { x: group.userData.finalX, duration: 1.2, ease: "power1.out" });
-    } else {
-      gsap.to(group.position, { x: group.userData.offscreenX, duration: 1.2, ease: "power1.out" });
-    }
-  });
-}
-
-   // ----------------------------------------------------------------------------
    // Animation-Loop
    // ----------------------------------------------------------------------------
    let animationId; // Speichern der requestAnimationFrame ID
 
    function animate() {
   animationId = requestAnimationFrame(animate);
-  updateAllImages();
-  updateImagePositions();
-  updateCoverGroupPositions();
+  
+  // Bild-Updates mit statischen Methoden
+  ImageUpdater.updateAllImages(camera, imageMeshes);
+  ImageUpdater.updateImagePositions(camera, imageMeshes, gsap);
+  ImageUpdater.updateCoverGroupPositions(camera, coverGroups, gsap);
+  
   updateCurrentSection();
-  updateTitleOpacitiesAndStartTyping(); // Neue Funktion hinzufügen
+  
+  // Typewriter-Update
+  if (typewriter) {
+    const contexts = { context1, context2, context3, context4, context5 };
+    const textures = { textTexture1, textTexture2, textTexture3, textTexture4, textTexture5 };
+    typewriter.updateTitleOpacitiesAndStartTyping(currentStation, contexts, textures);
+  }
+  
   if (particleSystem) {
     particleSystem.animate();
   }
@@ -1265,19 +1172,18 @@ function openWebsite2Project() {
   checkDeviceSize();
 }
 
-// Neue Funktion zur Anpassung der TextMesh-Größen
+// Überarbeitete Funktion zur Anpassung der TextMesh-Größen und Positionen
 function adjustTextMeshSizes() {
   // Basis-Skalierung
-  const baseScale = 0.6;
+  const baseScale = 0.9;
   
-  // Breakpoints definieren
-  let scale = baseScale;
-  if (window.innerWidth <= 768) {
-    // Mobile Geräte
-    scale = baseScale * 0.8;
-  } else if (window.innerWidth <= 1024) {
+  // Skalierung direkt basierend auf isMobile setzen
+  let scale = isMobile ? baseScale * 0.55 : baseScale;
+  
+  // Optional: Zusätzliche Anpassung für verschiedene Bildschirmgrößen
+  if (!isMobile && window.innerWidth <= 1024) {
     // Tablets
-    scale = baseScale * 0.9;
+    scale = baseScale * 0.85;
   }
   
   // Alle TextMeshes im Scene-Graph finden und anpassen
@@ -1288,22 +1194,58 @@ function adjustTextMeshSizes() {
          object.material.map === textTexture2 ||
          object.material.map === textTexture3 ||
          object.material.map === textTexture4 ||
-         object.material.map === textTexture5)) {
+         object.material.map === textTexture5 ||
+         (introText && object.material.map === introText.texture))) {
       
       // Passe die Skalierung an
       object.scale.set(scale, scale, scale);
+      
+      // Speichere die ursprüngliche Position, falls nicht schon gesetzt
+      if (!object.userData.originalPosition) {
+        object.userData.originalPosition = {
+          x: object.position.x,
+          y: object.position.y,
+          z: object.position.z
+        };
+      }
+      
+      // Für mobile Geräte: Position anpassen
+      if (isMobile) {
+        // X-Position: mehr zur Mitte des Bildschirms schieben
+        object.position.x = 0.12;  // Du kannst diesen Wert anpassen
+        
+        // Y-Position: etwas nach unten verschieben (verringere den Wert)
+        // Da die Y-Achse nach oben positiv ist
+        if (object.material.map !== introText?.texture) {
+          // Nur für die Überschriften, nicht für den Intro-Text
+          object.position.y = 0.3;  // Du kannst diesen Wert anpassen
+        }
+      } else {
+        // Für Desktop: Ursprüngliche Position wiederherstellen
+        const originalPos = object.userData.originalPosition;
+        if (originalPos) {
+          object.position.x = originalPos.x;
+          object.position.y = originalPos.y;
+        }
+      }
     }
   });
 }
 
 // Funktion zum Neuerstellen der Canvas-Texturen bei Größenänderung
 function recreateCanvasTextures() {
-  // Alle Canvas-Texturen neu erstellen mit angepassten Größen
-  updateCanvas1Text();
-  updateCanvas2Text();
-  updateCanvas3Text();
-  updateCanvas4Text();
-  updateCanvas5Text();
+  // Wenn Typewriter existiert, alle Canvas-Texturen aktualisieren
+  if (typewriter) {
+    const contexts = { context1, context2, context3, context4, context5 };
+    const textures = { textTexture1, textTexture2, textTexture3, textTexture4, textTexture5 };
+    // Die richtige Methode aufrufen
+    typewriter.updateAllCanvasTexts(contexts, textures);
+  }
+  
+  // Intro-Text aktualisieren
+  if (introText) {
+    introText.updateCanvasText();
+  }
 }
 
 // Hilfsfunktion zur Berechnung responsiver Größen
@@ -1316,333 +1258,6 @@ function getResponsiveSize(baseSize) {
   
   let scale = Math.max(window.innerWidth / baseWidth, minScale);
   return Math.floor(baseSize * scale);
-}
-
-   // Füge diese Funktion im Script-Teil hinzu:
-let previousStation = -1;
-
-function updateTitleOpacitiesAndStartTyping() {
-  // Mapping der Kamerastationen zu den zugehörigen Titel-Indizes
-  const stationToTitleMap = [
-    { station: 1, titleIndex: 0 },  // Design Work
-    { station: 6, titleIndex: 1 },  // Code & Data
-    { station: 8, titleIndex: 2 },  // Website Projects
-    { station: 10, titleIndex: 3 }, // Photo & Video
-    { station: 12, titleIndex: 4 }  // About me
-  ];
-
-  // Findet den aktuell aktiven Titelindex basierend auf der Station
-  const activeMatch = stationToTitleMap.find(item => item.station === currentStation);
-  const activeIndex = activeMatch ? activeMatch.titleIndex : -1;
-  
-  // Aktualisiere alle Title-Opacities
-  for (let i = 0; i < titleOpacities.length; i++) {
-    titleOpacities[i] = (i === activeIndex) ? 1.0 : 0.4;
-  }
-  
-  // Stationswechsel erkennen
-  if (previousStation !== currentStation) {
-    // Station wurde gewechselt, jetzt:
-    console.log(`Station gewechselt: ${previousStation} -> ${currentStation}`);
-    
-    // 1. Alten Typewriter stoppen
-    typingInProgress = false;
-    
-    // 2. Alle vorherigen Untertitel ausblenden
-    const prevMatch = stationToTitleMap.find(item => item.station === previousStation);
-    if (prevMatch) {
-      const prevIndex = prevMatch.titleIndex;
-      // Sofort ausblenden ohne Animation
-      subtitleOpacities[prevIndex] = 0;
-      // Sofort den Fortschritt zurücksetzen
-      subtitleProgress[prevIndex] = 0;
-    }
-    
-    // 3. Wenn eine aktive Station vorhanden ist
-    if (activeIndex >= 0) {
-      // Sofort einblenden ohne Animation
-      subtitleOpacities[activeIndex] = 1;
-      // Sofort den Fortschritt zurücksetzen
-      subtitleProgress[activeIndex] = 0;
-      
-      // Mit leichter Verzögerung den Typewriter starten
-      setTimeout(() => {
-        if (currentStation === stationToTitleMap.find(item => item.titleIndex === activeIndex)?.station) {
-          startTypewriterEffect(activeIndex);
-        }
-      }, 300);
-    }
-    
-    // Aktualisiere die vorherige Station
-    previousStation = currentStation;
-  } 
-  // Wenn keine Station gewechselt wurde, aber der Text noch nicht gestartet ist
-  else if (activeIndex >= 0 && subtitleProgress[activeIndex] === 0 && !typingInProgress) {
-    startTypewriterEffect(activeIndex);
-  }
-  
-  // Immer alle Canvas-Texte aktualisieren
-  updateCanvas1Text();
-  updateCanvas2Text();
-  updateCanvas3Text();
-  updateCanvas4Text();
-  updateCanvas5Text();
-}
-
-// Die fadeIn/fadeOut Funktionen können wir entfernen oder vereinfacht lassen:
-function fadeInSubtitle(index) {
-  subtitleOpacities[index] = 1;
-}
-
-function fadeOutSubtitle(index) {
-  subtitleOpacities[index] = 0;
-  subtitleProgress[index] = 0;
-}
-
-// Füge diese Typewriter-Funktionen hinzu:
-function startTypewriterEffect(sectionIndex) {
-  typingInProgress = true;
-  
-  // Berechne die Gesamtlänge des zu schreibenden Textes
-  const totalLength = subtitleTexts[sectionIndex].reduce((sum, text) => sum + text.length, 0);
-  
-  // Setze den Fortschritt zurück
-  subtitleProgress[sectionIndex] = 0;
-  
-  // Starte das Typing
-  typeNextCharacter(sectionIndex, totalLength);
-}
-
-function typeNextCharacter(sectionIndex, totalLength) {
-  if (subtitleProgress[sectionIndex] < totalLength) {
-    subtitleProgress[sectionIndex]++;
-    
-    // Aktualisiere den entsprechenden Canvas
-    switch(sectionIndex) {
-      case 0: updateCanvas1Text(); break;
-      case 1: updateCanvas2Text(); break;
-      case 2: updateCanvas3Text(); break;
-      case 3: updateCanvas4Text(); break;
-      case 4: updateCanvas5Text(); break;
-    }
-    
-    // Zufällige Verzögerung für realistischeren Typewriter-Effekt
-    const delay = 20 + Math.random() * 30;
-    setTimeout(() => typeNextCharacter(sectionIndex, totalLength), delay);
-  } else {
-    typingInProgress = false;
-  }
-}
-
-// 2. Die updateCanvas-Funktionen aus initScene() nach außen verschieben:
-function updateCanvas1Text() {
-  context1.clearRect(0, 0, 1024, 512);
-  context1.fillStyle = "rgba(0,0,0,0)";
-  context1.fillRect(0, 0, 1024, 512);
-  context1.textAlign = "left"; // Auf "center" ändern
-  context1.textBaseline = "middle";
-  
-  // Schatten-Eigenschaften für Titel
-  context1.shadowColor = "rgba(0, 0, 0, 0.5)";
-  context1.shadowBlur = 5;
-  context1.shadowOffsetX = 1;
-  context1.shadowOffsetY = 1;
-  
-  // Hauptüberschrift mit dynamischer Opacity
-  const titleFontSize = getResponsiveSize(42);
-  const subtitleFontSize = getResponsiveSize(24);
-  context1.fillStyle = `rgba(255,255,255,${titleOpacities[0]})`;
-  context1.font = `${titleFontSize}px 'IBM Plex Mono'`;
-  
-  // Horizontale Position in die Mitte des Canvas setzen
-  const centerX = 1024 / 4.5;
-  // Vertikale Position anpassen
-  const centerY = 512 / 1.25;
-  
-  // Text zentriert zeichnen
-  context1.fillText("Design Work", centerX, centerY - 50);
-  
-  // Untertext mit Typewriter-Effekt UND Opacity
-  context1.fillStyle = `rgba(255,255,255,${subtitleOpacities[0]})`;
-  context1.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
-  
-  const subtitle1 = subtitleTexts[0][0].substring(0, subtitleProgress[0]);
-  context1.fillText(subtitle1, centerX, centerY);
-  
-  if (subtitleProgress[0] >= subtitleTexts[0][0].length) {
-    const subtitle2 = subtitleTexts[0][1].substring(0, subtitleProgress[0] - subtitleTexts[0][0].length);
-    context1.fillText(subtitle2, centerX, centerY + 35);
-  }
-  
-  // Zurücksetzen des Schattens
-  context1.shadowColor = "transparent";
-  
-  textTexture1.needsUpdate = true;
-}
-
-function updateCanvas2Text() {
-  context2.clearRect(0, 0, 1024, 512);
-  context2.fillStyle = "rgba(0,0,0,0)";
-  context2.fillRect(0, 0, 1024, 512);
-  context2.textAlign = "left"; // Auf "center" ändern
-  context2.textBaseline = "middle";
-  
-  // Schatten-Eigenschaften für Titel
-  context2.shadowColor = "rgba(0, 0, 0, 0.5)";
-  context2.shadowBlur = 5;
-  context2.shadowOffsetX = 1;
-  context2.shadowOffsetY = 1;
-  
-  // Hauptüberschrift mit dynamischer Opacity
-  const titleFontSize = getResponsiveSize(42);
-  const subtitleFontSize = getResponsiveSize(24);
-  context2.fillStyle = `rgba(255,255,255,${titleOpacities[1]})`;
-  context2.font = `${titleFontSize}px 'IBM Plex Mono'`;
-  const centerX = 1024 / 4.5;
-  const centerY = 512 / 1.25;
-  context2.fillText("Code & Data", centerX, centerY - 50);
-  
-  // Untertext mit Typewriter-Effekt UND Opacity
-  context2.fillStyle = `rgba(255,255,255,${subtitleOpacities[1]})`;
-  context2.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
-  
-  const subtitle1 = subtitleTexts[1][0].substring(0, subtitleProgress[1]);
-  context2.fillText(subtitle1, centerX, centerY);
-  
-  if (subtitleProgress[1] >= subtitleTexts[1][0].length) {
-    const subtitle2 = subtitleTexts[1][1].substring(0, subtitleProgress[1] - subtitleTexts[1][0].length);
-    context2.fillText(subtitle2, centerX, centerY + 35);
-  }
-  
-  // Zurücksetzen des Schattens
-  context2.shadowColor = "transparent";
-  
-  textTexture2.needsUpdate = true;
-}
-
-function updateCanvas3Text() {
-  context3.clearRect(0, 0, 1024, 512);
-  context3.fillStyle = "rgba(0,0,0,0)";
-  context3.fillRect(0, 0, 1024, 512);
-  context3.textAlign = "left"; // Auf "center" ändern
-  context3.textBaseline = "middle";
-  
-  // Schatten-Eigenschaften für Titel
-  context3.shadowColor = "rgba(0, 0, 0, 0.5)";
-  context3.shadowBlur = 5;
-  context3.shadowOffsetX = 1;
-  context3.shadowOffsetY = 1;
-  
-  // Hauptüberschrift mit dynamischer Opacity
-  const titleFontSize = getResponsiveSize(42);
-  const subtitleFontSize = getResponsiveSize(24);
-  context3.fillStyle = `rgba(255,255,255,${titleOpacities[2]})`;
-  context3.font = `${titleFontSize}px 'IBM Plex Mono'`;
-  const centerX = 1024 / 4.5;
-  const centerY = 512 / 1.25;
-  context3.fillText("Website Projects", centerX, centerY - 50);
-  
-  // Untertext mit Typewriter-Effekt UND Opacity
-  context3.fillStyle = `rgba(255,255,255,${subtitleOpacities[2]})`;
-  context3.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
-  
-  const subtitle1 = subtitleTexts[2][0].substring(0, subtitleProgress[2]);
-  context3.fillText(subtitle1, centerX, centerY);
-  
-  if (subtitleProgress[2] >= subtitleTexts[2][0].length) {
-    const subtitle2 = subtitleTexts[2][1].substring(0, subtitleProgress[2] - subtitleTexts[2][0].length);
-    context3.fillText(subtitle2, centerX, centerY + 35);
-  }
-  
-  // Zurücksetzen des Schattens
-  context3.shadowColor = "transparent";
-  
-  textTexture3.needsUpdate = true;
-}
-
-function updateCanvas4Text() {
-  context4.clearRect(0, 0, 1024, 512);
-  context4.fillStyle = "rgba(0,0,0,0)"; // Stellt sicher, dass es 100% transparent ist
-  context4.fillRect(0, 0, 1024, 512);
-  context4.textAlign = "left"; // Auf "center" ändern
-  context4.textBaseline = "middle";
-  
-  // Schatten-Eigenschaften für Titel
-  context4.shadowColor = "rgba(0, 0, 0, 0.5)";
-  context4.shadowBlur = 5;
-  context4.shadowOffsetX = 1;
-  context4.shadowOffsetY = 1;
-  
-  // Hauptüberschrift mit dynamischer Opacity
-  const titleFontSize = getResponsiveSize(42);
-  const subtitleFontSize = getResponsiveSize(24);
-  context4.fillStyle = `rgba(255,255,255,${titleOpacities[3]})`;
-  context4.font = `${titleFontSize}px 'IBM Plex Mono'`;
-  const centerX = 1024 / 4.5;
-  const centerY = 512 / 1.25;
-  context4.fillText("Photo & Video", centerX, centerY - 50);
-  
-  // Untertext mit Typewriter-Effekt UND Opacity
-  context4.fillStyle = `rgba(255,255,255,${subtitleOpacities[3]})`;
-  context4.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
-  
-  const subtitle1 = subtitleTexts[3][0].substring(0, subtitleProgress[3]);
-  context4.fillText(subtitle1, centerX, centerY);
-  
-  if (subtitleProgress[3] >= subtitleTexts[3][0].length) {
-    const subtitle2 = subtitleTexts[3][1].substring(0, subtitleProgress[3] - subtitleTexts[3][0].length);
-    context4.fillText(subtitle2, centerX, centerY + 35);
-    
-    if (subtitleProgress[3] >= subtitleTexts[3][0].length + subtitleTexts[3][1].length) {
-      const subtitle3 = subtitleTexts[3][2].substring(0, subtitleProgress[3] - subtitleTexts[3][0].length - subtitleTexts[3][1].length);
-      context4.fillText(subtitle3, centerX, centerY + 70);
-    }
-  }
-  
-  // Zurücksetzen des Schattens
-  context4.shadowColor = "transparent";
-  
-  textTexture4.needsUpdate = true;
-}
-
-function updateCanvas5Text() {
-  context5.clearRect(0, 0, 1024, 512);
-  context5.fillStyle = "rgba(0,0,0,0)"; // Stellt sicher, dass es 100% transparent ist
-  context5.fillRect(0, 0, 1024, 512);
-  context5.textAlign = "left"; // Auf "center" ändern
-  context5.textBaseline = "middle";
-  
-  // Schatten-Eigenschaften für Titel
-  context5.shadowColor = "rgba(0, 0, 0, 0.5)";
-  context5.shadowBlur = 5;
-  context5.shadowOffsetX = 1;
-  context5.shadowOffsetY = 1;
-  
-  // Hauptüberschrift mit dynamischer Opacity
-  const titleFontSize = getResponsiveSize(42);
-  const subtitleFontSize = getResponsiveSize(24);
-  context5.fillStyle = `rgba(255,255,255,${titleOpacities[4]})`;
-  context5.font = `${titleFontSize}px 'IBM Plex Mono'`;
-  const centerX = 1024 / 4.5;
-  const centerY = 512 / 1.25;
-  context5.fillText("About me", centerX, centerY - 50);
-  
-  // Untertext mit Typewriter-Effekt UND Opacity
-  context5.fillStyle = `rgba(255,255,255,${subtitleOpacities[4]})`;
-  context5.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
-  
-  const subtitle1 = subtitleTexts[4][0].substring(0, subtitleProgress[4]);
-  context5.fillText(subtitle1, centerX, centerY);
-  
-  if (subtitleProgress[4] >= subtitleTexts[4][0].length) {
-    const subtitle2 = subtitleTexts[4][1].substring(0, subtitleProgress[4] - subtitleTexts[4][0].length);
-    context5.fillText(subtitle2, centerX, centerY + 35);
-  }
-  
-  // Zurücksetzen des Schattens
-  context5.shadowColor = "transparent";
-  
-  textTexture5.needsUpdate = true;
 }
 </script>
 
