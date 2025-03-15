@@ -27,7 +27,7 @@
       <div class="footer-section">
         <div class="section-label">Connect</div>
         <div class="social-links">
-          <a href="https://www.linkedin.com/in/franzanhaupl/" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.linkedin.com/in/franz-anhaupl/" target="_blank" rel="noopener noreferrer">
             LinkedIn
           </a>
           <a href="https://github.com/Litorian113" target="_blank" rel="noopener noreferrer">
