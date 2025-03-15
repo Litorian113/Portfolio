@@ -353,8 +353,8 @@ function loadAppropriateTextures() {
   const textureLoader = new THREE.TextureLoader();
   const texturePaths = {
     desktop: {
-      bild1: '/Bild1.png',
-      bild2: '/Bild2.png',
+      bild1: '/Bild2.png',
+      bild2: '/Bild1.png',
       bild3: '/Bild3.png',
       bild4: '/Bild4.png'
     },
@@ -725,8 +725,8 @@ function loadAppropriateTextures() {
         bild4: '/mobile/Bild4-mobile.png'
       } : 
       {
-        bild1: '/Bild1.png',
-        bild2: '/Bild2.png',
+        bild1: '/Bild2.png',
+        bild2: '/Bild1.png',
         bild3: '/Bild3.png',
         bild4: '/Bild4.png'
       };

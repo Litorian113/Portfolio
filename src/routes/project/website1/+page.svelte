@@ -247,6 +247,7 @@
   /* Button-Container: 100% Breite, Button linksbündig */
   .back-btn-container {
     width: 100%;
+    z-index: 100;
   }
   
   .back-btn-container button {

@@ -5,6 +5,7 @@
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
 	import Stage from '$lib/Stage.svelte';
+	import Footer from '$lib/Footer.svelte';
   
     $: url = $page.url;
   
@@ -291,8 +292,15 @@
       </div>
     </FadeInSection>
   </div>
+
+  <div class="back-btn-container bottom-back">
+    <button on:click={goBackToFlur}>
+      <img src="/leftArrow.png" alt="Back arrow" />
+      Back to Projects
+    </button>
+  </div>
   
-  
+  <Footer />
   
   </div>
   </div>
@@ -717,6 +725,10 @@
     }
   }
 
+  
+
+
+
   .collaborators-section {
   margin-top: 10rem;
   margin-bottom: 5rem;
@@ -786,6 +798,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem;
+  width: 100%;
 }
 
 .tool {
@@ -796,6 +809,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   transition: all 0.3s ease;
+  flex: 0 1 auto;
 }
 
 .tool:hover {
@@ -820,10 +834,12 @@
 @media (max-width: 768px) {
   .creative-arsenal {
     margin-top: 3rem;
+    display: block;
   }
   
   .tools-container {
     gap: 1rem;
+    width: 100%;
   }
   
   .tool {
@@ -833,8 +849,34 @@
 
 @media (max-width: 480px) {
   .tools-container {
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 0.7rem;
+    width: 100%;
   }
+  
+  .tool {
+    flex: 0 0 calc(50% - 0.7rem);
+    max-width: calc(50% - 0.7rem);
+    padding: 0.7rem 0.8rem;
+    margin-bottom: 0.7rem;
+  }
+  
+  .tool-name {
+    font-size: 0.9rem;
+  }
+  
+  .tool-role {
+    font-size: 0.8rem;
+  }
+}
+
+/* Zusätzliches Styling für den unteren Back-Button */
+.bottom-back {
+  margin-top: 10rem;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: flex-start; /* Linksbündig statt zentriert */
 }
 </style>

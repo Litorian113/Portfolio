@@ -265,6 +265,71 @@
   </div>
 </div>
 
+
+<div class="collaborators-section">
+  <div class="divider-large"></div>
+  
+  <FadeInSection>
+    <div class="collaborators-content">
+      <h4>The People Behind the Project</h4>
+      <div class="collaborators-list">
+        <div class="collaborator">Jonas Wienberg</div>
+        <div class="collaborator">Philipp Maginot</div>
+        <div class="collaborator">Maria Kamenskaya</div>
+        <div class="collaborator">Franz Anhäupl</div>
+      </div>
+      
+      <!-- Neuer Abschnitt für Creative Arsenal -->
+      <div class="creative-arsenal">
+        <h4>Our Creative Arsenal</h4>
+        <p class="arsenal-intro">Crafting this experience with our digital toolbelt:</p>
+        <div class="tools-container">
+          <div class="tool">
+            <span class="tool-name">Figma</span>
+            <span class="tool-role">UI/UX Design</span>
+          </div>
+          <div class="tool">
+            <span class="tool-name">Miro</span>
+            <span class="tool-role">Collaboration & Ideation</span>
+          </div>
+          <div class="tool">
+            <span class="tool-name">Dall-E 3</span>
+            <span class="tool-role">AI Image Generation</span>
+          </div>
+          <div class="tool">
+            <span class="tool-name">Premiere Pro</span>
+            <span class="tool-role">Video Editing</span>
+          </div>
+          <div class="tool">
+            <span class="tool-name">After Effects</span>
+            <span class="tool-role">Motion Design</span>
+          </div>
+          <div class="tool">
+            <span class="tool-name">FigJam</span>
+            <span class="tool-role">Collaborative Whiteboarding</span>
+          </div>
+          <div class="tool">
+            <span class="tool-name">Autodesk</span>
+            <span class="tool-role">3D Design</span>
+          </div>
+          <div class="tool">
+            <span class="tool-name">Ultimaker</span>
+            <span class="tool-role">3D Printing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </FadeInSection>
+</div>
+
+
+<div class="back-btn-container bottom-back">
+  <button on:click={goBackToFlur}>
+    <img src="/leftArrow.png" alt="Back arrow" />
+    Back to Projects
+  </button>
+</div>
+
 <Footer />
 
 </div>
@@ -475,38 +540,7 @@ h4 {
   font-size: 1.5rem;
 }
 
-.img-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 8px;
-  margin-top: 5rem;
-  justify-items: center;
-  align-items: center;
-  scale: 0.8;
-}
 
-.img1 {
-  grid-row: span 2 / span 2;
-}
-
-.img4 {
-  grid-column-start: 2;
-}
-
-.img5 {
-  grid-column-start: 3;
-}
-
-.img-grid img {
-  filter: grayscale(100%);
-  transition: filter 0.8s ease;
-  transform: translateZ(0);
-}
-
-.img-grid img:hover {
-  filter: grayscale(0%);
-}
 
 .img-section-4 {
   display: grid;
@@ -589,49 +623,6 @@ img {
     font-size: 1.4rem;
   }
   
-  /* Bildergalerie neu anpassen */
-  .img-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: auto auto auto;
-    gap: 1.5rem;
-    scale: 1;
-    margin-top: 3rem;
-  }
-  
-  /* Erstes Bild kleiner skalieren und über volle Breite */
-  .img-grid .img1 {
-    grid-column: 1 / span 2;
-    width: 100% !important;
-    max-width: 80%;
-    margin: 0 auto 1rem auto;
-  }
-  
-  /* Restliche Bilder im 2x2 Grid */
-  .img-grid .img2 {
-    grid-column: 1;
-    grid-row: 2;
-  }
-  
-  .img-grid .img3 {
-    grid-column: 2;
-    grid-row: 2;
-  }
-  
-  .img-grid .img4 {
-    grid-column: 1;
-    grid-row: 3;
-  }
-  
-  .img-grid .img5 {
-    grid-column: 2;
-    grid-row: 3;
-  }
-  
-  .img-grid div {
-    width: 100% !important;
-  }
-
   .project-columns .project-column .divider,
   .project-columns .project-column p,
   .tags {
@@ -694,23 +685,7 @@ img {
     font-size: 1.1rem;
   }
   
-  .img-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  
-  .img-grid .img1,
-  .img-grid .img2,
-  .img-grid .img3,
-  .img-grid .img4,
-  .img-grid .img5 {
-    grid-column: 1;
-  }
-  
-  .img-grid .img1 {
-    max-width: 90%;
-  }
+
   
   .back-btn-container button {
     padding: 0.6rem 1.2rem;
@@ -724,5 +699,181 @@ img {
   .project-columns .project-column p {
     font-size: 1.2rem;
   }
+}
+
+
+/* Zusätzliches Styling für den unteren Back-Button */
+.bottom-back {
+  margin-top: 10rem;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: flex-start; /* Linksbündig statt zentriert */
+}
+
+/* Optional: Nur für den unteren Button eine leicht andere Darstellung */
+.bottom-back button {
+  padding: 0.8rem 2.5rem; /* Etwas breiter als der obere Button */
+}
+
+/* Mobile Anpassungen für den unteren Button */
+@media (max-width: 768px) {
+  .bottom-back {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+}
+
+
+
+
+.collaborators-section {
+  margin-top: 10rem;
+  margin-bottom: 5rem;
+  width: 100%;
+}
+
+.divider-large {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-bottom: 4rem;
+}
+
+.collaborators-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.collaborators-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.collaborator {
+  color: white;
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 1.3rem;
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .collaborators-section {
+    margin-top: 6rem;
+    margin-bottom: 3rem;
+  }
+  
+  .collaborators-list {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.creative-arsenal {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.arsenal-intro {
+  grid-column: span 4 / span 4;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.creative-arsenal h4 {
+  grid-column: span 4 / span 4;
+}
+
+.tools-container {
+  grid-column: span 4 / span 4;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.tool {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  flex: 0 1 auto;
+}
+
+.tool:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
+}
+
+.tool-name {
+  color: #1359FF;
+  font-family: 'Franz-Plex', mono;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.tool-role {
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 0.9rem;
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .creative-arsenal {
+    margin-top: 3rem;
+    display: block;
+  }
+  
+  .tools-container {
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .tool {
+    padding: 0.8rem 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tools-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    width: 100%;
+  }
+  
+  .tool {
+    flex: 0 0 calc(50% - 0.7rem);
+    max-width: calc(50% - 0.7rem);
+    padding: 0.7rem 0.8rem;
+    margin-bottom: 0.7rem;
+  }
+  
+  .tool-name {
+    font-size: 0.9rem;
+  }
+  
+  .tool-role {
+    font-size: 0.8rem;
+  }
+}
+
+/* Zusätzliches Styling für den unteren Back-Button */
+.bottom-back {
+  margin-top: 10rem;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: flex-start; /* Linksbündig statt zentriert */
 }
 </style>
