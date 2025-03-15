@@ -124,4 +124,22 @@ export class CoverGroupFactory {
     group.userData.finalX = config.finalX;
     group.userData.offscreenX = config.offscreenX;
   }
+
+  /**
+   * Erstellt mehrere Cover-Gruppen auf einmal
+   * @param {Array} configs - Array mit Konfigurationsobjekten für jede Cover-Gruppe
+   * @returns {Array} - Array der erstellten Cover-Gruppen
+   */
+  createAllCoverGroups(configs) {
+    const groups = [];
+    
+    configs.forEach(config => {
+      const group = this.createCoverGroup(config);
+      this.scene.add(group);
+      groups.push(group);
+      this.coverGroups.push(group);
+    });
+    
+    return groups;
+  }
 }
