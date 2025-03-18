@@ -7,11 +7,11 @@
     <div class="footer-content">
         <div class="footer-left">
             <a href="/imprint">Imprint</a>
-            <a href="/privacy-policy">Privacy Policy</a>
+            <a href="/privacy">Privacy Policy</a>
         </div>
         <div class="footer-center"></div>
         <div class="footer-right">
-            <a href="https://www.linkedin.com/in/franz-anhaupl/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://www.linkedin.com/in/franzanhaeupl/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             <a href="https://github.com/Litorian113" target="_blank" rel="noopener noreferrer">GitHub</a>
             <a href="https://www.instagram.com/fxma_photography_videography/" target="_blank" rel="noopener noreferrer">Instagram</a>
         </div>
