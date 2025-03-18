@@ -692,6 +692,13 @@
   </div>
 </div>
 
+<div class="company-video-container">
+  <video autoplay muted loop playsinline preload="metadata">
+    <source src="/videos/tasche.mp4" type="video/mp4">
+    Dein Browser unterstützt keine Videos.
+  </video>
+</div>
+
 <!-- Füge diesen Block nach dem Fashion-Grid ein -->
 <div class="grid-section1">
   <div class="text-grid1">
