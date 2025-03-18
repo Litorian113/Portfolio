@@ -19,7 +19,7 @@
         <div class="section-label">Legal</div>
         <div class="legal-links">
           <a href="/imprint">Imprint</a>
-          <a href="/privacy-policy">Privacy Policy</a>
+          <a href="/privacy">Privacy Policy</a>
         </div>
       </div>
       
@@ -27,7 +27,7 @@
       <div class="footer-section">
         <div class="section-label">Connect</div>
         <div class="social-links">
-          <a href="https://www.linkedin.com/in/franz-anhaupl/" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.linkedin.com/in/franzanhaeupl/" target="_blank" rel="noopener noreferrer">
             LinkedIn
           </a>
           <a href="https://github.com/Litorian113" target="_blank" rel="noopener noreferrer">
