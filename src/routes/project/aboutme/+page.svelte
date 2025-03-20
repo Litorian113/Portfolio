@@ -42,7 +42,7 @@
     
     // Timeline-Daten - In umgekehrter Reihenfolge (aktuellstes zuerst)
     const timeline = [
-        { year: '2025-present', title: 'Assistant', location: 'AI+D Lab, KITeGG', description: 'Research work in AI-driven interactive technologies' },
+        { year: '2025-present', title: 'Assistant', location: 'AI+D Lab, KITeGG, HfG Schwäbisch Gmünd', description: 'Research work in AI-driven interactive technologies' },
         { year: '2024-present', title: 'Student Parliament', location: 'HfG Schwäbisch Gmünd', description: 'Representing student interests' },
         { year: '2023-present', title: 'Interaction Design', location: 'HfG Schwäbisch Gmünd', description: 'Focus on user experience and interactive systems' },
         { year: '2021-present', title: 'Commercial Photographer', location: 'Freelance', description: 'Creative photo projects for various clients' },
@@ -52,6 +52,8 @@
     // Tools mit Kategorisierung (P5.js wurde entfernt und zur Tech-Kategorie verschoben)
     const tools = [
         { name: 'Figma', category: 'Design' },
+		{ name: 'Miro', category: 'Design' },
+		{ name: 'FigJam', category: 'Design' },
         { name: 'Adobe Suite', category: 'Design' },
         { name: 'VS Code', category: 'Development' },
         { name: 'Arduino IDE', category: 'Development' },
