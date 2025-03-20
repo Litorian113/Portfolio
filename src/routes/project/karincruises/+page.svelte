@@ -89,14 +89,15 @@
         <div class="project-column">
           <h3>My Role</h3>
           <div class="divider"></div>
-          <p>I mainly worked in the creation of the Screendesign. Helped in the research process and played a big ass role
-            in the videoproduction to get the final videoresult.</p>
+          <p>
+            UI/UX Designer, Web Developer, SvelteKit Development, AI Integration
+          </p>
         </div>
         <div class="project-column">
           <h3>Project Overview</h3>
           <div class="divider"></div>
           <p>
-            KarinCruises.de tracks my girlfriend’s cruise route in real-time with an interactive globe, live port updates, and AI-generated travel tips.  
+            <a href="https://karincruises.de" target="_blank" rel="noopener noreferrer" class="project-link" style="color: #00CCB5; font-weight: 500;">KarinCruises.de</a> tracks my girlfriend's cruise route in real-time with an interactive globe, live port updates, and AI-generated travel tips.  
           </p>
         </div>
         <div class="project-column">
@@ -179,6 +180,57 @@
   
     <div class="img-section-4">
       <div class="img-container"><img src="/karinProject/karin2.png" alt="Beschreibung des Bildes" /></div>
+  </div>
+
+
+  <div class="collaborators-section">
+    <div class="divider-large"></div>
+    
+    <FadeInSection>
+      <div class="collaborators-content">
+        <h4>The People Behind the Project</h4>
+        <div class="collaborators-list">
+          <div class="collaborator">Franz Anhäupl</div>
+        </div>
+        
+        <!-- Neuer Abschnitt für Creative Arsenal -->
+        <div class="creative-arsenal">
+          <h4>My Creative Arsenal</h4>
+          <p class="arsenal-intro">Crafting this experience with our digital toolbelt:</p>
+          <div class="tools-container">
+            <div class="tool">
+              <span class="tool-name">Figma</span>
+              <span class="tool-role">UI/UX Design</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Visual Studio Code</span>
+              <span class="tool-role">Code Editing & Development</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Three.js</span>
+              <span class="tool-role">3D Data Visualization</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Chat GPT API</span>
+              <span class="tool-role">AI-Assisted Data Processing</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Claude 3.7</span>
+              <span class="tool-role">AI-Powered Data Interpretation</span>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </FadeInSection>
+  </div>
+  
+  
+  <div class="back-btn-container bottom-back">
+    <button on:click={goBackToFlur}>
+      <img src="/leftArrow.png" alt="Back arrow" />
+      Back to Projects
+    </button>
   </div>
   
   <Footer />
@@ -265,7 +317,7 @@
     margin: 0;
     padding: 0.5rem 0;
     font-family: 'Franz-Grotesk', sans-serif;
-    color: #FFFD56;
+    color: #00CCB5;
     letter-spacing: 0.1rem;
   }
   
@@ -379,7 +431,7 @@
   
   h4 {
     font-family: 'Franz-Plex', mono;
-    color: #FFFD56;
+    color: #00CCB5;
     line-height: 1.6;
     font-size: 1.5rem;
   }
@@ -531,5 +583,166 @@
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
   }
+}
+
+
+.collaborators-section {
+  margin-top: 10rem;
+  margin-bottom: 5rem;
+  width: 100%;
+}
+
+.divider-large {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-bottom: 4rem;
+}
+
+.collaborators-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.collaborators-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.collaborator {
+  color: white;
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 1.3rem;
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .collaborators-section {
+    margin-top: 6rem;
+    margin-bottom: 3rem;
+  }
+  
+  .collaborators-list {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.creative-arsenal {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.arsenal-intro {
+  grid-column: span 4 / span 4;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.creative-arsenal h4 {
+  grid-column: span 4 / span 4;
+}
+
+.tools-container {
+  grid-column: span 4 / span 4;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.tool {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  flex: 0 1 auto;
+}
+
+.tool:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
+}
+
+.tool-name {
+  color: #00CCB5;
+  font-family: 'Franz-Plex', mono;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.tool-role {
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 0.9rem;
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .creative-arsenal {
+    margin-top: 3rem;
+    display: block;
+  }
+  
+  .tools-container {
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .tool {
+    padding: 0.8rem 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tools-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    width: 100%;
+  }
+  
+  .tool {
+    flex: 0 0 calc(50% - 0.7rem);
+    max-width: calc(50% - 0.7rem);
+    padding: 0.7rem 0.8rem;
+    margin-bottom: 0.7rem;
+  }
+  
+  .tool-name {
+    font-size: 0.9rem;
+  }
+  
+  .tool-role {
+    font-size: 0.8rem;
+  }
+}
+
+/* Zusätzliches Styling für den unteren Back-Button */
+.bottom-back {
+  margin-top: 10rem;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: flex-start; /* Linksbündig statt zentriert */
+}
+
+.project-link {
+  text-decoration: none;
+  transition: text-decoration 0.3s;
+}
+
+.project-link:hover {
+  text-decoration: underline;
 }
   </style>
