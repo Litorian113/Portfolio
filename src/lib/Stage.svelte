@@ -487,24 +487,24 @@ function loadAppropriateTextures() {
 
       // --------------------------------------------------------
       // Flur-Linien
-      const points = [
-        new THREE.Vector3(-10, -5, 20),
-        new THREE.Vector3(-5, -2.5, -50),
-        new THREE.Vector3(10, -5, 20),
-        new THREE.Vector3(5, -2.5, -50),
-        new THREE.Vector3(-5, 2.5, -50),
-        new THREE.Vector3(5, 2.5, -50),
-        new THREE.Vector3(-5, -2.5, -50),
-        new THREE.Vector3(5, -2.5, -50),
-        new THREE.Vector3(-5, 2.5, -50),
-        new THREE.Vector3(-5, -2.5, -50),
-        new THREE.Vector3(5, 2.5, -50),
-        new THREE.Vector3(5, -2.5, -50)
-      ];
-      const corridorGeometry = new THREE.BufferGeometry().setFromPoints(points);
-      const corridorMaterial = new THREE.LineBasicMaterial({ color: 0x707070 });
-      corridorLines = new THREE.LineSegments(corridorGeometry, corridorMaterial);
-      scene.add(corridorLines);
+      // const points = [
+      //   new THREE.Vector3(-10, -5, 20),
+      //   new THREE.Vector3(-5, -2.5, -50),
+      //   new THREE.Vector3(10, -5, 20),
+      //   new THREE.Vector3(5, -2.5, -50),
+      //   new THREE.Vector3(-5, 2.5, -50),
+      //   new THREE.Vector3(5, 2.5, -50),
+      //   new THREE.Vector3(-5, -2.5, -50),
+      //   new THREE.Vector3(5, -2.5, -50),
+      //   new THREE.Vector3(-5, 2.5, -50),
+      //   new THREE.Vector3(-5, -2.5, -50),
+      //   new THREE.Vector3(5, 2.5, -50),
+      //   new THREE.Vector3(5, -2.5, -50)
+      // ];
+      // const corridorGeometry = new THREE.BufferGeometry().setFromPoints(points);
+      // const corridorMaterial = new THREE.LineBasicMaterial({ color: 0x707070 });
+      // corridorLines = new THREE.LineSegments(corridorGeometry, corridorMaterial);
+      // scene.add(corridorLines);
 
       // Rückwand
       const backWallGeo = new THREE.PlaneGeometry(10, 5);
@@ -678,7 +678,7 @@ function loadAppropriateTextures() {
       cover4.colorSpace = THREE.SRGBColorSpace;
 
       // Hover-Texturen (hier testweise alle = "/Karin1.png")
-      const hover3 = textureLoader.load('/Karin1.png');
+      const hover3 = textureLoader.load('/earthquake-flur.png');
       hover3.colorSpace = THREE.SRGBColorSpace;
       const hover2 = textureLoader.load('/Hover2.png');
       hover2.colorSpace = THREE.SRGBColorSpace;
