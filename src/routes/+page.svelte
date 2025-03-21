@@ -10,9 +10,6 @@
 </script>
 
 <script>
-    export let cx;
-    export let cy;
-    export let cz;
     import Stage from '$lib/Stage.svelte';
     import { fade } from 'svelte/transition';
     import HomeFooter from '$lib/components/HomeFooter.svelte';
@@ -20,55 +17,93 @@
     import HeaderHoverText from '$lib/components/HeaderHoverText.svelte';
     import Nav from '$lib/Nav.svelte';
     import BurgerMenu from '$lib/components/BurgerMenu.svelte';
-    import ContactIcon from '$lib/components/ContactIcon.svelte'; // Neue Komponente importieren
+    import ContactIcon from '$lib/components/ContactIcon.svelte';
+    
+    // SEO settings for the homepage
+    const pageTitle = "FXMA Design | Franz - Interaction Designer & Creative Developer";
+    const pageDescription = "Portfolio of Franz, Interaction Designer focusing on UI/UX, web design and innovative digital experiences. Explore creative projects, 3D visualizations and interactive applications.";
     
     let stageComponent;
     let currentSection = 'intro';
+    let contactFormVisible = false;  // Keep this declaration
     
-    // Zustandsvariablen für Kontaktformular
-    let contactFormVisible = false;
+    export let cx;
+    export let cy;
+    export let cz;
 
-    // Funktion, die die exportierte Navigationsfunktion der Stage-Komponente aufruft
+    // Function that calls the exported navigation function of the Stage component
     function navigateTo(sectionId) {
         if (stageComponent && typeof stageComponent.navigateToSection === 'function') {
             stageComponent.navigateToSection(sectionId);
         }
     }
     
-    // Aktuelle Jahreszahl für Copyright
+    // Current year for copyright
     const getCurrentYear = () => new Date().getFullYear();
     
-    // Formular-Handler
+    // Form handler
     function handleSubmit(e) {
         e.preventDefault();
-        // Hier könntest du einen API-Call zum Senden der E-Mail implementieren
-        // oder einen mailto-Link öffnen
+        // Here you could implement an API call to send the email
+        // or open a mailto link
         contactFormVisible = false;
-        alert('Vielen Dank für deine Nachricht!');
+        alert('Thank you for your message!');
     }
 </script>
 
-<!-- Header als Komponente -->
+<!-- Page-specific SEO tags -->
+<svelte:head>
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription}>
+    
+    <!-- Open Graph Tags for Social Media -->
+    <meta property="og:title" content={pageTitle}>
+    <meta property="og:description" content={pageDescription}>
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fxma.design">
+    <meta property="og:image" content="https://fxma.design/social-preview.jpg">
+    
+    <!-- Structured data for Google -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://fxma.design/",
+      "name": "FXMA Design",
+      "description": "Portfolio of Franz, Interaction Designer and Creative Developer",
+      "author": {
+        "@type": "Person",
+        "name": "Franz"
+      }
+    }
+    </script>
+</svelte:head>
+
+<!-- Hidden H1 for SEO -->
+<h1 class="sr-only">Franz - Interaction Designer & Creative Developer Portfolio</h1>
+
+<!-- Header component -->
 <HeaderHoverText />
 
-<!-- Kontakt-Icon als Komponente -->
+<!-- Contact Icon component -->
 <ContactIcon on:open={() => contactFormVisible = true} />
 
-<!-- Burger-Menü als Komponente -->
+<!-- Burger Menu component -->
 <BurgerMenu />
 
-<!-- Kontaktformular als Komponente -->
+<!-- Contact form component -->
 <Messageform visible={contactFormVisible} on:close={() => contactFormVisible = false} />
 
 <div class="app">
     <Stage 
         bind:this={stageComponent} 
-        {cx} {cy} {cz} 
-        isMainPage={true}
-        bind:currentSection={currentSection}  
+        bind:currentSection={currentSection}
+        {cx}
+        {cy}
+        {cz}  
     />
     
-    <!-- Navigation als Komponente einbinden -->
+    <!-- Include Navigation component -->
     <Nav {currentSection} {navigateTo} />
     
     <HomeFooter />
@@ -81,8 +116,16 @@
         height: 100%;
     }
 
+    /* Screen reader only class for hidden H1 */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
 </style>
-
-<svelte:head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-</svelte:head>
