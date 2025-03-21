@@ -8,7 +8,12 @@
 	import Footer from '$lib/Footer.svelte';
   
     $: url = $page.url;
-  
+    
+    // SEO-Konfiguration für diese Projektseite
+    const pageTitle = "bwegt App Redesign | FXMA Design Portfolio";
+    const pageDescription = "In-depth case study of the bwegt mobility app redesign project focusing on improved usability, simplified navigation, and enhanced real-time travel information for a seamless user experience.";
+    const pageKeywords = "bwegt app, UX design, UI redesign, mobility app, user research, prototype, gamification, Franz portfolio";
+
     // Stelle sicher, dass Scrollen auf dieser Seite funktioniert
     onMount(() => {
       // Aktiviere das Scrollen explizit
@@ -72,6 +77,43 @@
     
   </script>
   
+  <!-- Seitenspezifische SEO-Tags -->
+<svelte:head>
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription}>
+  <meta name="keywords" content={pageKeywords}>
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://fxma.design/project/bwegt">
+  
+  <!-- Open Graph Tags für Social Media -->
+  <meta property="og:title" content={pageTitle}>
+  <meta property="og:description" content={pageDescription}>
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://fxma.design/project/bwegt">
+  <meta property="og:image" content="https://fxma.design/bwegt-doku1.png">
+  
+  <!-- Strukturierte Daten für Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": "bwegt App Redesign",
+    "description": "A redesign of the bwegt mobility app focusing on usability, navigation, and real-time information.",
+    "creator": {
+      "@type": "Person",
+      "name": "Franz"
+    },
+    "keywords": "mobility app, UX design, UI redesign, gamification, user testing",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "FXMA Design",
+      "url": "https://fxma.design"
+    },
+    "image": "https://fxma.design/bwegt-doku1.png"
+  }
+  </script>
+</svelte:head>
   
   <!-- Füge eine wrapper-Klasse hinzu, um sicherzustellen, dass dieser Bereich scrollbar ist -->
   <div class="scroll-container">
@@ -84,14 +126,16 @@
         </button>
       </div>
       <div class="heading-container">
-        <h2>bwegt App</h2>
+        <!-- Ändere h2 zu h1 -->
+        <h1>bwegt App</h1>
       </div>
       <div class="project-columns">
         <div class="project-column">
           <h3>My Role</h3>
           <div class="divider"></div>
-          <p>I mainly worked in the creation of the Screendesign. Helped in the research process and played a big ass role
-            in the videoproduction to get the final videoresult.</p>
+          <p>
+            UI/UX Designer, User Research Contributor, Interface Developer, Prototype Creator, Visual Assets Creator, Video Production Lead, Team Collaborator
+          </p>
         </div>
         <div class="project-column">
           <h3>Project Overview</h3>
@@ -124,7 +168,7 @@
     role="figure"
     on:mousemove={handleMouseMove}
     on:mouseleave={resetTransform}>
-  <img src="/bwegt-doku1.png" alt="Beschreibung des Bildes" />
+  <img src="/bwegt-doku1.png" alt="Cover of the bwegt project showcasing the app with two screens on tilted smartphones" />
   </div>
   
   
@@ -148,7 +192,7 @@
   
   
     <div class="image-section">
-      <img src="/bwegt-doku2.png" alt="Beschreibung des Bildes" />
+      <img src="/bwegt-doku2.png" alt="Sticky notes displaying a detailed user flow diagram that helped gather important insights for the app design" />
     </div>
   
   
@@ -175,11 +219,11 @@
   
   
     <div class="img-grid">
-      <div class="img1"><img src="/grid1.png" alt="Beschreibung des Bildes" /></div>
-      <div class="img2"><img src="/grid2.png" alt="Beschreibung des Bildes" /></div>
-      <div class="img3"><img src="/grid3.png" alt="Beschreibung des Bildes" /></div>
-      <div class="img4"><img src="/grid4.png" alt="Beschreibung des Bildes" /></div>
-      <div class="img5"><img src="/grid5.png" alt="Beschreibung des Bildes" /></div>
+      <div class="img1"><img src="/grid1.png" alt="AI-generated avatar customization interface that helps users personalize their experience within the app" /></div>
+      <div class="img2"><img src="/grid2.png" alt="AI-generated badge visualization for the reward system showing the user's current achievement level" /></div>
+      <div class="img3"><img src="/grid3.png" alt="AI-generated environmental impact visualization showing progression levels in the gamification system" /></div>
+      <div class="img4"><img src="/grid4.png" alt="AI-generated reward icon representing achievements in the public transport usage tracking system" /></div>
+      <div class="img5"><img src="/grid5.png" alt="AI-generated emblem for the highest user level in the bwegt environmental benefits program" /></div>
     </div>
   
   
@@ -202,7 +246,7 @@
     </div>
   
     <div class="img-section-4">
-      <div class="img-container"><img src="/bwegt-doku3.png" alt="Beschreibung des Bildes" /></div>
+      <div class="img-container"><img src="/bwegt-doku3.png" alt="Overview of the benefits main page and subpages displayed on three smartphone screens showing the gamification system" /></div>
   </div>
   
   
@@ -220,15 +264,15 @@
   </div>
   
   <div class="img-section-4">
-    <div class="img-container"><img src="/bwegt-doku4.png" alt="Beschreibung des Bildes" /></div>
+    <div class="img-container"><img src="/bwegt-doku4.png" alt="Color palette used throughout the bwegt project showing primary, secondary, and accent colors" /></div>
   </div>
   
   <div class="img-section-4">
-    <div class="img-container"><img src="/bwegt-doku5.png" alt="Beschreibung des Bildes" /></div>
+    <div class="img-container"><img src="/bwegt-doku5.png" alt="Component set developed for the project displaying buttons, cards, input fields and navigation elements" /></div>
   </div>
   
   <div class="image-section">
-    <img src="/bwegt-doku6.png" alt="Beschreibung des Bildes" />
+    <img src="/bwegt-doku6.png" alt="Desktop UI version of bwegt showing responsive layouts of the key screens we designed" />
   </div>
   
   <div class="grid-section1">
@@ -246,7 +290,7 @@
   
   
   <div class="img-section-4">
-    <div class="img-container"><img data-src="/bwegt-doku7.png" alt="Beschreibung des Bildes" src="/placeholder.png" /></div>
+    <div class="img-container"><img data-src="/bwegt-doku7.png" alt="Active Journey feature showcased on three smartphone screens, displaying real-time travel information and connection updates" /></div>
   </div>
   
 
@@ -377,7 +421,7 @@
     align-content: center;
   }
 
-  .heading-container h2 {
+  .heading-container h1 {
     width: 100%;
     text-align: left;
     font-size: 6rem;
@@ -644,7 +688,7 @@
       margin-bottom: 2rem;
     }
     
-    .heading-container h2 {
+    .heading-container h1 {
       font-size: 4rem;
       line-height: 1.1;
     }
@@ -676,7 +720,7 @@
   
   /* Noch kleinere Geräte */
   @media (max-width: 480px) {
-    .heading-container h2 {
+    .heading-container h1 {
       font-size: 3rem;
     }
     
