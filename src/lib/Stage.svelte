@@ -324,7 +324,7 @@
       if (Math.abs(touchDiff) > 50 || swipeVelocity > 0.5) {
         // Emuliere ein Mausrad-Event für die bestehende onWheel-Funktion
         const wheelEvent = { 
-          deltaY: touchDiff, 
+          deltaY: -touchDiff, // Hier ist das Vorzeichen umgekehrt (-touchDiff statt touchDiff)
           preventDefault: () => {} 
         };
         onWheel(wheelEvent);
