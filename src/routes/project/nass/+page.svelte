@@ -4,9 +4,14 @@
   import { goto } from '$app/navigation';
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-	import Footer from '$lib/Footer.svelte';
+  import Footer from '$lib/Footer.svelte';
 
   $: url = $page.url;
+
+  // SEO-Konfiguration für diese Projektseite
+  const pageTitle = "NASS Device | Water Testing Solution | FXMA Design";
+  const pageDescription = "NASS is a portable water testing device with E-Ink interface, designed to make water quality analysis accessible and help combat waterborne diseases in regions like Uganda.";
+  const pageKeywords = "water testing device, E-Ink interface, NASS device, water quality, portable device, UI design, Franz portfolio";
 
   // Stelle sicher, dass Scrollen auf dieser Seite funktioniert
   onMount(() => {
@@ -64,13 +69,45 @@
   function resetTransform(e) {
     e.currentTarget.querySelector('img').style.transform = 'translate(0,0)';
   }
-
-  
-  
-
-  
 </script>
 
+<!-- Seitenspezifische SEO-Tags -->
+<svelte:head>
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription}>
+  <meta name="keywords" content={pageKeywords}>
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://fxma.design/project/nass">
+  
+  <!-- Open Graph Tags für Social Media -->
+  <meta property="og:title" content={pageTitle}>
+  <meta property="og:description" content={pageDescription}>
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://fxma.design/project/nass">
+  <meta property="og:image" content="https://fxma.design/Nass-cover.png">
+  
+  <!-- Strukturierte Daten für Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": "NASS Device",
+    "description": "A portable water testing device with a simple E-Ink interface and open-data sharing.",
+    "creator": {
+      "@type": "Person",
+      "name": "Franz"
+    },
+    "keywords": "water testing, E-Ink interface, UI/UX design, product design",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "FXMA Design",
+      "url": "https://fxma.design"
+    },
+    "image": "https://fxma.design/Nass-cover.png"
+  }
+  </script>
+</svelte:head>
 
 <!-- Füge eine wrapper-Klasse hinzu, um sicherzustellen, dass dieser Bereich scrollbar ist -->
 <div class="scroll-container">
@@ -78,19 +115,21 @@
   <div class="top-section">
     <div class="back-btn-container">
       <button on:click={goBackToFlur}>
-        <img src="/leftArrow.png" alt="Back arrow" />
+        <img src="/leftArrow.png" alt="Back arrow icon" />
         Back
       </button>
     </div>
     <div class="heading-container">
-      <h2>Nass Device</h2>
+      <!-- H2 durch H1 ersetzen, aber CSS-Klasse beibehalten -->
+      <h1>Nass Device</h1>
     </div>
     <div class="project-columns">
       <div class="project-column">
         <h3>My Role</h3>
         <div class="divider"></div>
-        <p>I mainly worked in the creation of the Screendesign. Helped in the research process and played a big ass role
-          in the videoproduction to get the final videoresult.</p>
+        <p>
+          UI/UX Designer, Interface Development, User Testing Lead, Research Contributor, Team Collaborator, Wireframe Development, Video Production Lead
+        </p>
       </div>
       <div class="project-column">
         <h3>Project Overview</h3>
@@ -123,7 +162,7 @@
   role="figure"
   on:mousemove={handleMouseMove}
   on:mouseleave={resetTransform}>
-<img src="/Nass-cover.png" alt="Beschreibung des Bildes" />
+<img src="/Nass-cover.png" alt="NASS project cover showing the device design displayed on a laptop screen" />
 </div>
 
 
@@ -143,10 +182,10 @@
 
   <div class="img-section-2col">
     <div class="img-container-left">
-      <img src="/Nass-Doku1.png" alt="NASS Device Präsentation" />
+      <img src="/Nass-Doku1.png" alt="Interactive prototype of the NASS website displayed on a MacBook screen" />
     </div>
     <div class="img-container-right">
-      <img src="/Nass-Doku2.png" alt="NASS Device Detail" />
+      <img src="/Nass-Doku2.png" alt="Cover of the NASS user guidance manual that accompanies the device and software" />
     </div>
   </div>
 
@@ -168,7 +207,7 @@
   </div>
 
   <div class="img-section-4">
-    <div class="img-container"><img src="/Nass-Doku3.png" alt="Beschreibung des Bildes" /></div>
+    <div class="img-container"><img src="/Nass-Doku3.png" alt="Color palette presentation showing the four main colors used throughout the NASS project" /></div>
 </div>
 
 
@@ -190,11 +229,11 @@
   </div>
 
   <div class="img-section-4">
-    <div class="img-container"><img src="/Nass-Doku4.png" alt="Beschreibung des Bildes" /></div>
+    <div class="img-container"><img src="/Nass-Doku4.png" alt="Grid display of the custom icon set designed for NASS, arranged in 3 rows with 4 icons per row" /></div>
 </div>
 
 <div class="img-section-4">
-  <div class="img-container"><img src="/Nass-Doku5.png" alt="Beschreibung des Bildes" /></div>
+  <div class="img-container"><img src="/Nass-Doku5.png" alt="Device UI screen showing the implementation of our custom icons in the E-Ink display" /></div>
 </div>
 
 
@@ -212,7 +251,7 @@
 </div>
 
 <div class="image-section">
-  <img src="/Nass-Doku6.png" alt="Beschreibung des Bildes" />
+  <img src="/Nass-Doku6.png" alt="Three detailed images showing the prototype building process, with the final product being held by a user in the last image" />
 </div>
 
 
@@ -233,7 +272,7 @@
 </div>
 
 <div class="image-section">
-  <img src="/Nass-Doku7.png" alt="Beschreibung des Bildes" />
+  <img src="/Nass-Doku7.png" alt="Overview of the NASS website design showing two different subpage layouts and navigation styles" />
 </div>
 
 <div class="grid-section1">
@@ -249,7 +288,7 @@
 </div>
 
 <div class="image-section">
-  <img src="/Nass-Doku8.png" alt="Beschreibung des Bildes" />
+  <img src="/Nass-Doku8.png" alt="Detailed view of the instructional manual designed to help users easily understand how to operate the NASS device" />
 </div>
 
 
@@ -325,7 +364,7 @@
 
 <div class="back-btn-container bottom-back">
   <button on:click={goBackToFlur}>
-    <img src="/leftArrow.png" alt="Back arrow" />
+    <img src="/leftArrow.png" alt="Back arrow icon" />
     Back to Projects
   </button>
 </div>
@@ -334,10 +373,6 @@
 
 </div>
 </div>
-
-
-
-
 
 <style>
 /* IBM Plex Mono Regular */
@@ -407,7 +442,7 @@
   align-content: center;
 }
 
-.heading-container h2 {
+.heading-container h1 {
   width: 100%;
   text-align: left;
   font-size: 6rem;
@@ -636,7 +671,7 @@ img {
     margin-bottom: 2rem;
   }
   
-  .heading-container h2 {
+  .heading-container h1 {
     font-size: 4rem;
     line-height: 1.1;
   }
@@ -668,7 +703,7 @@ img {
 
 /* Noch kleinere Geräte */
 @media (max-width: 480px) {
-  .heading-container h2 {
+  .heading-container h1 {
     font-size: 3rem;
   }
   
