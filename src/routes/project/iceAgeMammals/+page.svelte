@@ -7,7 +7,12 @@
 	import Footer from '$lib/Footer.svelte';
   
     $: url = $page.url;
-  
+    
+    // SEO-Variablen hinzufügen
+    const pageTitle = "Ice Age Mammals | Interactive Exhibition | FXMA Design";
+    const pageDescription = "An interactive museum installation with Reed sensors, 3D-printed game pieces, and projection mapping that brings the saber-toothed tiger to life through playful interaction.";
+    const pageKeywords = "interactive installation, museum exhibit, projection mapping, saber-toothed tiger, UX design, physical computing, Ice Age Mammals";
+
     // Stelle sicher, dass Scrollen auf dieser Seite funktioniert
     onMount(() => {
       // Aktiviere das Scrollen explizit
@@ -72,6 +77,43 @@
     
   </script>
   
+  <!-- Head-Bereich für SEO -->
+<svelte:head>
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription}>
+  <meta name="keywords" content={pageKeywords}>
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://fxma.design/project/iceAgeMammals">
+  
+  <!-- Open Graph Tags für Social Media -->
+  <meta property="og:title" content={pageTitle}>
+  <meta property="og:description" content={pageDescription}>
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://fxma.design/project/iceAgeMammals">
+  <meta property="og:image" content="https://fxma.design/ice-cover.png">
+  
+  <!-- Strukturierte Daten für Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": "Ice Age Mammals Interactive Installation",
+    "description": "An interactive museum installation that brings the saber-toothed tiger to life through tangible interaction with 3D-printed game pieces and projection mapping.",
+    "creator": {
+      "@type": "Person",
+      "name": "Franz"
+    },
+    "keywords": "interactive installation, projection mapping, museum exhibit, physical computing",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "FXMA Design",
+      "url": "https://fxma.design"
+    },
+    "image": "https://fxma.design/ice-cover.png"
+  }
+  </script>
+</svelte:head>
   
   <!-- Füge eine wrapper-Klasse hinzu, um sicherzustellen, dass dieser Bereich scrollbar ist -->
   <div class="scroll-container">
@@ -84,14 +126,15 @@
         </button>
       </div>
       <div class="heading-container">
-        <h2>Ice Age Mammals</h2>
+        <h1>Ice Age Mammals</h1>
       </div>
       <div class="project-columns">
         <div class="project-column">
           <h3>My Role</h3>
           <div class="divider"></div>
-          <p>I mainly worked in the creation of the Screendesign. Helped in the research process and played a big ass role
-            in the videoproduction to get the final videoresult.</p>
+          <p>
+            UI/UX Designer, Interactive Installation Designer, Projection Mapping Developer, Video Production Lead, 3D Printing Coordinator, Arduino Programming
+          </p>
         </div>
         <div class="project-column">
           <h3>Project Overview</h3>
@@ -120,11 +163,11 @@
   
   
   
-    <div class="cover-section"
+  <div class="cover-section"
     role="figure"
     on:mousemove={handleMouseMove}
     on:mouseleave={resetTransform}>
-  <img src="/ice-cover.png" alt="Beschreibung des Bildes" />
+  <img src="/ice-cover.png" alt="Interactive table installation for the Ice Age Mammals exhibition with projected visualization of a saber-toothed tiger" />
   </div>
   
   
@@ -148,20 +191,20 @@
     <div class="grid-section1">
       <div class="ice-img-grid">
         <div class="row">
-        <div class="grid-item"><img src="/iceGrid1.png" alt="Ice Age Project Image 1" /></div>
-        <div class="grid-item"><img src="/iceGrid2.png" alt="Ice Age Project Image 2" /></div>
+        <div class="grid-item"><img src="/iceGrid1.png" alt="Building process of the interactive table showing wooden base structure assembly" /></div>
+        <div class="grid-item"><img src="/iceGrid2.png" alt="Close-up of carving and layering work on the wooden landscape structure" /></div>
     </div>
-        <div class="grid-item full-width"><img src="/iceGrid3.png" alt="Ice Age Project Image 3" /></div>
-        <div class="grid-item full-width"><img src="/iceGrid4.png" alt="Ice Age Project Image 4" /></div>
+        <div class="grid-item full-width"><img src="/iceGrid3.png" alt="Full overview of the table structure with embedded sensor slots before electronics installation" /></div>
+        <div class="grid-item full-width"><img src="/iceGrid4.png" alt="Close-up view of the layered landscape design showing topographic features" /></div>
         <div class="row">
-        <div class="grid-item"><img src="/iceGrid5.png" alt="Ice Age Project Image 5" /></div>
-        <div class="grid-item"><img src="/iceGrid6.png" alt="Ice Age Project Image 6" /></div>
+        <div class="grid-item"><img src="/iceGrid5.png" alt="Electronic components being installed within the table's wooden framework" /></div>
+        <div class="grid-item"><img src="/iceGrid6.png" alt="Reed sensor wiring and connection points being prepared for game piece detection" /></div>
     </div>
     <div class="row">
-        <div class="grid-item"><img src="/iceGrid7.png" alt="Ice Age Project Image 7 description" /></div>
-        <div class="grid-item"><img src="/iceGrid8.png" alt="Ice Age Project Image 8" /></div>
+        <div class="grid-item"><img src="/iceGrid7.png" alt="Testing phase of the interactive system with Arduino connections visible" /></div>
+        <div class="grid-item"><img src="/iceGrid8.png" alt="Final assembly steps of the physical table structure before projection mapping" /></div>
     </div>
-        <div class="grid-item full-width"><img src="/iceGrid9.png" alt="Ice Age Project Image 9" /></div>
+        <div class="grid-item full-width"><img src="/iceGrid9.png" alt="Overhead view of the completed wooden landscape with all sensor positions marked" /></div>
       </div>
     </div>
 
@@ -186,11 +229,11 @@
 
   <div class="grid-section1">
     <div class="icegrid2-container">
-      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-1.png" alt="Ice Age Project Detail 1" /></div>
-      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-2.png" alt="Ice Age Project Detail 2" /></div>
-      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-3.png" alt="Ice Age Project Detail 3" /></div>
-      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-4.png" alt="Ice Age Project Detail 4" /></div>
-      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-5.png" alt="Ice Age Project Detail 5" /></div>
+      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-1.png" alt="Close-up of the interactive controller during assembly showing internal wiring components" /></div>
+      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-2.png" alt="D-pad controller design with illuminated buttons for intuitive navigation" /></div>
+      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-3.png" alt="Testing the controller's electrical connections with Arduino interface" /></div>
+      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-4.png" alt="Controller housing with color-coded lighting showing active control options" /></div>
+      <div class="icegrid2-item"><img src="/iceGrid2/iceGrid2-5.png" alt="Completed navigation controller with integrated feedback system ready for installation" /></div>
       <!-- Weitere Bilder können hier hinzugefügt werden -->
     </div>
   </div>
@@ -232,20 +275,20 @@
       <div class="slider-container slider-right">
         <div class="slider-track">
           <!-- Erste Gruppe von Bildern -->
-          <div class="slider-item"><img src="/sliderIce1/slider1-1.png" alt="Ice Age Interface 1" /></div>
-          <div class="slider-item"><img src="/sliderIce1/slider1-2.png" alt="Ice Age Interface 2" /></div>
-          <div class="slider-item"><img src="/sliderIce1/slider1-3.png" alt="Ice Age Interface 3" /></div>
-          <div class="slider-item"><img src="/sliderIce1/slider1-4.png" alt="Ice Age Interface 4" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-1.png" alt="Final installation view showing the illuminated interactive table with projected visualization" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-2.png" alt="Close-up of game piece interaction triggering the saber-toothed tiger animation on the table" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-3.png" alt="Side view of the table showing the projection mapping aligned with the physical landscape" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-4.png" alt="User testing the interactive experience with the 3D-printed magnetized game piece" /></div>
           <!-- Wiederholen für nahtloses Looping -->
-          <div class="slider-item"><img src="/sliderIce1/slider1-1.png" alt="Ice Age Interface 1" /></div>
-          <div class="slider-item"><img src="/sliderIce1/slider1-2.png" alt="Ice Age Interface 2" /></div>
-          <div class="slider-item"><img src="/sliderIce1/slider1-3.png" alt="Ice Age Interface 3" /></div>
-          <div class="slider-item"><img src="/sliderIce1/slider1-4.png" alt="Ice Age Interface 4" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-1.png" alt="Final installation view showing the illuminated interactive table with projected visualization" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-2.png" alt="Close-up of game piece interaction triggering the saber-toothed tiger animation on the table" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-3.png" alt="Side view of the table showing the projection mapping aligned with the physical landscape" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-4.png" alt="User testing the interactive experience with the 3D-printed magnetized game piece" /></div>
           <!-- Eine weitere Wiederholung für bessere Abdeckung -->
-          <div class="slider-item"><img src="/sliderIce1/slider1-1.png" alt="Ice Age Interface 1" /></div>
-          <div class="slider-item"><img src="/sliderIce1/slider1-2.png" alt="Ice Age Interface 2" /></div>
-          <div class="slider-item"><img src="/sliderIce1/slider1-3.png" alt="Ice Age Interface 3" /></div>
-          <div class="slider-item"><img src="/sliderIce1/slider1-4.png" alt="Ice Age Interface 4" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-1.png" alt="Final installation view showing the illuminated interactive table with projected visualization" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-2.png" alt="Close-up of game piece interaction triggering the saber-toothed tiger animation on the table" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-3.png" alt="Side view of the table showing the projection mapping aligned with the physical landscape" /></div>
+          <div class="slider-item"><img src="/sliderIce1/slider1-4.png" alt="User testing the interactive experience with the 3D-printed magnetized game piece" /></div>
         </div>
       </div>
   
@@ -253,20 +296,20 @@
       <div class="slider-container slider-left">
         <div class="slider-track">
           <!-- Bilder dreifach für nahtloses Looping -->
-          <div class="slider-item"><img src="/sliderIce2/slider2-1.png" alt="Ice Age Process 1" /></div>
-          <div class="slider-item"><img src="/sliderIce2/slider2-2.png" alt="Ice Age Process 2" /></div>
-          <div class="slider-item"><img src="/sliderIce2/slider2-3.png" alt="Ice Age Process 3" /></div>
-          <div class="slider-item"><img src="/sliderIce2/slider2-4.png" alt="Ice Age Process 4" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-1.png" alt="Night view of the exhibition setup with dramatic lighting highlighting the table installation" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-2.png" alt="Interactive scene showing the saber-toothed tiger's habitat with information overlay" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-3.png" alt="User interacting with the controller to navigate through information categories" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-4.png" alt="Detail view of the animated projection responding to the physical game piece position" /></div>
           <!-- Erste Wiederholung -->
-          <div class="slider-item"><img src="/sliderIce2/slider2-1.png" alt="Ice Age Process 1" /></div>
-          <div class="slider-item"><img src="/sliderIce2/slider2-2.png" alt="Ice Age Process 2" /></div>
-          <div class="slider-item"><img src="/sliderIce2/slider2-3.png" alt="Ice Age Process 3" /></div>
-          <div class="slider-item"><img src="/sliderIce2/slider2-4.png" alt="Ice Age Process 4" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-1.png" alt="Night view of the exhibition setup with dramatic lighting highlighting the table installation" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-2.png" alt="Interactive scene showing the saber-toothed tiger's habitat with information overlay" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-3.png" alt="User interacting with the controller to navigate through information categories" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-4.png" alt="Detail view of the animated projection responding to the physical game piece position" /></div>
           <!-- Zweite Wiederholung für bessere Abdeckung -->
-          <div class="slider-item"><img src="/sliderIce2/slider2-1.png" alt="Ice Age Process 1" /></div>
-          <div class="slider-item"><img src="/sliderIce2/slider2-2.png" alt="Ice Age Process 2" /></div>
-          <div class="slider-item"><img src="/sliderIce2/slider2-3.png" alt="Ice Age Process 3" /></div>
-          <div class="slider-item"><img src="/sliderIce2/slider2-4.png" alt="Ice Age Process 4" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-1.png" alt="Night view of the exhibition setup with dramatic lighting highlighting the table installation" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-2.png" alt="Interactive scene showing the saber-toothed tiger's habitat with information overlay" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-3.png" alt="User interacting with the controller to navigate through information categories" /></div>
+          <div class="slider-item"><img src="/sliderIce2/slider2-4.png" alt="Detail view of the animated projection responding to the physical game piece position" /></div>
         </div>
       </div>
   
@@ -287,13 +330,13 @@
   </div>
   
   <div class="img-section-4">
-    <div class="img-container"><img src="/iceFarbe.png" alt="Beschreibung des Bildes" /></div>
+    <div class="img-container"><img src="/iceFarbe.png" alt="Color palette for the Ice Age Mammals project featuring earthy tones inspired by the Ice Age period" /></div>
 </div>
 <div class="img-section-4">
-    <div class="img-container"><img src="/iceAsset1.png" alt="Beschreibung des Bildes" /></div>
+    <div class="img-container"><img src="/iceAsset1.png" alt="Typography specifications showing Lacquer and Kulim Park fonts with styling guidelines" /></div>
 </div>
 <div class="img-section-4">
-    <div class="img-container"><img src="/iceAsset2.png" alt="Beschreibung des Bildes" /></div>
+    <div class="img-container"><img src="/iceAsset2.png" alt="Custom illustration set for the project including saber-toothed tiger and environmental elements" /></div>
 </div>
   
   
@@ -356,7 +399,7 @@
 
 <div class="back-btn-container bottom-back">
   <button on:click={goBackToFlur}>
-    <img src="/leftArrow.png" alt="Back arrow" />
+    <img src="/leftArrow.png" alt="Back arrow icon" />
     Back to Projects
   </button>
 </div>
@@ -439,7 +482,7 @@
     align-content: center;
   }
   
-  .heading-container h2 {
+  .heading-container h1 {
     width: 100%;
     text-align: left;
     font-size: 6rem;
@@ -710,7 +753,7 @@
       margin-bottom: 2rem;
     }
     
-    .heading-container h2 {
+    .heading-container h1 {
       font-size: 4rem;
       line-height: 1.1;
     }
@@ -786,7 +829,7 @@
   
   /* Noch kleinere Geräte */
   @media (max-width: 480px) {
-    .heading-container h2 {
+    .heading-container h1 {
       font-size: 3rem;
     }
     
