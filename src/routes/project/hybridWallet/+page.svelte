@@ -65,12 +65,51 @@
       e.currentTarget.querySelector('img').style.transform = 'translate(0,0)';
     }
   
-    
-    
-  
+    // SEO-Konfiguration für diese Projektseite
+    const pageTitle = "HYBRID Wallet | Smart Payment Solution | FXMA Design";
+    const pageDescription = "The HYBRID Wallet blends physical and digital payment seamlessly with NFC technology, LED feedback, and fingerprint authentication — accompanied by a feature-rich companion app.";
+    const pageKeywords = "HYBRID Wallet, smart wallet, UI/UX design, NFC payment, digital payment solution, app design, Arduino prototype, interaction design";
     
   </script>
   
+<!-- Direkt nach dem schließenden </script>-Tag -->
+<!-- Seitenspezifische SEO-Tags -->
+<svelte:head>
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription}>
+  <meta name="keywords" content={pageKeywords}>
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://fxma.design/project/hybridWallet">
+  
+  <!-- Open Graph Tags für Social Media -->
+  <meta property="og:title" content={pageTitle}>
+  <meta property="og:description" content={pageDescription}>
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://fxma.design/project/hybridWallet">
+  <meta property="og:image" content="https://fxma.design/walletImg/hybridWallet-cover.png">
+  
+  <!-- Strukturierte Daten für Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": "HYBRID Wallet",
+    "description": "A smart wallet with NFC payment, LED feedback, fingerprint authentication, and a companion app—blending digital and physical payments seamlessly.",
+    "creator": {
+      "@type": "Person",
+      "name": "Franz"
+    },
+    "keywords": "smart wallet, NFC payment, app design, UX design, interaction design",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "FXMA Design",
+      "url": "https://fxma.design"
+    },
+    "image": "https://fxma.design/walletImg/hybridWallet-cover.png"
+  }
+  </script>
+</svelte:head>
   
   <!-- Füge eine wrapper-Klasse hinzu, um sicherzustellen, dass dieser Bereich scrollbar ist -->
   <div class="scroll-container">
@@ -78,19 +117,20 @@
     <div class="top-section">
       <div class="back-btn-container">
         <button on:click={goBackToFlur}>
-          <img src="/leftArrow.png" alt="Back arrow" />
+          <img src="/leftArrow.png" alt="Back navigation arrow icon" />
           Back
         </button>
       </div>
       <div class="heading-container">
-        <h2>HYBRID Wallet</h2>
+        <h1>HYBRID Wallet</h1>
       </div>
       <div class="project-columns">
         <div class="project-column">
           <h3>My Role</h3>
           <div class="divider"></div>
-          <p>I mainly worked in the creation of the Screendesign. Helped in the research process and played a big ass role
-            in the videoproduction to get the final videoresult.</p>
+          <p>
+            UI/UX Designer, Interface Developer, User Research Contributor, Digital Prototype Creator, Team Collaborator
+          </p>
         </div>
         <div class="project-column">
           <h3>Project Overview</h3>
@@ -124,7 +164,7 @@
     role="figure"
     on:mousemove={handleMouseMove}
     on:mouseleave={resetTransform}>
-  <img src="/walletImg/hybridWallet-cover.png" alt="Beschreibung des Bildes" />
+  <img src="/walletImg/hybridWallet-cover.png" alt="HYBRID Wallet product showcase featuring the smart wallet with glowing LED edge and companion app interface" />
   </div>
   
   
@@ -163,17 +203,17 @@
 
     <div class="image-section">
         <h4 class="img-title">Drawings and first dummy</h4>
-      <img src="/walletImg/hybrid1.png" alt="Beschreibung des Bildes" />
+      <img src="/walletImg/hybrid1.png" alt="Initial concept sketches and first paper prototype of the HYBRID Wallet showing various form factor explorations" />
     </div>
 
     <div class="image-section">
         <h4 class="img-title">Building more advanced prototype dummies</h4>
-      <img src="/walletImg/hybrid2.png" alt="Beschreibung des Bildes" />
+      <img src="/walletImg/hybrid2.png" alt="Advanced cardboard prototypes of the HYBRID Wallet demonstrating different possible shapes and component arrangements" />
     </div>
 
     <div class="image-section">
         <h4 class="img-title">Enhancing prototype and taking user feedback through testing</h4>
-      <img src="/walletImg/hybrid3.png" alt="Beschreibung des Bildes" />
+      <img src="/walletImg/hybrid3.png" alt="Enhanced HYBRID Wallet prototype with integrated electronics and user testing session showing interaction feedback" />
     </div>
   
   
@@ -192,12 +232,12 @@
     </div>
 
     <div class="image-section">
-      <img src="/walletImg/hybrid4.png" alt="Beschreibung des Bildes" />
+      <img src="/walletImg/hybrid4.png" alt="HYBRID companion app interface design showing multiple screens with card management and transaction history features" />
     </div>
   
     <div class="image-section">
         <h4 class="img-title">Interactive Elements & Icons</h4>
-      <img src="/walletImg/hybrid5.png" alt="Beschreibung des Bildes" />
+      <img src="/walletImg/hybrid5.png" alt="Collection of interactive UI elements and custom icons designed for the HYBRID app showcasing consistent design language" />
     </div>
   
   
@@ -218,7 +258,7 @@
     </div>
 
     <div class="image-section">
-      <img src="/walletImg/hybrid6.png" alt="Beschreibung des Bildes" />
+      <img src="/walletImg/hybrid6.png" alt="High-fidelity 3D renders of the HYBRID Wallet from multiple angles demonstrating the slim profile and premium finish" />
     </div>
 
 
@@ -286,7 +326,7 @@
     
     <div class="back-btn-container bottom-back">
       <button on:click={goBackToFlur}>
-        <img src="/leftArrow.png" alt="Back arrow" />
+        <img src="/leftArrow.png" alt="Back navigation arrow icon for returning to projects page" />
         Back to Projects
       </button>
     </div>
@@ -374,7 +414,7 @@
     align-content: center;
   }
 
-  .heading-container h2 {
+  .heading-container h1 {
     width: 100%;
     text-align: left;
     font-size: 6rem;
@@ -560,7 +600,7 @@
       margin-bottom: 2rem;
     }
     
-    .heading-container h2 {
+    .heading-container h1 {
       font-size: 4rem;
       line-height: 1.1;
     }
@@ -584,7 +624,7 @@
   
   /* Noch kleinere Geräte */
   @media (max-width: 480px) {
-    .heading-container h2 {
+    .heading-container h1 {
       font-size: 3rem;
     }
     
