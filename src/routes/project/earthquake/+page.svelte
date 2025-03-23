@@ -664,6 +664,40 @@
   }
 
 
+/* Verbesserte Media Queries für die Überschrift */
+@media (max-width: 768px) {
+  .heading-container h2 {
+    font-size: 3.5rem;  /* Etwas kleiner als zuvor (4rem) */
+    line-height: 1;     /* Reduzierter Zeilenabstand für besseren Umbruch */
+    letter-spacing: 0;  /* Kein zusätzlicher Buchstabenabstand für kompakteres Aussehen */
+  }
+}
+
+@media (max-width: 480px) {
+  .heading-container h2 {
+    font-size: 2.4rem;  /* Deutlich kleiner für kleine Geräte */
+    line-height: 0.9;   /* Noch mehr reduzierter Zeilenabstand */
+    margin-bottom: 1rem; /* Mehr Platz nach unten hinzufügen */
+  }
+}
+
+/* Falls du zu h1 wechselst (für SEO), diese Regeln hinzufügen: */
+@media (max-width: 768px) {
+  .heading-container h1 {
+    font-size: 3.5rem;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .heading-container h1 {
+    font-size: 2.4rem;
+    line-height: 0.9;
+    margin-bottom: 1rem;
+  }
+}
+
 /* Animation-Anpassungen für bessere Abdeckung */
 @keyframes slideRight {
   0% {
@@ -721,12 +755,12 @@
   margin-bottom: 1rem;
 }
 
-/* Mobile Anpassungen */
-@media (max-width: 768px) {
+/* Tablet-Anpassung (bereits bei größeren Tablets umbrechen) */
+@media (max-width: 1024px) {
   .grid-row {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-bottom: 4rem;
+    gap: 2rem;
+    margin-bottom: 5rem;
   }
   
   .grid-image {
@@ -735,6 +769,24 @@
   
   .grid-text {
     grid-column: 1;
+    max-width: 85%;
+    margin: 0 auto;
+  }
+  
+  .grid-text h4 {
+    margin-top: 1rem;
+  }
+}
+
+/* Bestehende Mobile-Anpassungen (für noch kleinere Geräte) */
+@media (max-width: 768px) {
+  .grid-row {
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+  
+  .grid-text {
+    max-width: 100%;
   }
 }
 
