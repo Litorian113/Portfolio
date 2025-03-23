@@ -156,7 +156,7 @@
           <h3>My Role</h3>
           <div class="divider"></div>
           <p>
-            Lead Screen Designer, UI/UX Developer, WordPress Implementation Specialist, Technical Integration Lead, Video Production Director, User Testing Coordinator, Instagram API Integration Expert, Team Collaborator
+            UI/UX Developer, WordPress Implementation, Technical Integration, Instagram API Integration, Team Collaborator
           </p>
         </div>
         <div class="project-column">
@@ -281,8 +281,8 @@
               <span class="tool-role">Deployment & Hosting</span>
             </div>
             <div class="tool">
-              <span class="tool-name">Illustrator</span>
-              <span class="tool-role">Icon-Generation</span>
+              <span class="tool-name">Instagram API</span>
+              <span class="tool-role">Social Media Integration</span>
             </div>
             
           </div>
@@ -826,5 +826,34 @@
 /* Hover-Effekt für den Link */
 .website-link:hover h1 {
   color: #e41f2c; /* Hellere Farbe beim Hover */
+}
+
+/* Neue Media Queries für mobile Anpassungen */
+@media (max-width: 768px) {
+  .website-link h1 {
+    font-size: 1.8rem;  /* Leicht verkleinert für Tablets */
+    line-height: 1.4;   /* Etwas kompaktere Zeilenhöhe */
+    white-space: nowrap; /* Verhindert Umbrechen */
+  }
+  
+  .link-icon {
+    width: 16px;        /* Icon etwas kleiner machen */
+    height: 16px;
+    margin-left: 6px;   /* Geringerer Abstand zum Text */
+  }
+}
+
+@media (max-width: 480px) {
+  .website-link h1 {
+    font-size: 1.5rem;  /* Noch kleiner für Smartphones */
+    line-height: 1.3;   /* Kompaktere Zeilenhöhe */
+  }
+  
+  .link-icon {
+    width: 14px;        /* Noch kleineres Icon für Smartphones */
+    height: 14px;
+    margin-left: 4px;   /* Minimaler Abstand zum Text */
+    top: -2px;          /* Vertikale Ausrichtung anpassen */
+  }
 }
   </style>
