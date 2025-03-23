@@ -804,5 +804,42 @@
   justify-content: flex-start; /* Linksbündig statt zentriert */
 }
 
+/* Bestehender CSS-Code (unverändert) */
+.heading-container h1 {
+  font-family: 'Franz-Plex', mono;
+  color: #057FD3;
+  line-height: 1.6;
+  font-size: 2rem;
+  margin: 0;
+  padding: 0;
+}
 
+/* Neue Media Queries für mobile Anpassungen */
+@media (max-width: 768px) {
+  .heading-container h1 {
+    font-size: 1.8rem;  /* Leicht verkleinert für Tablets */
+    line-height: 1.4;   /* Etwas kompaktere Zeilenhöhe */
+  }
+  
+  .link-icon {
+    width: 16px;        /* Icon etwas kleiner machen */
+    height: 16px;
+    margin-left: 6px;   /* Geringerer Abstand zum Text */
+  }
+}
+
+@media (max-width: 480px) {
+  .heading-container h1 {
+    font-size: 1.6rem;  /* Noch kleiner für Smartphones */
+    line-height: 1.3;   /* Kompaktere Zeilenhöhe */
+    word-break: keep-all; /* Verhindert das Umbrechen von Wörtern */
+  }
+  
+  .link-icon {
+    width: 14px;        /* Noch kleineres Icon für Smartphones */
+    height: 14px;
+    margin-left: 4px;   /* Minimaler Abstand zum Text */
+    top: -3px;          /* Vertikale Ausrichtung anpassen */
+  }
+}
   </style>
