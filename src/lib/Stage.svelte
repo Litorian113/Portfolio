@@ -344,7 +344,8 @@
       bild1: null,
       bild2: null, 
       bild3: null,
-      bild4: null
+      bild4: null,
+      fotoCover: null // Neue Zeile
     };
     
     // Diese Funktion zum Überprüfen der Gerätegröße
@@ -392,13 +393,15 @@ function loadAppropriateTextures() {
       bild1: '/Bild2.png',
       bild2: '/Bild1.png',
       bild3: '/Bild3.png',
-      bild4: '/Bild4.png'
+      bild4: '/Bild4.png',
+      fotoCover: '/foto-cover.png'  // Neue Zeile
     },
     mobile: {
       bild1: '/mobile/Bild1-mobile.png',
       bild2: '/mobile/Bild2-mobile.png',
       bild3: '/mobile/Bild3-mobile.png',
-      bild4: '/mobile/Bild4-mobile.png'
+      bild4: '/mobile/Bild4-mobile.png',
+      fotoCover: '/mobile/Bild5.png'  // Neue Zeile
     }
   };
   
@@ -410,7 +413,8 @@ function loadAppropriateTextures() {
     { meshIndex: 0, texture: 'bild1', project: 'nass' },
     { meshIndex: 1, texture: 'bild2', project: 'bwegt' },
     { meshIndex: 2, texture: 'bild3', project: 'iceAgeMammals' },
-    { meshIndex: 3, texture: 'bild4', project: 'hybridWallet' }
+    { meshIndex: 3, texture: 'bild4', project: 'hybridWallet' },
+    { meshIndex: 6, texture: 'fotoCover', project: 'photovideo' } // Neue Zeile
   ];
   
   meshAssignments.forEach(({ meshIndex, texture, project }) => {
@@ -875,14 +879,15 @@ function loadAppropriateTextures() {
 
 
 
-      const pngTextureFoto = textureLoader.load('/foto-cover.png');
-      pngTextureFoto.colorSpace = THREE.SRGBColorSpace;
-      const pngGeometryFoto = new THREE.PlaneGeometry(3, 2);
-      const pngMaterialFoto = new THREE.MeshBasicMaterial({ 
-        map: pngTextureFoto, 
-        transparent: true,
-        alphaTest: 0.01 // Diese Zeile hinzufügen
-      });
+      const fotoTexturePath = isMobile ? '/mobile/Bild5.png' : '/foto-cover.png';
+const pngTextureFoto = textureLoader.load(fotoTexturePath);
+pngTextureFoto.colorSpace = THREE.SRGBColorSpace;
+const pngGeometryFoto = new THREE.PlaneGeometry(isMobile ? 2 : 3, isMobile ? 2 * (16/9) : 2); // Anpassung an mobile Proportionen
+const pngMaterialFoto = new THREE.MeshBasicMaterial({ 
+  map: pngTextureFoto, 
+  transparent: true,
+  alphaTest: 0.01
+});
       const pngMeshFoto = new THREE.Mesh(pngGeometryFoto, pngMaterialFoto);
       pngMeshFoto.position.set(3, 0, -22.5);
       pngMeshFoto.userData.finalX = 0;
@@ -890,6 +895,10 @@ function loadAppropriateTextures() {
       pngMeshFoto.userData.project = 'photovideo'; // Dieser Eintrag ist neu
       scene.add(pngMeshFoto);
       imageMeshes.push(pngMeshFoto);
+
+      if (isMobile) {
+        pngMeshFoto.scale.set(0.55, 0.55, 0.55); // Gleiche Skalierung wie andere mobile Bilder
+      }
 
       const pngTextureMe = textureLoader.load('/photo-video.png');
       pngTextureMe.colorSpace = THREE.SRGBColorSpace;
