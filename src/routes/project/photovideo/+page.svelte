@@ -1,3 +1,41 @@
+<svelte:head>
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription}>
+  <meta name="keywords" content={pageKeywords}>
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://fxma.design/project/photovideo">
+  
+  <!-- Open Graph Tags für Social Media -->
+  <meta property="og:title" content={pageTitle}>
+  <meta property="og:description" content={pageDescription}>
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://fxma.design/project/photovideo">
+  <meta property="og:image" content="https://fxma.design/mode/Tasche1.jpg">
+  
+  <!-- Strukturierte Daten für Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VisualArtwork",
+    "name": "Photography & Videography Portfolio",
+    "description": "A collection of photography and videography work featuring sports, fashion, and urban scenes captured through professional equipment and a unique creative perspective.",
+    "creator": {
+      "@type": "Person",
+      "name": "Franz"
+    },
+    "artMedium": "Photography and Videography",
+    "keywords": "photography, videography, sports photography, fashion photography, Canon R6, creative direction",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "FXMA Design",
+      "url": "https://fxma.design"
+    },
+    "image": "https://fxma.design/mode/Tasche1.jpg"
+  }
+  </script>
+</svelte:head>
+
 <script>
     import FadeInSection from '$lib/components/FadeInSection.svelte';
     import { page } from '$app/stores';
@@ -8,6 +46,11 @@
   
     $: url = $page.url;
   
+    // SEO-Konfiguration für diese Projektseite
+    const pageTitle = "Photography & Videography Portfolio | FXMA Design";
+    const pageDescription = "Explore a diverse collection of photography and videography work spanning sports, fashion, and urban scenes captured through a unique creative perspective.";
+    const pageKeywords = "photography portfolio, video production, sports photography, fashion photography, videography, camera work, Franz portfolio";
+
     // Stelle sicher, dass Scrollen auf dieser Seite funktioniert
     onMount(() => {
       // Aktiviere das Scrollen explizit
@@ -527,6 +570,160 @@
       // Bestehender onMount-Code
       setupOptimizedImageLoading();
     });
+
+    // Verbesserte Masonry-Implementierung
+    function createResponsiveMasonry() {
+      const grid = document.querySelector('.masonry-gallery');
+      if (!grid) return;
+      
+      // Bisher geladene Bilder erfassen
+      const loadedImages = new Set();
+      
+      // Layout-Funktion
+      function layoutMasonry() {
+        const items = Array.from(grid.querySelectorAll('.masonry-item'));
+        if (items.length === 0) return;
+        
+        // Spaltenanzahl basierend auf Bildschirmbreite
+        let columnCount;
+        if (window.innerWidth <= 480) {
+          columnCount = 1;  // Einzelne Spalte auf kleinen Smartphones
+        } else if (window.innerWidth <= 768) {
+          columnCount = 2;  // 2 Spalten auf Tablets/größeren Smartphones
+        } else {
+          columnCount = 3;  // 3 Spalten auf Desktop
+        }
+        
+        // Spaltenbreite berechnen
+        const containerWidth = grid.offsetWidth;
+        const columnWidth = containerWidth / columnCount;
+        const gap = 10;  // Abstand zwischen den Bildern
+        
+        // Spalten initialisieren
+        const columns = Array(columnCount).fill().map(() => []);
+        const columnHeights = Array(columnCount).fill(0);
+        
+        // Elemente in Spalten verteilen
+        items.forEach((item) => {
+          // Kürzeste Spalte finden
+          const shortestColumn = columnHeights.indexOf(Math.min(...columnHeights));
+          
+          // Element zur Spalte hinzufügen
+          columns[shortestColumn].push(item);
+          
+          // Statische Größenprüfung zur Höhenberechnung
+          const img = item.querySelector('img');
+          let itemHeight = 0;
+          
+          if (img && img.complete) {
+            // Proportionales Verhältnis berechnen
+            const ratio = img.naturalHeight / img.naturalWidth || 1;
+            // Höhe basierend auf neuer Breite und Bildverhältnis
+            itemHeight = (columnWidth * ratio) + gap;
+          } else {
+            // Fallback für noch nicht geladene Bilder
+            itemHeight = 200 + gap;
+          }
+          
+          // Spaltenhöhe aktualisieren
+          columnHeights[shortestColumn] += itemHeight;
+        });
+        
+        // Elemente positionieren
+        let currentItem = 0;
+        grid.style.position = 'relative';
+        
+        // Höchste Spalte finden für Container-Höhe
+        let maxHeight = Math.max(...columnHeights);
+        grid.style.height = `${maxHeight}px`;
+        
+        // Jede Spalte durchgehen
+        columns.forEach((column, columnIndex) => {
+          let currentY = 0;
+          
+          // Jedes Element in der Spalte positionieren
+          column.forEach((item) => {
+            // Positionieren
+            item.style.position = 'absolute';
+            item.style.top = `${currentY}px`;
+            item.style.left = `${columnIndex * columnWidth}px`;
+            item.style.width = `${columnWidth - gap}px`;
+            
+            // Höhe des aktuellen Elements berechnen
+            const img = item.querySelector('img');
+            let itemHeight = 0;
+            
+            if (img && img.complete) {
+              const ratio = img.naturalHeight / img.naturalWidth || 1;
+              itemHeight = columnWidth * ratio;
+            } else {
+              itemHeight = 200; // Fallback
+            }
+            
+            // Y-Position für nächstes Element aktualisieren
+            currentY += itemHeight + gap;
+          });
+        });
+      }
+      
+      // Event-Listener für geladene Bilder
+      const images = grid.querySelectorAll('img');
+      images.forEach((img) => {
+        // Bereits geladene Bilder überspringen
+        if (img.complete) {
+          if (!loadedImages.has(img.src)) {
+            loadedImages.add(img.src);
+          }
+        } else {
+          img.onload = () => {
+            if (!loadedImages.has(img.src)) {
+              loadedImages.add(img.src);
+              layoutMasonry();
+            }
+          };
+        }
+      });
+      
+      // Initial Layout erstellen
+      layoutMasonry();
+      
+      // Resize-Handler
+      const resizeHandler = debounce(layoutMasonry, 200);
+      window.addEventListener('resize', resizeHandler);
+      
+      // Debounce-Funktion zur Leistungsoptimierung
+      function debounce(func, wait) {
+        let timeout;
+        return function() {
+          const context = this;
+          const args = arguments;
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(context, args), wait);
+        };
+      }
+      
+      // Mehrfache Layout-Updates, um sicherzustellen, dass alle Bilder korrekt angezeigt werden
+      setTimeout(layoutMasonry, 500);
+      setTimeout(layoutMasonry, 2000);
+      
+      return {
+        update: layoutMasonry
+      };
+    }
+
+    // Ersetze die bestehenden Masonry-bezogenen Funktionen in deinem onMount mit diesem Aufruf:
+    onMount(() => {
+      // Bestehender Code...
+      
+      // Neu: Responsives Masonry erstellen
+      const masonryLayout = createResponsiveMasonry();
+      
+      // Bestehende Event-Handler beibehalten und aufräumen
+      return () => {
+        window.removeEventListener('resize', handleResize);
+        // Andere Event-Listener-Entfernungen...
+      };
+    });
   </script>
   
   
@@ -541,7 +738,7 @@
         </button>
         </div>
         <div class="heading-container">
-            <h2>Seeing the World My Way.</h2>
+            <h1>Seeing the World My Way.</h1>
           </div>
 
 
@@ -765,6 +962,86 @@
   </div>
 </div>
 
+
+
+<div class="collaborators-section">
+  <div class="divider-large"></div>
+  
+  <FadeInSection>
+      
+      <!-- Neuer Abschnitt für Creative Arsenal -->
+      <div class="creative-arsenal">
+        <h4>My Creative Arsenal</h4>
+        <p class="arsenal-intro">Crafting these pictures and videos with these tools</p>
+        <div class="tools-container">
+      
+          <div class="tool">
+            <span class="tool-name">Canon 90D</span>
+            <span class="tool-role">B-Roll & Backup Cam</span>
+          </div>
+      
+          <div class="tool">
+            <span class="tool-name">Canon R6 Mark II</span>
+            <span class="tool-role">Primary Camera</span>
+          </div>
+      
+          <div class="tool">
+            <span class="tool-name">DJI Ronin RS2</span>
+            <span class="tool-role">Camera Stabilization</span>
+          </div>
+      
+          <div class="tool">
+            <span class="tool-name">Photoshop</span>
+            <span class="tool-role">Retouching & Compositing</span>
+          </div>
+      
+          <div class="tool">
+            <span class="tool-name">Lightroom</span>
+            <span class="tool-role">Photo Color Grading</span>
+          </div>
+      
+          <div class="tool">
+            <span class="tool-name">Premiere Pro</span>
+            <span class="tool-role">Video Editing</span>
+          </div>
+      
+          <div class="tool">
+            <span class="tool-name">After Effects</span>
+            <span class="tool-role">Motion Graphics & VFX</span>
+          </div>
+      
+          <div class="tool">
+            <span class="tool-name">Canon RF 70–200mm f/2.8</span>
+            <span class="tool-role">Telephoto Zoom Lens</span>
+          </div>
+      
+          <div class="tool">
+            <span class="tool-name">Canon RF 24–70mm f/2.8</span>
+            <span class="tool-role">Allround Zoom Lens</span>
+          </div>
+      
+          <div class="tool">
+            <span class="tool-name">GoPro Hero 10 Black</span>
+            <span class="tool-role">Action & POV Shots</span>
+          </div>
+      
+          <div class="tool">
+            <span class="tool-name">DJI Mavic Air 2</span>
+            <span class="tool-role">Aerial Footage</span>
+          </div>
+      
+        </div>
+      </div>
+
+  </FadeInSection>
+</div>
+
+<div class="back-btn-container bottom-back">
+  <button on:click={goBackToFlur}>
+    <img src="/leftArrow.png" alt="Back navigation arrow" />
+    Back to Projects
+  </button>
+</div>
   
 
 <Footer />
@@ -848,7 +1125,7 @@
     align-content: center;
   }
   
-  .heading-container h2 {
+  .heading-container h1 {
     width: 100%;
     text-align: left;
     font-size: 6rem;
@@ -859,101 +1136,8 @@
     letter-spacing: 0.1rem;
   }
   
-  /* Drei Spalten Layout */
-  .project-columns {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 2rem;
-    margin-top: 1rem;
-    max-width: 100%;
-  }
+
   
-  /* Jede Spalte */
-  .project-columns .project-column {
-    flex: 1;
-    min-width: 320px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .project-columns .project-column h3 {
-    width: 100%;
-    text-align: left;
-    font-size: 1.5rem;
-    margin: 0;
-    padding: 0.5rem 0;
-    color: grey;
-    font-family: 'Franz-Grotesk', sans-serif;
-  }
-  
-  .project-columns .project-column .divider {
-    width: 95%;
-    height: 2px;
-    background-color: grey;
-    margin-bottom: 0.5rem;
-  }
-  
-  .project-columns .project-column p {
-    width: 95%;
-    text-align: left;
-    font-size: 1.5rem;
-    margin: 0;
-    color: white;
-    font-family: 'Franz-Grotesk', sans-serif;
-    line-height: 1.6;
-  }
-  
-  /* Container für die Tags */
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    width: 95%;
-    gap: 0.7rem;
-    margin-top: 1rem;
-  }
-  
-  /* Einzelnes Tag-Element */
-  .tag {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    background-color: #1B1D3A;
-    border-radius: 9999px;
-    color: #fff;
-    font-size: 1rem;
-    font-family: 'Franz-Grotesk', sans-serif;
-  }
-  
-  .cover-section {
-    width: 100%;
-    position: relative;
-    scale: 0.8;
-  }
-    
-  .cover-section img {
-    display: block;
-    width: 100%;
-    height: auto;
-    transition: transform 0.3s ease;
-    transform: translate(0, 0);
-    will-change: transform;
-  }
-  
-  .image-section {
-    width: 100%;
-    align-content: center;
-    margin-top: 10rem;
-  }
-  
-  .image-section img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-  }
   
   .grid-section1 {
     display: grid;
@@ -980,23 +1164,6 @@
     line-height: 1.6;
     font-size: 1.5rem;
   }
-  
-
-
-  
-  .img-section-4 {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: repeat(1, 1fr);
-    gap: 8px;
-    margin-top: 10rem;
-  }
-      
-  .img-container {
-    grid-column: span 4 / span 4;
-  }
-
-
   
   img {
     width: 100%;
@@ -1138,14 +1305,6 @@
     h4 {
       font-size: 1.4rem;
     }
-    
-
-  
-    .project-columns .project-column .divider,
-    .project-columns .project-column p,
-    .tags {
-      width: 100%;
-    }
   
     /* Anpassung der Überschriftengröße und -höhe */
     .heading-container {
@@ -1154,39 +1313,17 @@
       margin-bottom: 2rem;
     }
     
-    .heading-container h2 {
+    .heading-container h1 {
       font-size: 4rem;
       line-height: 1.1;
     }
     
-    /* Andere Bilder sollen die volle Breite behalten */
-    .img-section-4 {
-      display: block;
-      margin-top: 5rem;
-    }
-    
-    .img-container {
-      width: 100%;
-    }
-    
-    .image-section {
-      margin-top: 5rem;
-    }
-    
-    /* Anpassung der Projektspaltenlayouts */
-    .project-columns {
-      flex-direction: column;
-      gap: 2rem;
-    }
-    
-    .project-columns .project-column {
-      min-width: 100%;
-    }
+
   }
   
   /* Noch kleinere Geräte */
   @media (max-width: 480px) {
-    .heading-container h2 {
+    .heading-container h1 {
       font-size: 2rem;
     }
     
@@ -1208,18 +1345,11 @@
       font-size: 0.9rem;
     }
     
-    .project-columns .project-column h3 {
-      font-size: 1.3rem;
-    }
-    
-    .project-columns .project-column p {
-      font-size: 1.2rem;
-    }
   }
 
 
   @media (max-width: 360px) {
-  .heading-container h2 {
+  .heading-container h1 {
     font-size: 2rem;  /* Noch kompaktere Größe für sehr schmale Displays */
     word-break: break-word; /* Erlaubt Umbrüche bei langen Projektnamen */
   }
@@ -1313,21 +1443,6 @@
       display: none; /* Standardmäßig verstecken */
     }
     
-    /* Nur das erste Bild für Paragliding anzeigen, wenn es aktiv ist */
-    .sports-grid-section:has(+ .sports-toggle-container .sports-toggle-buttons button:first-child.active) .sports-item:first-child {
-      display: block;
-    }
-    
-    /* Nur das zweite Bild für Soccer anzeigen, wenn es aktiv ist */
-    .sports-grid-section:has(+ .sports-toggle-container .sports-toggle-buttons button:nth-child(2).active) .sports-item:nth-child(2) {
-      display: block;
-    }
-    
-    /* Für Browser, die :has nicht unterstützen, eine alternative Lösung */
-    [data-current-sport-index="0"] .sports-item:first-child,
-    [data-current-sport-index="1"] .sports-item:nth-child(2) {
-      display: block;
-    }
     
     .sports-toggle-buttons {
       flex-direction: row;
@@ -1445,4 +1560,136 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+
+
+.collaborators-section {
+  margin-top: 10rem;
+  margin-bottom: 5rem;
+  width: 100%;
+}
+
+.divider-large {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-bottom: 4rem;
+}
+
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .collaborators-section {
+    margin-top: 6rem;
+    margin-bottom: 3rem;
+  }
+}
+
+.creative-arsenal {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.arsenal-intro {
+  grid-column: span 4 / span 4;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.creative-arsenal h4 {
+  grid-column: span 4 / span 4;
+}
+
+.tools-container {
+  grid-column: span 4 / span 4;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.tool {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  flex: 0 1 auto;
+}
+
+.tool:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
+}
+
+.tool-name {
+  color: #EFE4C6;
+  font-family: 'Franz-Plex', mono;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.tool-role {
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 0.9rem;
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .creative-arsenal {
+    margin-top: 3rem;
+    display: block;
+  }
+  
+  .tools-container {
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .tool {
+    padding: 0.8rem 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tools-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    width: 100%;
+  }
+  
+  .tool {
+    flex: 0 0 calc(50% - 0.7rem);
+    max-width: calc(50% - 0.7rem);
+    padding: 0.7rem 0.8rem;
+    margin-bottom: 0.7rem;
+  }
+  
+  .tool-name {
+    font-size: 0.9rem;
+  }
+  
+  .tool-role {
+    font-size: 0.8rem;
+  }
+}
+
+/* Zusätzliches Styling für den unteren Back-Button */
+.bottom-back {
+  margin-top: 10rem;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: flex-start; /* Linksbündig statt zentriert */
+}
+
   </style>
