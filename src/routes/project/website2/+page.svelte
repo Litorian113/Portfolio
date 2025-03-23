@@ -1,3 +1,45 @@
+<svelte:head>
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription}>
+  <meta name="keywords" content={pageKeywords}>
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://fxma.design/project/website2">
+  
+  <!-- Open Graph Tags für Social Media -->
+  <meta property="og:title" content={pageTitle}>
+  <meta property="og:description" content={pageDescription}>
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://fxma.design/project/website2">
+  <meta property="og:image" content="https://fxma.design/website2/website2-cover.png">
+  
+  <!-- Strukturierte Daten für Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Zentrum Pferd",
+    "url": "https://zentrum-pferd.com",
+    "description": "A WordPress website featuring Instagram integration and storytelling-focused design for equine therapy and saddle craftsmanship services.",
+    "creator": {
+      "@type": "Person",
+      "name": "Franz"
+    },
+    "designer": {
+      "@type": "Person",
+      "name": "Franz"
+    },
+    "keywords": "equine therapy, saddle craftsmanship, Instagram integration, WordPress design",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "FXMA Design",
+      "url": "https://fxma.design"
+    },
+    "image": "https://fxma.design/website2/website2-cover.png"
+  }
+  </script>
+</svelte:head>
+
 <script>
     import FadeInSection from '$lib/components/FadeInSection.svelte';
     import { page } from '$app/stores';
@@ -65,9 +107,10 @@
       e.currentTarget.querySelector('img').style.transform = 'translate(0,0)';
     }
   
-    
-    
-  
+    // SEO-Konfiguration für diese Projektseite
+    const pageTitle = "Zentrum Pferd | WordPress Website Design | FXMA Design";
+    const pageDescription = "A professionally crafted WordPress website for Zentrum Pferd featuring Instagram integration, storytelling-focused design and responsive layouts to showcase equine expertise and services.";
+    const pageKeywords = "Zentrum Pferd, WordPress design, Instagram integration, equine therapy, saddle craftsmanship, responsive design, storytelling website";
     
   </script>
   
@@ -81,7 +124,7 @@
 
       <div class="back-btn-container">
         <button on:click={goBackToFlur}>
-          <img src="/leftArrow.png" alt="Back arrow" />
+          <img src="/leftArrow.png" alt="Back navigation arrow" />
           Back
         </button>
       </div>
@@ -90,19 +133,19 @@
       role="figure"
       on:mousemove={handleMouseMove}
       on:mouseleave={resetTransform}>
-    <img src="/website2/website2-cover.png" alt="Beschreibung des Bildes" />
+    <img src="/website2/website2-cover.png" alt="Zentrum Pferd website showcase featuring a responsive design with hero image and navigation menu" />
     </div>
 
 
 
       <div class="heading-container">
         <a href="https://zentrum-pferd.com" target="_blank" rel="noopener noreferrer" class="website-link">
-          <h4>zentrum-pferd.com
+          <h1>zentrum-pferd.com
             <svg class="link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
               <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
             </svg>
-          </h4>
+          </h1>
         </a>
       </div>
 
@@ -113,10 +156,8 @@
           <h3>My Role</h3>
           <div class="divider"></div>
           <p>
-            I mainly worked in the creation of the Screendesign. Helped in the research process and played a big ass role
-            in the videoproduction to get the final videoresult.
-        
-        </p>
+            Lead Screen Designer, UI/UX Developer, WordPress Implementation Specialist, Technical Integration Lead, Video Production Director, User Testing Coordinator, Instagram API Integration Expert, Team Collaborator
+          </p>
         </div>
         <div class="project-column">
           <h3>Project Overview</h3>
@@ -168,7 +209,7 @@
   
   
     <div class="img-section-4">
-      <div class="img-container"><img src="/website2/website2-bild1.png" alt="Beschreibung des Bildes" /></div>
+      <div class="img-container"><img src="/website2/website2-bild1.png" alt="Layout design of Zentrum Pferd website showing service sections, typography, and image placement" /></div>
   </div>
   
   
@@ -204,7 +245,7 @@
   
   
     <div class="img-section-4">
-      <div class="img-container"><img src="/website2/website2-bild2.png" alt="Beschreibung des Bildes" /></div>
+      <div class="img-container"><img src="/website2/website2-bild2.png" alt="Instagram feed integration on the Zentrum Pferd website displaying recent posts from their equine therapy services" /></div>
   </div>
   
   <div class="collaborators-section">
@@ -217,8 +258,44 @@
           <div class="collaborator">Jens Kramer</div>
           <div class="collaborator">Franz Anhäupl</div>
         </div>
+        
+        <!-- Neuer Abschnitt für Creative Arsenal -->
+        <div class="creative-arsenal">
+          <h4>My Creative Arsenal</h4>
+          <p class="arsenal-intro">Crafting this experience with our digital toolbelt:</p>
+          <div class="tools-container">
+            <div class="tool">
+              <span class="tool-name">Figma</span>
+              <span class="tool-role">UI/UX Design</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Wordpress</span>
+              <span class="tool-role">Content Management</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Elementor Pro</span>
+              <span class="tool-role">Visual Page Building</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Netcup Webhosting</span>
+              <span class="tool-role">Deployment & Hosting</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Illustrator</span>
+              <span class="tool-role">Icon-Generation</span>
+            </div>
+            
+          </div>
+        </div>
       </div>
     </FadeInSection>
+  </div>
+
+  <div class="back-btn-container bottom-back">
+    <button on:click={goBackToFlur}>
+      <img src="/leftArrow.png" alt="Back navigation arrow" />
+      Back to Projects
+    </button>
   </div>
 
  <Footer />
@@ -585,8 +662,7 @@
     transform: translateY(-2px);
   }
 
-  /* Abschlusssection für Projektmitarbeiter */
-.collaborators-section {
+  .collaborators-section {
   margin-top: 10rem;
   margin-bottom: 5rem;
   width: 100%;
@@ -629,5 +705,126 @@
     flex-direction: column;
     gap: 1rem;
   }
+}
+
+.creative-arsenal {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.arsenal-intro {
+  grid-column: span 4 / span 4;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.creative-arsenal h4 {
+  grid-column: span 4 / span 4;
+}
+
+.tools-container {
+  grid-column: span 4 / span 4;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.tool {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  flex: 0 1 auto;
+}
+
+.tool:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
+}
+
+.tool-name {
+  color: #EC0011;
+  font-family: 'Franz-Plex', mono;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.tool-role {
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 0.9rem;
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .creative-arsenal {
+    margin-top: 3rem;
+    display: block;
+  }
+  
+  .tools-container {
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .tool {
+    padding: 0.8rem 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tools-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    width: 100%;
+  }
+  
+  .tool {
+    flex: 0 0 calc(50% - 0.7rem);
+    max-width: calc(50% - 0.7rem);
+    padding: 0.7rem 0.8rem;
+    margin-bottom: 0.7rem;
+  }
+  
+  .tool-name {
+    font-size: 0.9rem;
+  }
+  
+  .tool-role {
+    font-size: 0.8rem;
+  }
+}
+
+/* Zusätzliches Styling für den unteren Back-Button */
+.bottom-back {
+  margin-top: 10rem;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: flex-start; /* Linksbündig statt zentriert */
+}
+
+/* Styling für die H1 wie bisher für H4 */
+.website-link h1 {
+  color: #EC0011; /* Die bestehende Farbe beibehalten */
+  transition: color 0.2s ease;
+  font-size: 2rem;
+  font-family: 'Franz-Plex', mono;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Hover-Effekt für den Link */
+.website-link:hover h1 {
+  color: #e41f2c; /* Hellere Farbe beim Hover */
 }
   </style>
