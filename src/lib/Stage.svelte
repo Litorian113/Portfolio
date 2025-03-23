@@ -473,7 +473,7 @@ function loadAppropriateTextures() {
         alpha: true,
         preserveDrawingBuffer: true
       });
-      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
       renderer.setSize(window.innerWidth, window.innerHeight);
       container.appendChild(renderer.domElement);
 
@@ -895,6 +895,10 @@ const pngMaterialFoto = new THREE.MeshBasicMaterial({
       pngMeshFoto.userData.project = 'photovideo'; // Dieser Eintrag ist neu
       scene.add(pngMeshFoto);
       imageMeshes.push(pngMeshFoto);
+
+      pngTextureFoto.minFilter = THREE.LinearFilter;
+      pngTextureFoto.magFilter = THREE.NearestFilter;
+      pngTextureFoto.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
       if (isMobile) {
         pngMeshFoto.scale.set(0.55, 0.55, 0.55); // Gleiche Skalierung wie andere mobile Bilder
