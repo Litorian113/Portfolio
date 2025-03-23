@@ -8,6 +8,11 @@
   
     $: url = $page.url;
   
+    // SEO-Konfiguration für diese Projektseite
+    const pageTitle = "Missing Migrants | Interactive Data Visualization | FXMA Design";
+    const pageDescription = "Interactive 3D globe visualization of migration data highlighting key routes, risk areas, and patterns through Three.js to reveal the human impact behind the numbers.";
+    const pageKeywords = "data visualization, migration data, interactive globe, Three.js, spatial data, interactive map, data exploration, Franz portfolio";
+  
     // Stelle sicher, dass Scrollen auf dieser Seite funktioniert
     onMount(() => {
       // Aktiviere das Scrollen explizit
@@ -72,6 +77,42 @@
     
   </script>
   
+<svelte:head>
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription}>
+  <meta name="keywords" content={pageKeywords}>
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://fxma.design/project/migrants">
+  
+  <!-- Open Graph Tags für Social Media -->
+  <meta property="og:title" content={pageTitle}>
+  <meta property="og:description" content={pageDescription}>
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://fxma.design/project/migrants">
+  <meta property="og:image" content="https://fxma.design/migrants/migrants-cover.png">
+  
+  <!-- Strukturierte Daten für Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VisualArtwork",
+    "name": "Missing Migrants Interactive Data Visualization",
+    "description": "An interactive 3D globe that visualizes migration data through color-coded data points, filters, and time sliders to reveal patterns in global migration crises.",
+    "creator": {
+      "@type": "Person",
+      "name": "Franz"
+    },
+    "keywords": "data visualization, migration data, interactive globe, Three.js",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "FXMA Design",
+      "url": "https://fxma.design"
+    },
+    "image": "https://fxma.design/migrants/migrants-cover.png"
+  }
+  </script>
+</svelte:head>
   
   <!-- Füge eine wrapper-Klasse hinzu, um sicherzustellen, dass dieser Bereich scrollbar ist -->
   <div class="scroll-container">
@@ -84,14 +125,15 @@
         </button>
       </div>
       <div class="heading-container">
-        <h2>Missing Migrants</h2>
+        <h1>Missing Migrants</h1>
       </div>
       <div class="project-columns">
         <div class="project-column">
           <h3>My Role</h3>
           <div class="divider"></div>
-          <p>I mainly worked in the creation of the Screendesign. Helped in the research process and played a big ass role
-            in the videoproduction to get the final videoresult.</p>
+          <p>
+            UI/UX Designer, Data Visualization Specialist, Interface Developer, Video Production Lead, Team Collaborator
+          </p>
         </div>
         <div class="project-column">
           <h3>Project Overview</h3>
@@ -259,6 +301,59 @@
     </div>
   </div>
 
+
+  <div class="collaborators-section">
+    <div class="divider-large"></div>
+    
+    <FadeInSection>
+      <div class="collaborators-content">
+        <h4>The People Behind the Project</h4>
+        <div class="collaborators-list">
+          <div class="collaborator">Helen Frank</div>
+          <div class="collaborator">Lisa Marie Rapp</div>
+          <div class="collaborator">Maurice Cadau</div>
+          <div class="collaborator">Franz Anhäupl</div>
+        </div>
+        
+        <!-- Neuer Abschnitt für Creative Arsenal -->
+        <div class="creative-arsenal">
+          <h4>My Creative Arsenal</h4>
+          <p class="arsenal-intro">Crafting this experience with our digital toolbelt:</p>
+          <div class="tools-container">
+            <div class="tool">
+              <span class="tool-name">Figma</span>
+              <span class="tool-role">UI/UX Design</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Visual Studio Code</span>
+              <span class="tool-role">Code Editing & Development</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Three.js</span>
+              <span class="tool-role">3D Data Visualization</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Kaggle</span>
+              <span class="tool-role">Data Analysis & Exploration</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Illustrator Adobe</span>
+              <span class="tool-role">Creating Vectorgraphics</span>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </FadeInSection>
+  </div>
+  
+  
+  <div class="back-btn-container bottom-back">
+    <button on:click={goBackToFlur}>
+      <img src="/leftArrow.png" alt="Back arrow" />
+      Back to Projects
+    </button>
+  </div>
   
 <Footer />
   
@@ -337,7 +432,7 @@
     align-content: center;
   }
   
-  .heading-container h2 {
+  .heading-container h1 {
     width: 100%;
     text-align: left;
     font-size: 6rem;
@@ -485,101 +580,7 @@
     width: 100%;
     height: 100%;
   }
-  
-  /* Ice Age Mammals spezifisches Bildergitter */
-  .ice-img-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    margin: 0;
-    grid-column: 1 / span 4;
-    width: 100%;
-  }
-  
-  /* Zeilencontainer für 2-spaltige Bilder */
-  .ice-img-grid .row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    grid-column: 1 / span 4; /* Nimmt die volle Breite des parent-grids ein (4 Spalten) */
-    width: 100%;
-    filter: grayscale(100%); /* Grayscale auf Reihenebene */
-    transition: filter 0.8s ease;
-  }
-  
-  /* Hover-Effekt auf Zeilenebene */
-  .ice-img-grid .row:hover {
-    filter: grayscale(0%);
-  }
-  
-  /* Die einzelnen Grid-Items in den Rows */
-  .ice-img-grid .row .grid-item {
-    width: 100%;
-    padding: 0;
-    line-height: 0;
-  }
-  
-  /* Elemente mit voller Breite nehmen alle 4 Spalten im Grid ein */
-  .ice-img-grid .grid-item.full-width {
-    grid-column: 1 / span 4;
-    filter: grayscale(100%); /* Grayscale für Vollbreite-Items */
-    transition: filter 0.8s ease;
-  }
-  
-  /* Hover für Vollbreite-Items */
-  .ice-img-grid .grid-item.full-width:hover {
-    filter: grayscale(0%);
-  }
-  
-  /* Allgemeine Bild-Styles */
-  .ice-img-grid img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    object-position: center;
-    transform: translateZ(0);
-    display: block;
-  }
-  
-  /* Neues Grid für icegrid2 */
-  .icegrid2-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    margin: 0;
-    grid-column: 1 / span 4; /* Nimmt 4 von 6 Spalten ein */
-    width: 100%;
-  }
-  
-  .icegrid2-item {
-    width: 100%;
-    line-height: 0; /* Verhindert unerwünschte Abstände */
-    filter: grayscale(100%);
-    transition: filter 0.8s ease;
-  }
-  
-  .icegrid2-item:hover {
-    filter: grayscale(0%);
-  }
-  
-  .icegrid2-item img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    object-position: center;
-    display: block; /* Verhindert unerwünschte Abstände */
-  }
-  
-  /* Mobile Anpassungen für das neue Grid */
-  @media (max-width: 768px) {
-    .icegrid2-container {
-      width: 100%;
-    }
-    
-    .icegrid2-item {
-      width: 100%;
-    }
-  }
+
   
   /* Mobile Anpassungen */
   @media (max-width: 768px) {
@@ -608,7 +609,7 @@
       margin-bottom: 2rem;
     }
     
-    .heading-container h2 {
+    .heading-container h1 {
       font-size: 4rem;
       line-height: 1.1;
     }
@@ -639,52 +640,11 @@
     .tags {
       width: 100%;
     }
-    
-    /* Mobile Bildgrid */
-    .ice-img-grid {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    
-    .ice-img-grid .grid-item,
-    .ice-img-grid .grid-item.full-width {
-      width: 100%;
-    }
-    
-
-    /* Grayscale-Effekte auf mobilen Geräten entfernen */
-    .ice-img-grid .row {
-      filter: grayscale(0%); /* Kein Grayscale auf mobil */
-    }
-    
-    .ice-img-grid .grid-item.full-width {
-      filter: grayscale(0%); /* Kein Grayscale auf mobil */
-    }
-    
-    .icegrid2-item {
-      filter: grayscale(0%); /* Kein Grayscale auf mobil */
-    }
-    
-    /* Auch für Slider-Items Grayscale entfernen */
-    .slider-item img {
-      filter: grayscale(0%);
-    }
-    
-    /* Slider Animationen eventuell verlangsamen für mobil */
-    .slider-right .slider-track {
-      animation: slideRight 45s linear infinite;
-    }
-    
-    .slider-left .slider-track {
-      animation: slideLeft 45s linear infinite;
-    }
   }
   
   /* Noch kleinere Geräte */
   @media (max-width: 480px) {
-    .heading-container h2 {
+    .heading-container h1 {
       font-size: 3rem;
     }
     
@@ -715,32 +675,9 @@
     }
   }
 
-  /* Horizontaler Slider mit Autoplay */
-.slider-container {
-  width: 100vw;
-  overflow: hidden;
-  margin: 4rem 0;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  height: auto;
-  max-height: 220px; /* Leicht erhöht für bessere Darstellung */
-  transition: max-height 0.3s ease; /* Animation für Höhenänderung */
-}
 
-/* Mehr Raum und Sichtbarkeit beim Hover über den Container */
-.slider-container:hover {
-  max-height: 320px; /* Leicht reduziert für angemessenere Größe */
-  overflow: visible; /* Erlaubt Bildern, über den Container hinauszuragen */
-  z-index: 100; /* Bringt den Container vor andere Elemente */
-}
 
-.slider-track {
-  display: flex;
-  gap: 0.5rem;
-  width: max-content;
-  padding: 0 5vw;
-}
+
 
 /* Animation-Anpassungen für bessere Abdeckung */
 @keyframes slideRight {
@@ -762,51 +699,9 @@
   }
 }
 
-/* Slider-Animationen */
-.slider-right .slider-track {
-  animation: slideRight 30s linear infinite;
-}
 
-.slider-left .slider-track {
-  animation: slideLeft 30s linear infinite;
-}
 
-.slider-item {
-  flex: 0 0 auto;
-  width: auto;
-  height: auto;
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 1;
-}
 
-/* Stärkere Vergrößerung beim Hover */
-.slider-container:hover .slider-item:hover {
-  transform: scale(1.5); /* Deutlich stärkere Vergrößerung */
-  z-index: 101; /* Noch höherer z-index für das gehovered Bild */
-  filter: drop-shadow(0 0 12px rgba(0,0,0,0.6)); /* Schatten für besseren Kontrast */
-}
-
-/* Mindestbreite für die Slider-Tracks */
-.slider-right .slider-track,
-.slider-left .slider-track {
-  min-width: 220vw; /* Stellt sicher, dass der Slider immer breiter als die Seite ist */
-}
-
-/* Slider-Tracks brauchen mehr Breite für den zweiten Slider */
-.slider-left .slider-track {
-  min-width: 280vw; /* Von 220vw erhöht für mehr Bildmaterial */
-}
-
-/* Sicherstellen, dass die Bilder vollständig sichtbar sind */
-.slider-item img {
-  width: 100%;
-  height: auto;
-  max-height: 200px;
-  object-fit: contain; /* Von cover auf contain geändert */
-  object-position: center;
-  border-radius: 8px;
-}
 
 /* Neues Grid-Layout für die Bilder mit Beschreibungen */
 .grid-container {
@@ -859,5 +754,159 @@
   .grid-text {
     grid-column: 1;
   }
+}
+
+
+
+
+.collaborators-section {
+  margin-top: 10rem;
+  margin-bottom: 5rem;
+  width: 100%;
+}
+
+.divider-large {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin-bottom: 4rem;
+}
+
+.collaborators-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.collaborators-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.collaborator {
+  color: white;
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 1.3rem;
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .collaborators-section {
+    margin-top: 6rem;
+    margin-bottom: 3rem;
+  }
+  
+  .collaborators-list {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.creative-arsenal {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.arsenal-intro {
+  grid-column: span 4 / span 4;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.creative-arsenal h4 {
+  grid-column: span 4 / span 4;
+}
+
+.tools-container {
+  grid-column: span 4 / span 4;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.tool {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  flex: 0 1 auto;
+}
+
+.tool:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-3px);
+}
+
+.tool-name {
+  color: #F19136;
+  font-family: 'Franz-Plex', mono;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.tool-role {
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Franz-Grotesk', sans-serif;
+  font-size: 0.9rem;
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+  .creative-arsenal {
+    margin-top: 3rem;
+    display: block;
+  }
+  
+  .tools-container {
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .tool {
+    padding: 0.8rem 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tools-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    width: 100%;
+  }
+  
+  .tool {
+    flex: 0 0 calc(50% - 0.7rem);
+    max-width: calc(50% - 0.7rem);
+    padding: 0.7rem 0.8rem;
+    margin-bottom: 0.7rem;
+  }
+  
+  .tool-name {
+    font-size: 0.9rem;
+  }
+  
+  .tool-role {
+    font-size: 0.8rem;
+  }
+}
+
+/* Zusätzliches Styling für den unteren Back-Button */
+.bottom-back {
+  margin-top: 10rem;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: flex-start; /* Linksbündig statt zentriert */
 }
 </style>
