@@ -65,12 +65,56 @@
       e.currentTarget.querySelector('img').style.transform = 'translate(0,0)';
     }
   
-    
-    
-  
+    // SEO-Konfiguration für diese Projektseite
+    const pageTitle = "KarinCruises | Real-Time Cruise Tracking | FXMA Design";
+    const pageDescription = "A SvelteKit-powered website that tracks cruise ship locations in real-time with an interactive 3D globe, AI-generated travel tips, and personalized notifications.";
+    const pageKeywords = "cruise tracking, real-time map, interactive globe, Three.js, SvelteKit, AI integration, travel website, OpenAI API";
     
   </script>
   
+<!-- Seitenspezifische SEO-Tags -->
+<svelte:head>
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription}>
+  <meta name="keywords" content={pageKeywords}>
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://fxma.design/project/karincruises">
+  
+  <!-- Open Graph Tags für Social Media -->
+  <meta property="og:title" content={pageTitle}>
+  <meta property="og:description" content={pageDescription}>
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://fxma.design/project/karincruises">
+  <meta property="og:image" content="https://fxma.design/karinProject/karin-cover.png">
+  
+  <!-- Strukturierte Daten für Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "KarinCruises.de",
+    "description": "A real-time cruise tracking website with interactive 3D globe and AI-generated local recommendations for each port.",
+    "url": "https://karincruises.de",
+    "applicationCategory": "TravelApplication",
+    "author": {
+      "@type": "Person",
+      "name": "Franz"
+    },
+    "keywords": "cruise tracking, interactive map, Three.js, SvelteKit, AI integration",
+    "creator": {
+      "@type": "Person",
+      "name": "Franz"
+    },
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "FXMA Design",
+      "url": "https://fxma.design"
+    },
+    "image": "https://fxma.design/karinProject/karin-cover.png"
+  }
+  </script>
+</svelte:head>
   
   <!-- Füge eine wrapper-Klasse hinzu, um sicherzustellen, dass dieser Bereich scrollbar ist -->
   <div class="scroll-container">
@@ -78,12 +122,12 @@
     <div class="top-section">
       <div class="back-btn-container">
         <button on:click={goBackToFlur}>
-          <img src="/leftArrow.png" alt="Back arrow" />
+          <img src="/leftArrow.png" alt="Back navigation arrow" />
           Back
         </button>
       </div>
       <div class="heading-container">
-        <h2>Karincruises.de</h2>
+        <h1>Karincruises.de</h1>
       </div>
       <div class="project-columns">
         <div class="project-column">
@@ -126,7 +170,7 @@
     role="figure"
     on:mousemove={handleMouseMove}
     on:mouseleave={resetTransform}>
-  <img src="/karinProject/karin-cover.png" alt="Beschreibung des Bildes" />
+  <img src="/karinProject/karin-cover.png" alt="KarinCruises.de website showcase featuring an interactive 3D globe displaying the cruise ship's route" />
   </div>
   
   
@@ -146,7 +190,7 @@
 
 
     <div class="image-section">
-        <img src="/karinProject/karin1.png" alt="Beschreibung des Bildes" />
+        <img src="/karinProject/karin1.png" alt="Interactive 3D globe visualization showing the cruise route with visited ports connected by lines and the current location highlighted" />
       </div>
   
   
@@ -179,7 +223,7 @@
       </div>
   
     <div class="img-section-4">
-      <div class="img-container"><img src="/karinProject/karin2.png" alt="Beschreibung des Bildes" /></div>
+      <div class="img-container"><img src="/karinProject/karin2.png" alt="KarinCruises.de responsive mobile interface showing port information and AI-generated local recommendations" /></div>
   </div>
 
 
@@ -228,7 +272,7 @@
   
   <div class="back-btn-container bottom-back">
     <button on:click={goBackToFlur}>
-      <img src="/leftArrow.png" alt="Back arrow" />
+      <img src="/leftArrow.png" alt="Back navigation arrow" />
       Back to Projects
     </button>
   </div>
@@ -302,7 +346,7 @@
     width: auto;
   }
   
-  /* Überschrift-Container: 100% Breite, h2 linksbündig */
+  /* Überschrift-Container: 100% Breite, h1 linksbündig */
   .heading-container {
     width: 100%;
     height: 30vh;
@@ -310,7 +354,7 @@
     align-content: center;
   }
   
-  .heading-container h2 {
+  .heading-container h1 {
     width: 100%;
     text-align: left;
     font-size: 6rem;
@@ -509,7 +553,7 @@
       margin-bottom: 2rem;
     }
     
-    .heading-container h2 {
+    .heading-container h1 {
       font-size: 4rem;
       line-height: 1.1;
     }
@@ -541,7 +585,7 @@
   
   /* Noch kleinere Geräte */
   @media (max-width: 480px) {
-    .heading-container h2 {
+    .heading-container h1 {
       font-size: 2rem;
     }
     
@@ -574,7 +618,7 @@
 
 
   @media (max-width: 360px) {
-  .heading-container h2 {
+  .heading-container h1 {
     font-size: 2rem;  /* Noch kompaktere Größe für sehr schmale Displays */
     word-break: break-word; /* Erlaubt Umbrüche bei langen Projektnamen */
   }
