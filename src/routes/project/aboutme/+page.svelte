@@ -1,3 +1,37 @@
+<svelte:head>
+  <title>{pageTitle}</title>
+  <meta name="description" content={pageDescription}>
+  <meta name="keywords" content={pageKeywords}>
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://fxma.design/project/aboutme">
+  
+  <!-- Open Graph Tags für Social Media -->
+  <meta property="og:title" content={pageTitle}>
+  <meta property="og:description" content={pageDescription}>
+  <meta property="og:type" content="profile">
+  <meta property="og:url" content="https://fxma.design/project/aboutme">
+  <meta property="og:image" content="https://fxma.design/about-profile.jpg">
+  
+  <!-- Strukturierte Daten für Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Franz",
+    "description": "Designer working at the intersection of design and technology, specializing in UI/UX and interactive systems.",
+    "jobTitle": "Interaction Designer",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "AI+D Lab, KITeGG, HfG Schwäbisch Gmünd"
+    },
+    "knowsAbout": ["UI/UX Design", "Interaction Design", "Data Visualization", "Programming", "Web Development"],
+    "url": "https://fxma.design",
+    "sameAs": ["https://fxma.design/project/aboutme"]
+  }
+  </script>
+</svelte:head>
+
 <script>
     import Footer from "$lib/Footer.svelte";
     import FadeInSection from '$lib/components/FadeInSection.svelte';
@@ -5,6 +39,11 @@
     import { spring } from 'svelte/motion';
     import { fade, fly } from 'svelte/transition';
     import { goto } from '$app/navigation';
+
+    // SEO-Konfiguration
+    const pageTitle = "About Me | Franz | Designer & Developer";
+    const pageDescription = "Franz is a designer working at the intersection of design and technology, specializing in UI/UX, programming, and data visualizations at the AI+D Lab.";
+    const pageKeywords = "Franz, designer, developer, UI/UX, data visualization, interaction design, portfolio, AI+D Lab";
 
     // State Management für Kategorien
     let activeCategory = 'about'; // 'about', 'journey', 'tools', 'tech'
@@ -54,11 +93,14 @@
         { name: 'Figma', category: 'Design' },
 		{ name: 'Miro', category: 'Design' },
 		{ name: 'FigJam', category: 'Design' },
-        { name: 'Adobe Suite', category: 'Design' },
         { name: 'VS Code', category: 'Development' },
         { name: 'Arduino IDE', category: 'Development' },
         { name: 'MongoDB', category: 'Development' },
         { name: 'Autodesk', category: 'Prototyping' },
+        { name: 'Premiere Pro', category: 'Videosoftware' },
+        { name: 'Aftereffetcs', category: 'Videosoftware' },
+        { name: 'Lightroom', category: 'Photo' },
+        { name: 'Photoshop', category: 'Photo' },
         { name: 'Ultimaker', category: 'Prototyping' }
     ];
     
@@ -261,7 +303,7 @@
             
             <!-- Hauptüberschrift -->
             <div class="heading-container">
-                <h2>About Me</h2>
+                <h1>About Me</h1>
             </div>
             
             <!-- Intro-Text -->
@@ -323,13 +365,15 @@
                             </div>
                             
                             <div class="hobbies-section">
-                                <h3>When I'm Not Working...</h3>
+                                <h3>How I Recharge My Creativity</h3>
                                 <div class="hobbies-grid">
                                     {#each hobbies as hobby, i}
                                         <div 
                                             class="hobby-item {hoveredHobby === i ? 'hovered' : ''}"
                                             on:mousemove={(event) => updateHobbyGlow(event, i)}
                                             on:mouseleave={endHobbyHover}
+                                            role="presentation"
+                                            aria-label="{hobby.name} hobby"
                                         >
                                             <div 
                                                 class="hobby-glow" 
@@ -535,7 +579,7 @@
         margin-bottom: 2rem;
     }
   
-    .heading-container h2 {
+    .heading-container h1 {
         width: 100%;
         text-align: left;
         font-size: 6rem;
@@ -928,7 +972,7 @@
             grid-template-columns: 1fr;
         }
         
-        .heading-container h2 {
+        .heading-container h1 {
             font-size: 4rem;
         }
         
@@ -943,7 +987,7 @@
             width: 95%;
         }
         
-        .heading-container h2 {
+        .heading-container h1 {
             font-size: 3rem;
         }
         
@@ -966,7 +1010,7 @@
     
     /* Hier den fehlenden Responsive Breakpoint ergänzen */
     @media (max-width: 480px) {
-        .heading-container h2 {
+        .heading-container h1 {
             font-size: 2.5rem;
         }
         
