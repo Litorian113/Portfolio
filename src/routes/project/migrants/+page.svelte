@@ -739,12 +739,12 @@
   margin-bottom: 1rem;
 }
 
-/* Mobile Anpassungen */
-@media (max-width: 768px) {
+/* Tablet-Anpassung (früher umbrechen) */
+@media (max-width: 1024px) {
   .grid-row {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
-    margin-bottom: 4rem;
+    gap: 2rem;
+    margin-bottom: 5rem;
   }
   
   .grid-image {
@@ -753,6 +753,24 @@
   
   .grid-text {
     grid-column: 1;
+    max-width: 85%;
+    margin: 0 auto;
+  }
+  
+  .grid-text h4 {
+    margin-top: 1rem;
+  }
+}
+
+/* Mobile Anpassungen (bestehend) */
+@media (max-width: 768px) {
+  .grid-row {
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+  }
+  
+  .grid-text {
+    max-width: 100%;
   }
 }
 
