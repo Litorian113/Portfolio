@@ -9,12 +9,33 @@ export class Typewriter {
         this.subtitleOpacities = [1, 1, 1, 1, 1]; // Opacity für jeden Untertext
         this.previousStation = -1;
 
+        // Neuformatierung auf maximal 5 Wörter pro Zeile (für Photo & Video 4 Wörter)
         this.subtitleTexts = [
-            ['A selection of interaction design projects', 'created during my studies at HfG Schwäbisch Gmünd.'],
-            ['A collection of coded projects from my', 'studies and personal explorations.'],
-            ['Freelance web projects developed for', 'small and medium-sized businesses.'],
-            ['Visual work from years of experience as a', 'professional photographer, spanning commercial', 'and personal projects.'],
-            ['A glimpse into who I am and', 'what drives my creative journey.']
+            [
+                'A selection of interaction design', 
+                'projects created during my studies', 
+                'at HfG Schwäbisch Gmünd.'
+            ],
+            [
+                'A collection of coded projects', 
+                'from my studies and personal', 
+                'explorations.'
+            ],
+            [
+                'Freelance web projects developed for', 
+                'small and medium-sized businesses.'
+            ],
+            [
+                'Visual work from years', 
+                'of experience as a', 
+                'professional photographer, spanning',
+                'commercial and personal projects.'
+            ],
+            [
+                'A glimpse into who I', 
+                'am and what drives my', 
+                'creative journey.'
+            ]
         ];
     }
 
@@ -130,7 +151,7 @@ export class Typewriter {
      */
     getResponsiveSize(baseSize) {
         const baseWidth = 1920;
-        const minScale = 0.7;
+        const minScale = 0.9;
         let scale = Math.max(window.innerWidth / baseWidth, minScale);
         return Math.floor(baseSize * scale);
     }
@@ -168,12 +189,30 @@ export class Typewriter {
         context.fillStyle = `rgba(255,255,255,${this.subtitleOpacities[0]})`;
         context.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
         
-        const subtitle1 = this.subtitleTexts[0][0].substring(0, this.subtitleProgress[0]);
-        context.fillText(subtitle1, centerX, centerY);
+        // Dynamisch mehrere Zeilen rendern
+        let totalCharactersTyped = 0;
+        let totalCharactersPreviousLines = 0;
         
-        if (this.subtitleProgress[0] >= this.subtitleTexts[0][0].length) {
-            const subtitle2 = this.subtitleTexts[0][1].substring(0, this.subtitleProgress[0] - this.subtitleTexts[0][0].length);
-            context.fillText(subtitle2, centerX, centerY + 35);
+        // Zeichne jede Zeile
+        for (let i = 0; i < this.subtitleTexts[0].length; i++) {
+            const lineText = this.subtitleTexts[0][i];
+            const lineYPosition = centerY + (i * 35); // 35 Pixel Zeilenabstand
+            
+            if (totalCharactersTyped < this.subtitleProgress[0]) {
+                // Wie viele Zeichen dieser Zeile anzeigen
+                const charsToShow = Math.min(
+                    lineText.length, 
+                    this.subtitleProgress[0] - totalCharactersPreviousLines
+                );
+                
+                if (charsToShow > 0) {
+                    const visibleText = lineText.substring(0, charsToShow);
+                    context.fillText(visibleText, centerX, lineYPosition);
+                }
+            }
+            
+            totalCharactersTyped += lineText.length;
+            totalCharactersPreviousLines += lineText.length;
         }
         
         context.shadowColor = "transparent";
@@ -186,19 +225,18 @@ export class Typewriter {
     updateCanvas2Text(context, texture) {
         if (!context || !texture) return;
         
+        // Grundlegende Einstellungen (gleich wie zuvor)
         context.clearRect(0, 0, 1024, 512);
         context.fillStyle = "rgba(0,0,0,0)";
         context.fillRect(0, 0, 1024, 512);
         context.textAlign = "left";
         context.textBaseline = "middle";
         
-        // Schatten-Eigenschaften für Titel
         context.shadowColor = "rgba(0, 0, 0, 0.5)";
         context.shadowBlur = 5;
         context.shadowOffsetX = 1;
         context.shadowOffsetY = 1;
         
-        // Hauptüberschrift mit dynamischer Opacity
         const titleFontSize = this.getResponsiveSize(42);
         const subtitleFontSize = this.getResponsiveSize(24);
         context.fillStyle = `rgba(255,255,255,${this.titleOpacities[1]})`;
@@ -213,12 +251,29 @@ export class Typewriter {
         context.fillStyle = `rgba(255,255,255,${this.subtitleOpacities[1]})`;
         context.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
         
-        const subtitle1 = this.subtitleTexts[1][0].substring(0, this.subtitleProgress[1]);
-        context.fillText(subtitle1, centerX, centerY);
+        // Dynamisch mehrere Zeilen rendern
+        let totalCharactersTyped = 0;
+        let totalCharactersPreviousLines = 0;
         
-        if (this.subtitleProgress[1] >= this.subtitleTexts[1][0].length) {
-            const subtitle2 = this.subtitleTexts[1][1].substring(0, this.subtitleProgress[1] - this.subtitleTexts[1][0].length);
-            context.fillText(subtitle2, centerX, centerY + 35);
+        // Zeichne jede Zeile
+        for (let i = 0; i < this.subtitleTexts[1].length; i++) {
+            const lineText = this.subtitleTexts[1][i];
+            const lineYPosition = centerY + (i * 35);
+            
+            if (totalCharactersTyped < this.subtitleProgress[1]) {
+                const charsToShow = Math.min(
+                    lineText.length, 
+                    this.subtitleProgress[1] - totalCharactersPreviousLines
+                );
+                
+                if (charsToShow > 0) {
+                    const visibleText = lineText.substring(0, charsToShow);
+                    context.fillText(visibleText, centerX, lineYPosition);
+                }
+            }
+            
+            totalCharactersTyped += lineText.length;
+            totalCharactersPreviousLines += lineText.length;
         }
         
         context.shadowColor = "transparent";
@@ -258,12 +313,29 @@ export class Typewriter {
         context.fillStyle = `rgba(255,255,255,${this.subtitleOpacities[2]})`;
         context.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
         
-        const subtitle1 = this.subtitleTexts[2][0].substring(0, this.subtitleProgress[2]);
-        context.fillText(subtitle1, centerX, centerY);
+        // Dynamisch mehrere Zeilen rendern
+        let totalCharactersTyped = 0;
+        let totalCharactersPreviousLines = 0;
         
-        if (this.subtitleProgress[2] >= this.subtitleTexts[2][0].length) {
-            const subtitle2 = this.subtitleTexts[2][1].substring(0, this.subtitleProgress[2] - this.subtitleTexts[2][0].length);
-            context.fillText(subtitle2, centerX, centerY + 35);
+        // Zeichne jede Zeile
+        for (let i = 0; i < this.subtitleTexts[2].length; i++) {
+            const lineText = this.subtitleTexts[2][i];
+            const lineYPosition = centerY + (i * 35);
+            
+            if (totalCharactersTyped < this.subtitleProgress[2]) {
+                const charsToShow = Math.min(
+                    lineText.length, 
+                    this.subtitleProgress[2] - totalCharactersPreviousLines
+                );
+                
+                if (charsToShow > 0) {
+                    const visibleText = lineText.substring(0, charsToShow);
+                    context.fillText(visibleText, centerX, lineYPosition);
+                }
+            }
+            
+            totalCharactersTyped += lineText.length;
+            totalCharactersPreviousLines += lineText.length;
         }
         
         context.shadowColor = "transparent";
@@ -295,7 +367,8 @@ export class Typewriter {
         context.font = `${titleFontSize}px 'IBM Plex Mono'`;
         
         const centerX = 1024 / 4.5;
-        const centerY = 512 / 1.25;
+        // Setze centerY höher für die Photo & Video-Sektion (wegen 4 Textzeilen)
+        const centerY = 512 / 1.45; // Angepasste Position nach oben verschoben
         
         context.fillText("Photo & Video", centerX, centerY - 50);
         
@@ -303,18 +376,30 @@ export class Typewriter {
         context.fillStyle = `rgba(255,255,255,${this.subtitleOpacities[3]})`;
         context.font = `${subtitleFontSize}px 'IBM Plex Mono'`;
         
-        const subtitle1 = this.subtitleTexts[3][0].substring(0, this.subtitleProgress[3]);
-        context.fillText(subtitle1, centerX, centerY);
+        // Dynamisch mehrere Zeilen rendern
+        let totalCharactersTyped = 0;
+        let totalCharactersPreviousLines = 0;
         
-        if (this.subtitleProgress[3] >= this.subtitleTexts[3][0].length) {
-            const subtitle2 = this.subtitleTexts[3][1].substring(0, this.subtitleProgress[3] - this.subtitleTexts[3][0].length);
-            context.fillText(subtitle2, centerX, centerY + 35);
+        // Zeichne jede Zeile
+        for (let i = 0; i < this.subtitleTexts[3].length; i++) {
+            const lineText = this.subtitleTexts[3][i];
+            const lineYPosition = centerY + (i * 35); // 35 Pixel Zeilenabstand
             
-            // Dritte Zeile für Photo & Video
-            if (this.subtitleProgress[3] >= this.subtitleTexts[3][0].length + this.subtitleTexts[3][1].length) {
-                const subtitle3 = this.subtitleTexts[3][2].substring(0, this.subtitleProgress[3] - this.subtitleTexts[3][0].length - this.subtitleTexts[3][1].length);
-                context.fillText(subtitle3, centerX, centerY + 70);
+            if (totalCharactersTyped < this.subtitleProgress[3]) {
+                // Wie viele Zeichen dieser Zeile anzeigen
+                const charsToShow = Math.min(
+                    lineText.length, 
+                    this.subtitleProgress[3] - totalCharactersPreviousLines
+                );
+                
+                if (charsToShow > 0) {
+                    const visibleText = lineText.substring(0, charsToShow);
+                    context.fillText(visibleText, centerX, lineYPosition);
+                }
             }
+            
+            totalCharactersTyped += lineText.length;
+            totalCharactersPreviousLines += lineText.length;
         }
         
         context.shadowColor = "transparent";
