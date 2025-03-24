@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 /**
  * Klasse zum Aktualisieren von Bild-Meshes basierend auf Kameraposition
  */
@@ -51,5 +53,72 @@ export class ImageUpdater {
                 gsap.to(group.position, { x: group.userData.offscreenX, duration: 1.2, ease: "power1.out" });
             }
         });
+    }
+
+    static updateCoverGroupOpacity(camera, coverGroups) {
+        if (!coverGroups || coverGroups.length === 0) return;
+        
+        // Bereichsdefinitionen für sanftes Überblenden
+        const fullVisibilityRange = { min: -8, max: 1 };     // Bereich voller Sichtbarkeit
+        const fadeInRange = { min: 1, max: 4 };              // Einblendbereich (beim Reingehen)
+        const fadeOutRange = { min: -11, max: -8 };          // Ausblendbereich (beim Verlassen)
+        
+        // Kameraposition
+        const camZ = camera.position.z;
+        
+        // Opazitätsberechnung
+        let opacity = 0;
+        
+        // Volle Sichtbarkeit im Hauptbereich
+        if (camZ >= fullVisibilityRange.min && camZ <= fullVisibilityRange.max) {
+            opacity = 1.0;
+        } 
+        // Einblenden beim Betreten
+        else if (camZ > fullVisibilityRange.max && camZ < fadeInRange.max) {
+            // Berechne Übergangsfortschritt (0-1)
+            const t = 1 - ((camZ - fullVisibilityRange.max) / (fadeInRange.max - fullVisibilityRange.max));
+            opacity = Math.max(0, Math.min(1, t)); // Auf Bereich 0-1 begrenzen
+        }
+        // Ausblenden beim Verlassen
+        else if (camZ < fullVisibilityRange.min && camZ > fadeOutRange.min) {
+            // Berechne Übergangsfortschritt (0-1)
+            const t = (camZ - fadeOutRange.min) / (fullVisibilityRange.min - fadeOutRange.min);
+            opacity = Math.max(0, Math.min(1, t)); // Auf Bereich 0-1 begrenzen
+        }
+        
+        // Wende die Opazität auf alle Gruppen an
+        coverGroups.forEach(group => {
+            if (!group.userData.defaultMesh) return;
+            
+            // DefaultMesh aktualisieren
+            if (group.userData.defaultMesh.material) {
+                // Stelle sicher, dass Transparenz aktiviert ist
+                if (!group.userData.defaultMesh.material.transparent) {
+                    group.userData.defaultMesh.material.transparent = true;
+                }
+                
+                // Opazität setzen und sichtbar/unsichtbar schalten
+                group.userData.defaultMesh.material.opacity = opacity;
+                group.userData.defaultMesh.visible = opacity > 0;
+            }
+            
+            // HoverMesh aktualisieren (nur wenn nicht aktiv)
+            if (group.userData.hoverMesh && group.userData.hoverMesh.material) {
+                if (!group.userData.hoverMesh.material.transparent) {
+                    group.userData.hoverMesh.material.transparent = true;
+                }
+                
+                // Nur anpassen, wenn das Hover-Mesh nicht aktiv ist
+                if (group.userData.hoverMesh.material.opacity <= 0.5) {
+                    group.userData.hoverMesh.material.opacity = 0; // Initial immer unsichtbar
+                    group.userData.hoverMesh.visible = opacity > 0;
+                }
+            }
+        });
+        
+        // Debug-Information für Feintuning
+        if (opacity > 0) {
+            console.log(`Kamera Z: ${camZ.toFixed(2)}, Cover Opacity: ${opacity.toFixed(2)}`);
+        }
     }
 }

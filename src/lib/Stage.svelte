@@ -699,17 +699,17 @@ function loadAppropriateTextures() {
          const geom = new THREE.PlaneGeometry(3, 2);
          const defaultMat = new THREE.MeshBasicMaterial({
             map: defaultTex,
-            transparent: true,
+            transparent: true, // Diese Zeile muss auf true sein!
+            opacity: 1.0,      // Setze dies explizit
             toneMapped: false,
-            opacity: 1,
             color: 0xffffff
          });
          const defaultMesh = new THREE.Mesh(geom, defaultMat);
          const hoverMat = new THREE.MeshBasicMaterial({
             map: hoverTex,
-            transparent: true,
+            transparent: true, // Diese Zeile muss auf true sein!
+            opacity: 0.0,      // Setze dies explizit 
             toneMapped: false,
-            opacity: 0,  // startet ausgeblendet
             color: 0xffffff
          });
          const hoverMesh = new THREE.Mesh(geom, hoverMat);
@@ -743,6 +743,41 @@ function loadAppropriateTextures() {
       scene.add(coverGroup4);
 
       coverGroups.push(coverGroup1, coverGroup2, coverGroup3, coverGroup4);
+
+      // Nach dem Hinzufügen aller coverGroups zum Array
+      function initializeCoverGroupsOpacity() {
+        // Setze alle Cover-Gruppen initial auf transparent
+        coverGroups.forEach(group => {
+          if (group.userData.defaultMesh) {
+            group.userData.defaultMesh.material.transparent = true;
+            group.userData.defaultMesh.material.opacity = 0;
+            group.userData.defaultMesh.visible = false;
+          }
+          
+          if (group.userData.hoverMesh) {
+            group.userData.hoverMesh.material.transparent = true;
+            group.userData.hoverMesh.material.opacity = 0;
+            group.userData.hoverMesh.visible = false;
+          }
+        });
+      }
+      
+      // Füge diesen Aufruf hinzu
+      initializeCoverGroupsOpacity();
+
+      // NEUE CODE-ZEILEN:
+      // Direkte Manipulation der Cover-Gruppen-Materialien
+      coverGroups.forEach(group => {
+        // Stelle sicher, dass die Transparenz aktiviert ist
+        group.userData.defaultMesh.material.transparent = true;
+        group.userData.hoverMesh.material.transparent = true;
+        
+        // Auf unsichtbar setzen
+        group.userData.defaultMesh.material.opacity = 0;
+        group.userData.defaultMesh.visible = false;
+        group.userData.hoverMesh.material.opacity = 0;
+        group.userData.hoverMesh.visible = false;
+      });
 
       // --------------------------------------------------------
     // 4) WEITERE BILDER (z. B. Earthquake, Nass1, Bwegt1)
@@ -922,10 +957,14 @@ const pngMaterialFoto = new THREE.MeshBasicMaterial({
       
       // Partikelsystem initialisieren
       particleSystem = new ParticleSystem(THREE, scene, {
-        particleCount: isMobileDevice() ? 1000 : 2000, // Weniger Partikel auf Mobilgeräten
-        particleColor: 0x333344,
-        particleSize: 0.3,
-        particleOpacity: 0.6
+        particleCount: isMobileDevice() ? 600 : 1500,    // Reduzierte Anzahl
+        particleColor: 0x06003D,                         // Helleres Blau mit leichtem Türkis-Touch
+        particleSize: 0.2,                              // Etwas größere Partikel
+        particleOpacity: 1,                           // Höhere Deckkraft
+        particleGlow: true,                              // Glüheffekt aktivieren (falls unterstützt)
+        particleSpeedFactor: 0.7,                        // Langsamere Bewegung für eleganteres Aussehen
+        particleDistribution: 'sides',                   // Konzentriert Partikel an den Seiten
+        particleSizeVariation: 0.1                       // Mehr Größenvarianz für Tiefenwirkung
       });
 
       // Nochmal Texturwechsel aufrufen, wenn Mobile und Meshes jetzt vorhanden sind
@@ -1151,6 +1190,8 @@ function updateCanvas5Text() {
   ImageUpdater.updateAllImages(camera, imageMeshes);
   ImageUpdater.updateImagePositions(camera, imageMeshes, gsap);
   ImageUpdater.updateCoverGroupPositions(camera, coverGroups, gsap);
+  // Neue Zeile für Cover-Gruppen-Opazität
+  ImageUpdater.updateCoverGroupOpacity(camera, coverGroups);
   
   updateCurrentSection();
   

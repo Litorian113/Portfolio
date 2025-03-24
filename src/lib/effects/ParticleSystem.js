@@ -1,23 +1,28 @@
 /**
  * Partikel-System für die 3D-Szene
- * Erzeugt atmosphärische Partikel an den Rändern des Flurs
+ * Erzeugt atmosphärische Partikel an allen Seiten des Flurs (Wände, Boden, Decke)
  */
-
 export class ParticleSystem {
     constructor(THREE, scene, options = {}) {
       this.THREE = THREE;
       this.scene = scene;
       
-      // Standardoptionen mit übergebenen Optionen zusammenführen
+      // Erweiterte Optionen mit Wandverteilung
       this.options = {
         particleCount: options.particleCount || 2000,
-        particleColor: options.particleColor || 0x333344,
-        particleSize: options.particleSize || 0.3,
-        particleOpacity: options.particleOpacity || 0.6,
-        minX: options.minX || 12, // Mindestabstand vom Zentrum (X-Achse)
-        maxY: options.maxY || 6,  // Maximale Höhe (Y-Achse)
-        minZ: options.minZ || -45, // Minimale Z-Position
-        maxZ: options.maxZ || 15   // Maximale Z-Position
+        particleColor: options.particleColor || 0x050035,
+        particleSize: options.particleSize || 0.15,
+        particleOpacity: options.particleOpacity || 1,
+        minX: options.minX || 10,         // Mindestabstand vom Zentrum (X-Achse/Seitenwände)
+        maxY: options.maxY || 15,         // Maximale Höhe für Seitenwände
+        floorCeilingWidth: options.floorCeilingWidth || 15, // Breite von Boden/Decke
+        minZ: options.minZ || -75,        // Minimale Z-Position
+        maxZ: options.maxZ || 25,         // Maximale Z-Position
+        distribution: options.distribution || {
+          sides: 0.7,  // 70% der Partikel an den Seitenwänden
+          ceiling: 0.15, // 15% der Partikel an der Decke
+          floor: 0.15  // 15% der Partikel am Boden
+        }
       };
       
       this.particles = null;
@@ -26,37 +31,92 @@ export class ParticleSystem {
       this.initialize();
     }
     
-    /**
-     * Erstellt das Partikelsystem und fügt es der Szene hinzu
-     */
     initialize() {
       const { THREE, scene, options } = this;
-      const { particleCount, particleColor, particleSize, particleOpacity } = options;
+      const { particleCount, particleColor, particleSize, particleOpacity, distribution } = options;
       
       // Geometrie erstellen
       const geometry = new THREE.BufferGeometry();
       const positions = new Float32Array(particleCount * 3);
       
-      // Zufällige Positionen - NUR auf den Seiten, nicht in der Mitte
-      for (let i = 0; i < particleCount; i++) {
-        const i3 = i * 3;
+      // Partikelverteilung berechnen
+      const sideCount = Math.floor(particleCount * distribution.sides);
+      const ceilingCount = Math.floor(particleCount * distribution.ceiling);
+      const floorCount = particleCount - sideCount - ceilingCount;
+      
+      let particleIndex = 0;
+      
+      // 1. Seitenwand-Partikel
+      for (let i = 0; i < sideCount; i++) {
+        const i3 = particleIndex * 3;
         const side = Math.random() > 0.5 ? 1 : -1;
         
-        // Positioniere Partikel weiter außen
+        // X-Position (links oder rechts)
         positions[i3] = side * (options.minX + Math.random() * 8);
         
-        // Vertikale Position - verteilt für bessere Raumfüllung
+        // Y-Position (Höhe)
         positions[i3 + 1] = Math.random() * options.maxY * 2 - options.maxY;
         
-        // Z-Position entlang des Flurs
+        // Z-Position (entlang des Flurs)
         positions[i3 + 2] = (Math.random() * (options.maxZ - options.minZ)) + options.minZ;
         
-        // Geschwindigkeiten speichern
+        // Geschwindigkeit: horizontal für Seitenwände
         this.velocities.push({
           x: (Math.random() - 0.5) * 0.008,
           y: (Math.random() - 0.5) * 0.008,
-          z: (Math.random() - 0.5) * 0.015
+          z: (Math.random() - 0.5) * 0.015,
+          wall: 'side'
         });
+        
+        particleIndex++;
+      }
+      
+      // 2. Decken-Partikel
+      for (let i = 0; i < ceilingCount; i++) {
+        const i3 = particleIndex * 3;
+        
+        // X-Position (Breite der Decke)
+        positions[i3] = (Math.random() * options.floorCeilingWidth * 2) - options.floorCeilingWidth;
+        
+        // Y-Position (fixe Höhe für Decke)
+        positions[i3 + 1] = options.maxY + Math.random() * 2; 
+        
+        // Z-Position (entlang des Flurs)
+        positions[i3 + 2] = (Math.random() * (options.maxZ - options.minZ)) + options.minZ;
+        
+        // Geschwindigkeit: nach unten gerichtet für Decke
+        this.velocities.push({
+          x: (Math.random() - 0.5) * 0.006,
+          y: -(Math.random() * 0.004 + 0.002),
+          z: (Math.random() - 0.5) * 0.015,
+          wall: 'ceiling'
+        });
+        
+        particleIndex++;
+      }
+      
+      // 3. Boden-Partikel
+      for (let i = 0; i < floorCount; i++) {
+        const i3 = particleIndex * 3;
+        
+        // X-Position (Breite des Bodens)
+        positions[i3] = (Math.random() * options.floorCeilingWidth * 2) - options.floorCeilingWidth;
+        
+        // Y-Position (fixe Höhe für Boden)
+        positions[i3 + 1] = -options.maxY - Math.random() * 2;
+        
+        // Z-Position (entlang des Flurs)
+        positions[i3 + 2] = (Math.random() * (options.maxZ - options.minZ)) + options.minZ;
+        
+        // Geschwindigkeit: nach oben gerichtet für Boden
+        this.velocities.push({
+          x: (Math.random() - 0.5) * 0.006,
+          y: Math.random() * 0.004 + 0.002,
+          z: (Math.random() - 0.5) * 0.015,
+          wall: 'floor'
+        });
+        
+        particleIndex++;
       }
       
       geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -75,9 +135,6 @@ export class ParticleSystem {
       scene.add(this.particles);
     }
     
-    /**
-     * Animiert die Partikel - wird im Animation Loop aufgerufen
-     */
     animate() {
       if (!this.particles) return;
       
@@ -86,29 +143,64 @@ export class ParticleSystem {
       
       for (let i = 0; i < options.particleCount; i++) {
         const i3 = i * 3;
+        const vel = velocities[i];
         
-        positions[i3] += velocities[i].x;
-        positions[i3 + 1] += velocities[i].y + Math.sin(Date.now() * 0.001 + i) * 0.004;
-        positions[i3 + 2] += velocities[i].z;
+        positions[i3] += vel.x;
+        positions[i3 + 1] += vel.y + Math.sin(Date.now() * 0.001 + i) * 0.002;
+        positions[i3 + 2] += vel.z;
         
-        // Grenzen prüfen und zurücksetzen
-        // X-Position: Halte Partikel an den Seiten
-        if (positions[i3] > 0 && positions[i3] < options.minX) {
-          positions[i3] = options.minX + Math.random() * 8;
-        } else if (positions[i3] < 0 && positions[i3] > -options.minX) {
-          positions[i3] = -options.minX - Math.random() * 8;
+        // Je nach Wand-Typ unterschiedliche Grenzen prüfen
+        switch (vel.wall) {
+          case 'side':
+            // Seitenwände: X-Grenzen prüfen
+            if (positions[i3] > 0 && positions[i3] < options.minX) {
+              positions[i3] = options.minX + Math.random() * 8;
+            } else if (positions[i3] < 0 && positions[i3] > -options.minX) {
+              positions[i3] = -options.minX - Math.random() * 8;
+            }
+            
+            // X-Maximalgrenze
+            if (Math.abs(positions[i3]) > 25) {
+              const side = positions[i3] > 0 ? 1 : -1;
+              positions[i3] = side * (options.minX + Math.random() * 8);
+            }
+            
+            // Y-Grenzen für Seitenwände
+            if (Math.abs(positions[i3 + 1]) > options.maxY) {
+              positions[i3 + 1] = Math.sign(positions[i3 + 1]) * options.maxY * 0.8;
+            }
+            break;
+            
+          case 'ceiling':
+            // Decke: Y-Grenzen prüfen
+            if (positions[i3 + 1] < options.maxY) {
+              positions[i3 + 1] = options.maxY + Math.random() * 2;
+            } else if (positions[i3 + 1] > options.maxY + 5) {
+              positions[i3 + 1] = options.maxY + Math.random() * 2;
+            }
+            
+            // X-Grenzen für Decke
+            if (Math.abs(positions[i3]) > options.floorCeilingWidth) {
+              positions[i3] = (Math.random() * options.floorCeilingWidth * 2) - options.floorCeilingWidth;
+            }
+            break;
+            
+          case 'floor':
+            // Boden: Y-Grenzen prüfen
+            if (positions[i3 + 1] > -options.maxY) {
+              positions[i3 + 1] = -options.maxY - Math.random() * 2;
+            } else if (positions[i3 + 1] < -options.maxY - 5) {
+              positions[i3 + 1] = -options.maxY - Math.random() * 2;
+            }
+            
+            // X-Grenzen für Boden
+            if (Math.abs(positions[i3]) > options.floorCeilingWidth) {
+              positions[i3] = (Math.random() * options.floorCeilingWidth * 2) - options.floorCeilingWidth;
+            }
+            break;
         }
         
-        // Weitere Grenzen
-        if (Math.abs(positions[i3]) > 25) {
-          const side = positions[i3] > 0 ? 1 : -1;
-          positions[i3] = side * (options.minX + Math.random() * 8);
-        }
-        
-        if (Math.abs(positions[i3 + 1]) > options.maxY) {
-          positions[i3 + 1] = Math.sign(positions[i3 + 1]) * options.maxY * 0.8;
-        }
-        
+        // Z-Grenzen gemeinsam für alle Partikel
         if (positions[i3 + 2] > options.maxZ) {
           positions[i3 + 2] = options.minZ;
         } else if (positions[i3 + 2] < options.minZ) {
