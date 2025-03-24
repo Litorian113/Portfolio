@@ -58,7 +58,7 @@ export class ImageUpdater {
                     mesh.position.y = 0; 
                     
                     // Skalierung anpassen
-                    mesh.scale.set(0.8, 0.8, 0.8);  // Etwas kleiner als Standard
+                    mesh.scale.set(0.56, 0.56, 0.56);  // Etwas kleiner als Standard
                 }
             });
         }
