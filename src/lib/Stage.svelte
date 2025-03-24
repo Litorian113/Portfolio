@@ -1188,6 +1188,9 @@ function updateCanvas5Text() {
   
   // Bild-Updates mit statischen Methoden
   ImageUpdater.updateAllImages(camera, imageMeshes);
+  
+  // WICHTIG: Zuerst filtern, dann positionieren
+  ImageUpdater.filterMobileImages(imageMeshes);
   ImageUpdater.updateImagePositions(camera, imageMeshes, gsap);
   ImageUpdater.updateCoverGroupPositions(camera, coverGroups, gsap);
   // Neue Zeile für Cover-Gruppen-Opazität
@@ -1313,6 +1316,12 @@ function getResponsiveSize(baseSize) {
   let scale = Math.max(window.innerWidth / baseWidth, minScale);
   return Math.floor(baseSize * scale);
 }
+
+// In der filterMobileImages-Methode
+// Nach dem Ausblenden von website2:
+
+// Position und Skalierung von website1 anpassen
+
 </script>
 
 <style>

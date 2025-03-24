@@ -27,6 +27,44 @@ export class ImageUpdater {
     }
 
     /**
+     * Filtert bestimmte Bild-Meshes auf mobilen Geräten aus
+     * Wird nach updateAllImages aufgerufen
+     */
+    static filterMobileImages(imageMeshes) {
+        // Prüfen, ob wir auf einem mobilen Gerät sind
+        const isMobile = window.innerWidth <= 768;
+        
+        if (isMobile) {
+            console.log("Filterung für mobile Geräte aktiv");
+            
+            imageMeshes.forEach(mesh => {
+                if (!mesh || !mesh.userData) return;
+                
+                const projectName = mesh.userData.project;
+                console.log(`Prüfe Image-Mesh: ${projectName}`);
+                
+                // Wenn das Projekt "website2" ist, ausblenden
+                if (projectName === 'website2') {
+                    console.log("Blende website2 für mobile Geräte aus");
+                    mesh.visible = false;
+                }
+                
+                // Position und Skalierung von website1 anpassen
+                if (projectName === 'website1') {
+                    console.log("Positioniere website1 für mobile Geräte");
+                    
+                    // Mesh direkt manipulieren - ohne gsap für direktes Setzen
+                    mesh.position.x = 0; // Mittig positionieren
+                    mesh.position.y = 0; 
+                    
+                    // Skalierung anpassen
+                    mesh.scale.set(0.45, 0.45, 0.45);  // Etwas kleiner als Standard
+                }
+            });
+        }
+    }
+
+    /**
      * Aktualisiert die X-Position aller Bilder basierend auf Distanz zur Kamera
      */
     static updateImagePositions(camera, imageMeshes, gsap) {
@@ -90,16 +128,32 @@ export class ImageUpdater {
         // Ist das Gerät ein Mobilgerät?
         const isMobile = window.innerWidth <= 768;
         
+        // Debug-Ausgabe für alle Projektgruppen (temporär)
+        if (isMobile) {
+            console.log("Mobile Ansicht aktiv, vorhandene Projekte:");
+            coverGroups.forEach(group => {
+                console.log(`Projekt: ${group.userData.project}`);
+            });
+        }
+        
         // Wende die Opazität auf alle Gruppen an
         coverGroups.forEach((group, index) => {
             if (!group.userData.defaultMesh) return;
             
-            // Mobile Geräte: Nur die ersten beiden Cover-Gruppen anzeigen (Earthquake und Migrants)
+            // Mobile Geräte: Nur ausgewählte Projekte anzeigen
             if (isMobile) {
                 const projectName = group.userData.project;
-                const isVisibleOnMobile = projectName === 'earthquake' || projectName === 'migrants';
+                console.log(`Verarbeite Projekt: ${projectName}`);
                 
+                // WICHTIG: Nur diese drei Projekte anzeigen, ALLES andere ausblenden
+                const isVisibleOnMobile = 
+                    projectName === 'earthquake' || 
+                    projectName === 'migrants' || 
+                    projectName === 'website1';
+                
+                // Wenn NICHT eines der sichtbaren Projekte, dann ausblenden
                 if (!isVisibleOnMobile) {
+                    console.log(`Blende Projekt aus: ${projectName}`);
                     // Unsichtbar machen
                     group.userData.defaultMesh.visible = false;
                     if (group.userData.hoverMesh) {
@@ -108,36 +162,39 @@ export class ImageUpdater {
                     return; // Frühzeitig beenden für unsichtbare Gruppen
                 }
                 
-                // Bei mobilen Geräten vertikal gestaffelt anordnen
+                // Positionierung der sichtbaren Projekte
                 if (projectName === 'earthquake') {
                     gsap.to(group.position, { 
                         x: -0.58, 
-                        y: 0.7,  // Obere Position
+                        y: 0.7,
                         duration: 1.2, 
                         ease: "power1.out" 
                     });
-                    // Skalierung für mobile Geräte
                     gsap.to(group.scale, {
-                        x: 0.4,
-                        y: 0.4,
-                        z: 0.4,
-                        duration: 1.2,
-                        ease: "power1.out"
+                        x: 0.4, y: 0.4, z: 0.4,
+                        duration: 1.2, ease: "power1.out"
                     });
                 } else if (projectName === 'migrants') {
                     gsap.to(group.position, { 
                         x: -0.58, 
-                        y: -0.5,  // Untere Position
+                        y: -0.5,
                         duration: 1.2, 
                         ease: "power1.out" 
                     });
-                    // Skalierung für mobile Geräte
                     gsap.to(group.scale, {
-                        x: 0.4,
-                        y: 0.4,
-                        z: 0.4,
-                        duration: 1.2,
-                        ease: "power1.out"
+                        x: 0.4, y: 0.4, z: 0.4,
+                        duration: 1.2, ease: "power1.out"
+                    });
+                } else if (projectName === 'website1') {
+                    gsap.to(group.position, { 
+                        x: -0.58, 
+                        y: 0,  // Eigene Position zwischen den anderen beiden
+                        duration: 1.2, 
+                        ease: "power1.out" 
+                    });
+                    gsap.to(group.scale, {
+                        x: 0.4, y: 0.4, z: 0.4,
+                        duration: 1.2, ease: "power1.out"
                     });
                 }
             }
