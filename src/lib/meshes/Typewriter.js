@@ -151,7 +151,7 @@ export class Typewriter {
      */
     getResponsiveSize(baseSize) {
         const baseWidth = 1920;
-        const minScale = 0.9;
+        const minScale = 1.05;
         let scale = Math.max(window.innerWidth / baseWidth, minScale);
         return Math.floor(baseSize * scale);
     }
