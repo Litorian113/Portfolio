@@ -157,6 +157,13 @@ export class Typewriter {
     }
 
     /**
+     * Hilfsfunktion zur Überprüfung, ob es sich um ein mobiles Gerät handelt
+     */
+    isMobileDevice() {
+        return window.innerWidth < 768; // Typischer Breakpoint für mobile Geräte
+    }
+
+    /**
      * Aktualisiert den Canvas für "Design Work"
      */
     updateCanvas1Text(context, texture) {
@@ -180,7 +187,8 @@ export class Typewriter {
         context.fillStyle = `rgba(255,255,255,${this.titleOpacities[0]})`;
         context.font = `${titleFontSize}px 'IBM Plex Mono'`;
         
-        const centerX = 1024 / 4.5;
+        // Angepasste Position für Design Work auf mobilen Geräten
+        const centerX = this.isMobileDevice() ? 1024 / 6 : 1024 / 4.5;
         const centerY = 512 / 1.25;
         
         context.fillText("Design Work", centerX, centerY - 50);
@@ -304,7 +312,8 @@ export class Typewriter {
         context.fillStyle = `rgba(255,255,255,${this.titleOpacities[2]})`;
         context.font = `${titleFontSize}px 'IBM Plex Mono'`;
         
-        const centerX = 1024 / 4.5;
+        // Angepasste Position für Website Projects auf mobilen Geräten
+        const centerX = this.isMobileDevice() ? 1024 / 6 : 1024 / 4.5;
         const centerY = 512 / 1.25;
         
         context.fillText("Website Projects", centerX, centerY - 50);
