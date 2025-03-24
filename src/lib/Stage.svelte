@@ -471,7 +471,7 @@ function loadAppropriateTextures() {
       renderer = new THREE.WebGLRenderer({ 
         antialias: true, 
         alpha: true,
-        preserveDrawingBuffer: true
+        // preserveDrawingBuffer: true
       });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -887,11 +887,21 @@ function loadAppropriateTextures() {
 }
       const pngTexturePC1 = textureLoader.load('/Website1.png');
       pngTexturePC1.colorSpace = THREE.SRGBColorSpace;
+      // Verbesserte Textur-Einstellungen
+      pngTexturePC1.anisotropy = renderer.capabilities.getMaxAnisotropy(); // Verbessert schräge Ansichten
+      pngTexturePC1.minFilter = THREE.LinearFilter; // Verhindert zu starkes Downsampling
+      pngTexturePC1.magFilter = THREE.LinearFilter; // Bessere Qualität bei Vergrößerung
+      pngTexturePC1.generateMipmaps = true; // Bessere Darstellung in verschiedenen Distanzen
+
       const pngGeometryPC1 = new THREE.PlaneGeometry(2.8, 3.4);
-      const pngMaterialPC1 = new THREE.MeshBasicMaterial({ map: pngTexturePC1, transparent: true });
+      const pngMaterialPC1 = new THREE.MeshBasicMaterial({ 
+        map: pngTexturePC1, 
+        transparent: true,
+        alphaTest: 0.01 // Verbessert die Kanten-Darstellung
+      });
       const pngMeshPC1 = new THREE.Mesh(pngGeometryPC1, pngMaterialPC1);
       pngMeshPC1.position.set(-3, 0, -13.5);
-      pngMeshPC1.scale.set(0.6,0.6,0.6);
+      pngMeshPC1.scale.set(0.6, 0.6, 0.6);
       pngMeshPC1.userData.finalX = -0.8;
       pngMeshPC1.userData.offscreenX = -3;
       pngMeshPC1.userData.project = 'website1';
