@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { gsap } from 'gsap';
 
 /**
  * Klasse zum Aktualisieren von Bild-Meshes basierend auf Kameraposition
@@ -86,39 +87,83 @@ export class ImageUpdater {
             opacity = Math.max(0, Math.min(1, t)); // Auf Bereich 0-1 begrenzen
         }
         
+        // Ist das Gerät ein Mobilgerät?
+        const isMobile = window.innerWidth <= 768;
+        
         // Wende die Opazität auf alle Gruppen an
-        coverGroups.forEach(group => {
+        coverGroups.forEach((group, index) => {
             if (!group.userData.defaultMesh) return;
             
+            // Mobile Geräte: Nur die ersten beiden Cover-Gruppen anzeigen (Earthquake und Migrants)
+            if (isMobile) {
+                const projectName = group.userData.project;
+                const isVisibleOnMobile = projectName === 'earthquake' || projectName === 'migrants';
+                
+                if (!isVisibleOnMobile) {
+                    // Unsichtbar machen
+                    group.userData.defaultMesh.visible = false;
+                    if (group.userData.hoverMesh) {
+                        group.userData.hoverMesh.visible = false;
+                    }
+                    return; // Frühzeitig beenden für unsichtbare Gruppen
+                }
+                
+                // Bei mobilen Geräten vertikal gestaffelt anordnen
+                if (projectName === 'earthquake') {
+                    gsap.to(group.position, { 
+                        x: -0.58, 
+                        y: 0.7,  // Obere Position
+                        duration: 1.2, 
+                        ease: "power1.out" 
+                    });
+                    // Skalierung für mobile Geräte
+                    gsap.to(group.scale, {
+                        x: 0.4,
+                        y: 0.4,
+                        z: 0.4,
+                        duration: 1.2,
+                        ease: "power1.out"
+                    });
+                } else if (projectName === 'migrants') {
+                    gsap.to(group.position, { 
+                        x: -0.58, 
+                        y: -0.5,  // Untere Position
+                        duration: 1.2, 
+                        ease: "power1.out" 
+                    });
+                    // Skalierung für mobile Geräte
+                    gsap.to(group.scale, {
+                        x: 0.4,
+                        y: 0.4,
+                        z: 0.4,
+                        duration: 1.2,
+                        ease: "power1.out"
+                    });
+                }
+            }
+            
+            // Normale Opazitätssteuerung für sichtbare Gruppen
             // DefaultMesh aktualisieren
             if (group.userData.defaultMesh.material) {
-                // Stelle sicher, dass Transparenz aktiviert ist
                 if (!group.userData.defaultMesh.material.transparent) {
                     group.userData.defaultMesh.material.transparent = true;
                 }
                 
-                // Opazität setzen und sichtbar/unsichtbar schalten
                 group.userData.defaultMesh.material.opacity = opacity;
                 group.userData.defaultMesh.visible = opacity > 0;
             }
             
-            // HoverMesh aktualisieren (nur wenn nicht aktiv)
+            // HoverMesh aktualisieren
             if (group.userData.hoverMesh && group.userData.hoverMesh.material) {
                 if (!group.userData.hoverMesh.material.transparent) {
                     group.userData.hoverMesh.material.transparent = true;
                 }
                 
-                // Nur anpassen, wenn das Hover-Mesh nicht aktiv ist
                 if (group.userData.hoverMesh.material.opacity <= 0.5) {
-                    group.userData.hoverMesh.material.opacity = 0; // Initial immer unsichtbar
+                    group.userData.hoverMesh.material.opacity = 0;
                     group.userData.hoverMesh.visible = opacity > 0;
                 }
             }
         });
-        
-        // Debug-Information für Feintuning
-        if (opacity > 0) {
-            console.log(`Kamera Z: ${camZ.toFixed(2)}, Cover Opacity: ${opacity.toFixed(2)}`);
-        }
     }
 }
