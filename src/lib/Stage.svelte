@@ -1,4 +1,7 @@
 <script>
+    // Füge den Import für BackButton hinzu
+    import { BackButton } from '$lib/meshes/BackButton.js';
+    
     // Füge den Import für IntroText hinzu
     import { IntroText } from '$lib/meshes/IntroText.js';
     // Bestehende Imports...
@@ -13,6 +16,7 @@
     import { Typewriter } from '$lib/meshes/Typewriter.js';
     import { ImageUpdater } from '$lib/meshes/ImageUpdater.js';
     import { CanvasClickHandler } from '$lib/interactions/HandleCanvasClick.js';
+    import { CanvasTextManager } from '$lib/utils/CanvasTextManager.js';
 
     export let cx = 0;
     export let cy = 0;
@@ -125,6 +129,12 @@
 
     // CanvasClickHandler-Instanz
     let clickHandler;
+
+    // Variable für BackButton-Instanz
+    let backButton;
+
+    // Neue Variable für den CanvasTextManager
+    let canvasTextManager;
 
     // Funktion zum Hinzufügen des Wheel-Event-Listeners
     function addWheelListener() {
@@ -276,6 +286,11 @@
       // IntroText bereinigen
       if (introText) {
         introText.dispose();
+      }
+
+      // BackButton aufräumen
+      if (backButton) {
+        backButton.dispose();
       }
 
       // Beim Zerstören der Komponente, stelle sicher, dass Overflow wieder aktiviert wird
@@ -510,56 +525,22 @@ function loadAppropriateTextures() {
       // corridorLines = new THREE.LineSegments(corridorGeometry, corridorMaterial);
       // scene.add(corridorLines);
 
-      // Erstellung eines kleineren "Back to Start"-Buttons
-const buttonCanvas = document.createElement('canvas');
-const buttonContext = buttonCanvas.getContext('2d');
-buttonCanvas.width = 512; 
-buttonCanvas.height = 256;
-
-// Button mit Text zeichnen - bleibt gleich
-buttonContext.fillStyle = "rgba(6, 0, 61, 0.7)"; // Dunkelblau mit leichter Transparenz
-buttonContext.fillRect(0, 0, 512, 256);
-buttonContext.strokeStyle = "rgba(255, 255, 255, 0.8)";
-buttonContext.lineWidth = 4;
-buttonContext.strokeRect(10, 10, 492, 236);
-
-// Text zeichnen
-buttonContext.font = "bold 40px 'IBM Plex Mono'";
-buttonContext.textAlign = "center";
-buttonContext.textBaseline = "middle";
-buttonContext.fillStyle = "#FFFFFF";
-buttonContext.fillText("Back to Start", 256, 128);
-
-// Textur erstellen
-const buttonTexture = new THREE.CanvasTexture(buttonCanvas);
-buttonTexture.colorSpace = THREE.SRGBColorSpace;
-buttonTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-
-// Button-Mesh erstellen - KLEINER machen
-const backButtonGeo = new THREE.PlaneGeometry(0.5, 0.25); // von 4x2 zu 3x1.5
-const backButtonMat = new THREE.MeshBasicMaterial({ 
-  map: buttonTexture, 
-  transparent: true,
-  alphaTest: 0.01,
-  depthTest: false // Stellt sicher, dass der Button immer gerendert wird
-});
-const backButton = new THREE.Mesh(backButtonGeo, backButtonMat);
-backButton.position.set(0, 0, -38);
-backButton.name = "backButton"; // Name für leichteres Debugging
-scene.add(backButton);
-
-// Die Variable backWall weiterhin verfügbar halten, aber unsichtbar machen
-backWall = new THREE.Mesh(
-  new THREE.PlaneGeometry(0.1, 0.1),
-  new THREE.MeshBasicMaterial({ visible: false })
-);
-scene.add(backWall);
-
+      // BackButton erstellen
+      backButton = new BackButton(THREE, scene, renderer, camera);
+        
+      // Ersatz für die alte backWall-Variable
+      backWall = new THREE.Mesh(
+          new THREE.PlaneGeometry(0.1, 0.1),
+          new THREE.MeshBasicMaterial({ visible: false })
+      );
+      scene.add(backWall);
 
       // Factories initialisieren
       projectMeshFactory = new ProjectMeshFactory(scene, isMobile);
       coverGroupFactory = new CoverGroupFactory(scene, isMobile);
 
+      // CanvasTextManager initialisieren
+      canvasTextManager = new CanvasTextManager(THREE, renderer);
 
             // --------------------------------------------------------
       // 1) Design Work
@@ -1034,25 +1015,10 @@ const pngMaterialFoto = new THREE.MeshBasicMaterial({
   const x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
   const y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
   
-  const raycaster = new THREE.Raycaster();
-  raycaster.setFromCamera({ x, y }, camera);
-  
-  // Debug-Ausgabe aller getroffenen Objekte
-  const allIntersects = raycaster.intersectObjects(scene.children, true);
-  console.log("Getroffene Objekte:", allIntersects.map(i => i.object.name || "Unbenannt"));
-  
-  // Explizit nach dem Button suchen
-  const backButtonObj = scene.getObjectByName("backButton");
-  if (backButtonObj) {
-    const buttonIntersects = raycaster.intersectObject(backButtonObj);
-    if (buttonIntersects.length > 0) {
-      console.log("Back to Start Button geklickt");
-      // Zurück zum Start navigieren
-      navigateToSection("intro");
-      return;
-    }
-  } else {
-    console.warn("Back-Button nicht in der Szene gefunden!");
+  // BackButton-Klick-Erkennung
+  if (backButton && backButton.handleClick(x, y, navigateToSection)) {
+    // Wenn der Button geklickt wurde, frühzeitig beenden
+    return;
   }
   
   // Normaler Click-Handler für andere Objekte
@@ -1068,42 +1034,10 @@ function onMouseMove(event) {
   const x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
   const y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
   
-  const raycaster = new THREE.Raycaster();
-  raycaster.setFromCamera({ x, y }, camera);
-  
-  // Button-Objekt finden
-  const backButtonObj = scene.getObjectByName("backButton");
-  if (backButtonObj) {
-    const buttonIntersects = raycaster.intersectObject(backButtonObj);
-    if (buttonIntersects.length > 0) {
-      // Mauszeiger auf Pointer ändern
-      container.style.cursor = "pointer";
-      
-      // Optional: Button visuell hervorheben
-      if (backButtonObj.material && !backButtonObj.userData.isHighlighted) {
-        backButtonObj.userData.isHighlighted = true;
-        backButtonObj.material.opacity = 1.0; // Volle Opazität
-        gsap.to(backButtonObj.scale, { 
-          x: 1.1, 
-          y: 1.1, 
-          z: 1.1, 
-          duration: 0.2 
-        });
-      }
-      
-      // Frühzeitig beenden, damit der normale Hover-Handler nicht ausgeführt wird
-      return;
-    } else if (backButtonObj.userData.isHighlighted) {
-      // Zurücksetzen, wenn nicht mehr über dem Button
-      backButtonObj.userData.isHighlighted = false;
-      backButtonObj.material.opacity = 0.9; // Normale Opazität wiederherstellen
-      gsap.to(backButtonObj.scale, { 
-        x: 1, 
-        y: 1, 
-        z: 1, 
-        duration: 0.2 
-      });
-    }
+  // BackButton-Hover-Erkennung
+  if (backButton && backButton.handleMouseMove(event, container, gsap, rect, x, y)) {
+    // Wenn der Button getroffen wurde, frühzeitig beenden
+    return;
   }
   
   // Cursor zurücksetzen, wenn nicht über interaktiven Elementen
@@ -1119,145 +1053,23 @@ function onMouseMove(event) {
    // Canvas-Update-Funktionen für die einzelnen Abschnitte
    // ----------------------------------------------------------------------------
    function updateCanvas1Text() {
-  // Wenn typewriter existiert, nutze dessen Methode, sonst direkte Implementierung
-  if (typewriter && context1 && textTexture1) {
-    typewriter.updateCanvas1Text(context1, textTexture1);
-  } else if (context1 && textTexture1) {
-    // Einfache Titel-Darstellung ohne Typewriter-Effekt für die Initialisierung
-    context1.clearRect(0, 0, 1024, 512);
-    context1.fillStyle = "rgba(0,0,0,0)";
-    context1.fillRect(0, 0, 1024, 512);
-    context1.textAlign = "left";
-    context1.textBaseline = "middle";
-    
-    context1.shadowColor = "rgba(0, 0, 0, 0.5)";
-    context1.shadowBlur = 5;
-    context1.shadowOffsetX = 1;
-    context1.shadowOffsetY = 1;
-    
-    const titleFontSize = getResponsiveSize(42);
-    context1.fillStyle = "rgba(255,255,255,0.4)";
-    context1.font = `${titleFontSize}px 'IBM Plex Mono'`;
-    
-    const centerX = 1024 / 4.5;
-    const centerY = 512 / 1.25;
-    context1.fillText("Design Work", centerX, centerY - 50);
-    
-    context1.shadowColor = "transparent";
-    textTexture1.needsUpdate = true;
-  }
+  canvasTextManager.updateCanvas1Text(context1, textTexture1);
 }
 
 function updateCanvas2Text() {
-  if (typewriter && context2 && textTexture2) {
-    typewriter.updateCanvas2Text(context2, textTexture2);
-  } else if (context2 && textTexture2) {
-    context2.clearRect(0, 0, 1024, 512);
-    context2.fillStyle = "rgba(0,0,0,0)";
-    context2.fillRect(0, 0, 1024, 512);
-    context2.textAlign = "left";
-    context2.textBaseline = "middle";
-    
-    context2.shadowColor = "rgba(0, 0, 0, 0.5)";
-    context2.shadowBlur = 5;
-    context2.shadowOffsetX = 1;
-    context2.shadowOffsetY = 1;
-    
-    const titleFontSize = getResponsiveSize(42);
-    context2.fillStyle = "rgba(255,255,255,0.4)";
-    context2.font = `${titleFontSize}px 'IBM Plex Mono'`;
-    
-    const centerX = 1024 / 4.5;
-    const centerY = 512 / 1.25;
-    context2.fillText("Code & Data", centerX, centerY - 50);
-    
-    context2.shadowColor = "transparent";
-    textTexture2.needsUpdate = true;
-  }
+  canvasTextManager.updateCanvas2Text(context2, textTexture2);
 }
 
 function updateCanvas3Text() {
-  if (typewriter && context3 && textTexture3) {
-    typewriter.updateCanvas3Text(context3, textTexture3);
-  } else if (context3 && textTexture3) {
-    context3.clearRect(0, 0, 1024, 512);
-    context3.fillStyle = "rgba(0,0,0,0)";
-    context3.fillRect(0, 0, 1024, 512);
-    context3.textAlign = "left";
-    context3.textBaseline = "middle";
-    
-    context3.shadowColor = "rgba(0, 0, 0, 0.5)";
-    context3.shadowBlur = 5;
-    context3.shadowOffsetX = 1;
-    context3.shadowOffsetY = 1;
-    
-    const titleFontSize = getResponsiveSize(42);
-    context3.fillStyle = "rgba(255,255,255,0.4)";
-    context3.font = `${titleFontSize}px 'IBM Plex Mono'`;
-    
-    const centerX = 1024 / 4.5;
-    const centerY = 512 / 1.25;
-    context3.fillText("Website Projects", centerX, centerY - 50);
-    
-    context3.shadowColor = "transparent";
-    textTexture3.needsUpdate = true;
-  }
+  canvasTextManager.updateCanvas3Text(context3, textTexture3);
 }
 
 function updateCanvas4Text() {
-  if (typewriter && context4 && textTexture4) {
-    typewriter.updateCanvas4Text(context4, textTexture4);
-  } else if (context4 && textTexture4) {
-    context4.clearRect(0, 0, 1024, 512);
-    context4.fillStyle = "rgba(0,0,0,0)";
-    context4.fillRect(0, 0, 1024, 512);
-    context4.textAlign = "left";
-    context4.textBaseline = "middle";
-    
-    context4.shadowColor = "rgba(0, 0, 0, 0.5)";
-    context4.shadowBlur = 5;
-    context4.shadowOffsetX = 1;
-    context4.shadowOffsetY = 1;
-    
-    const titleFontSize = getResponsiveSize(42);
-    context4.fillStyle = "rgba(255,255,255,0.4)";
-    context4.font = `${titleFontSize}px 'IBM Plex Mono'`;
-    
-    const centerX = 1024 / 4.5;
-    const centerY = 512 / 1.25;
-    context4.fillText("Photo & Video", centerX, centerY - 50);
-    
-    context4.shadowColor = "transparent";
-    textTexture4.needsUpdate = true;
-  }
+  canvasTextManager.updateCanvas4Text(context4, textTexture4);
 }
 
 function updateCanvas5Text() {
-  if (typewriter && context5 && textTexture5) {
-    typewriter.updateCanvas5Text(context5, textTexture5);
-  } else if (context5 && textTexture5) {
-    context5.clearRect(0, 0, 1024, 512);
-    context5.fillStyle = "rgba(0,0,0,0)";
-    context5.fillRect(0, 0, 1024, 512);
-    context5.textAlign = "left";
-    context5.textBaseline = "middle";
-    
-    context5.shadowColor = "rgba(0, 0, 0, 0.5)";
-    context5.shadowBlur = 5;
-    context5.shadowOffsetX = 1;
-    context5.shadowOffsetY = 1;
-    
-    const titleFontSize = getResponsiveSize(42);
-    context5.fillStyle = "rgba(255,255,255,0.4)";
-    context5.font = `${titleFontSize}px 'IBM Plex Mono'`;
-    
-    const centerX = 1024 / 4.5;
-    const centerY = 512 / 1.25;
-    context5.fillText("About me", centerX, centerY - 50);
-    
-    context5.shadowColor = "transparent";
-    textTexture5.needsUpdate = true;
-  }
+  canvasTextManager.updateCanvas5Text(context5, textTexture5);
 }
 
    // ----------------------------------------------------------------------------
@@ -1415,12 +1227,10 @@ function adjustTextMeshSizes() {
 
 // Funktion zum Neuerstellen der Canvas-Texturen bei Größenänderung
 function recreateCanvasTextures() {
-  // Wenn Typewriter existiert, alle Canvas-Texturen aktualisieren
-  if (typewriter) {
+  if (canvasTextManager) {
     const contexts = { context1, context2, context3, context4, context5 };
     const textures = { textTexture1, textTexture2, textTexture3, textTexture4, textTexture5 };
-    // Die richtige Methode aufrufen
-    typewriter.updateAllCanvasTexts(contexts, textures);
+    canvasTextManager.updateAllCanvasTexts(contexts, textures);
   }
   
   // Intro-Text aktualisieren

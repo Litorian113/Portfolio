@@ -18,6 +18,8 @@
     import Nav from '$lib/Nav.svelte';
     import BurgerMenu from '$lib/components/BurgerMenu.svelte';
     import ContactIcon from '$lib/components/ContactIcon.svelte';
+    import WelcomeOverlay from '$lib/components/WelcomeOverlay.svelte';
+    import { onMount } from 'svelte';
     
     // SEO settings for the homepage
     const pageTitle = "FXMA Design | Franz - Interaction Designer & Creative Developer";
@@ -25,11 +27,34 @@
     
     let stageComponent;
     let currentSection = 'intro';
-    let contactFormVisible = false;  // Keep this declaration
+    let contactFormVisible = false; 
+    let showOverlay = false; // Standardmäßig ausblenden, bis wir prüfen können
     
     export let cx;
     export let cy;
     export let cz;
+
+    onMount(() => {
+        // Prüfen ob das Overlay bereits angezeigt wurde
+        const hasSeenOverlay = localStorage.getItem('hasSeenOverlay');
+        
+        // Overlay nur anzeigen, wenn es noch nicht gesehen wurde
+        if (!hasSeenOverlay) {
+            showOverlay = true;
+        }
+    });
+
+    function handleOverlayComplete() {
+        showOverlay = false;
+        
+        // In localStorage speichern, dass das Overlay gesehen wurde
+        try {
+            localStorage.setItem('hasSeenOverlay', 'true');
+        } catch (e) {
+            // Fallback für Fälle, in denen localStorage nicht verfügbar ist
+            console.warn('LocalStorage nicht verfügbar:', e);
+        }
+    }
 
     // Function that calls the exported navigation function of the Stage component
     function navigateTo(sectionId) {
@@ -78,6 +103,11 @@
     }
     </script>
 </svelte:head>
+
+<!-- Begrüßungs-Overlay anzeigen, wenn showOverlay true ist -->
+{#if showOverlay}
+    <WelcomeOverlay onComplete={handleOverlayComplete} />
+{/if}
 
 <!-- Hidden H1 for SEO -->
 <h1 class="sr-only">Franz - Interaction Designer & Creative Developer Portfolio</h1>
