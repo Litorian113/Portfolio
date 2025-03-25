@@ -510,12 +510,50 @@ function loadAppropriateTextures() {
       // corridorLines = new THREE.LineSegments(corridorGeometry, corridorMaterial);
       // scene.add(corridorLines);
 
-      // Rückwand
-      const backWallGeo = new THREE.PlaneGeometry(10, 5);
-      const backWallMat = new THREE.MeshBasicMaterial({ color: 0x010300 });
-      backWall = new THREE.Mesh(backWallGeo, backWallMat);
-      backWall.position.set(0, 0, -40);
-      scene.add(backWall);
+      // Erstellung eines kleineren "Back to Start"-Buttons
+const buttonCanvas = document.createElement('canvas');
+const buttonContext = buttonCanvas.getContext('2d');
+buttonCanvas.width = 512; 
+buttonCanvas.height = 256;
+
+// Button mit Text zeichnen - bleibt gleich
+buttonContext.fillStyle = "rgba(6, 0, 61, 0.7)"; // Dunkelblau mit leichter Transparenz
+buttonContext.fillRect(0, 0, 512, 256);
+buttonContext.strokeStyle = "rgba(255, 255, 255, 0.8)";
+buttonContext.lineWidth = 4;
+buttonContext.strokeRect(10, 10, 492, 236);
+
+// Text zeichnen
+buttonContext.font = "bold 40px 'IBM Plex Mono'";
+buttonContext.textAlign = "center";
+buttonContext.textBaseline = "middle";
+buttonContext.fillStyle = "#FFFFFF";
+buttonContext.fillText("Back to Start", 256, 128);
+
+// Textur erstellen
+const buttonTexture = new THREE.CanvasTexture(buttonCanvas);
+buttonTexture.colorSpace = THREE.SRGBColorSpace;
+buttonTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+// Button-Mesh erstellen - KLEINER machen
+const backButtonGeo = new THREE.PlaneGeometry(0.5, 0.25); // von 4x2 zu 3x1.5
+const backButtonMat = new THREE.MeshBasicMaterial({ 
+  map: buttonTexture, 
+  transparent: true,
+  alphaTest: 0.01,
+  depthTest: false // Stellt sicher, dass der Button immer gerendert wird
+});
+const backButton = new THREE.Mesh(backButtonGeo, backButtonMat);
+backButton.position.set(0, 0, -38);
+backButton.name = "backButton"; // Name für leichteres Debugging
+scene.add(backButton);
+
+// Die Variable backWall weiterhin verfügbar halten, aber unsichtbar machen
+backWall = new THREE.Mesh(
+  new THREE.PlaneGeometry(0.1, 0.1),
+  new THREE.MeshBasicMaterial({ visible: false })
+);
+scene.add(backWall);
 
 
       // Factories initialisieren
@@ -989,17 +1027,93 @@ const pngMaterialFoto = new THREE.MeshBasicMaterial({
 
    // Die alte handleCanvasClick-Funktion kann durch diese ersetzt werden:
    function handleCanvasClick(event) {
-      if (clickHandler) {
-        clickHandler.handleClick(event, coverGroups, imageMeshes);
-      }
+  if (!scene) return;
+  
+  // Raycasting für Button und andere Objekte
+  const rect = container.getBoundingClientRect();
+  const x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
+  const y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
+  
+  const raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera({ x, y }, camera);
+  
+  // Debug-Ausgabe aller getroffenen Objekte
+  const allIntersects = raycaster.intersectObjects(scene.children, true);
+  console.log("Getroffene Objekte:", allIntersects.map(i => i.object.name || "Unbenannt"));
+  
+  // Explizit nach dem Button suchen
+  const backButtonObj = scene.getObjectByName("backButton");
+  if (backButtonObj) {
+    const buttonIntersects = raycaster.intersectObject(backButtonObj);
+    if (buttonIntersects.length > 0) {
+      console.log("Back to Start Button geklickt");
+      // Zurück zum Start navigieren
+      navigateToSection("intro");
+      return;
     }
+  } else {
+    console.warn("Back-Button nicht in der Szene gefunden!");
+  }
+  
+  // Normaler Click-Handler für andere Objekte
+  if (clickHandler) {
+    clickHandler.handleClick(event, coverGroups, imageMeshes);
+  }
+}
 
-   // Optional: Auch die onMouseMove-Funktion könnte aktualisiert werden:
-   function onMouseMove(event) {
-      if (clickHandler) {
-        clickHandler.handleHover(event, coverGroups, imageMeshes, container);
+
+function onMouseMove(event) {
+  // Erst prüfen, ob der Mauszeiger über dem Button schwebt
+  const rect = container.getBoundingClientRect();
+  const x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
+  const y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
+  
+  const raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera({ x, y }, camera);
+  
+  // Button-Objekt finden
+  const backButtonObj = scene.getObjectByName("backButton");
+  if (backButtonObj) {
+    const buttonIntersects = raycaster.intersectObject(backButtonObj);
+    if (buttonIntersects.length > 0) {
+      // Mauszeiger auf Pointer ändern
+      container.style.cursor = "pointer";
+      
+      // Optional: Button visuell hervorheben
+      if (backButtonObj.material && !backButtonObj.userData.isHighlighted) {
+        backButtonObj.userData.isHighlighted = true;
+        backButtonObj.material.opacity = 1.0; // Volle Opazität
+        gsap.to(backButtonObj.scale, { 
+          x: 1.1, 
+          y: 1.1, 
+          z: 1.1, 
+          duration: 0.2 
+        });
       }
+      
+      // Frühzeitig beenden, damit der normale Hover-Handler nicht ausgeführt wird
+      return;
+    } else if (backButtonObj.userData.isHighlighted) {
+      // Zurücksetzen, wenn nicht mehr über dem Button
+      backButtonObj.userData.isHighlighted = false;
+      backButtonObj.material.opacity = 0.9; // Normale Opazität wiederherstellen
+      gsap.to(backButtonObj.scale, { 
+        x: 1, 
+        y: 1, 
+        z: 1, 
+        duration: 0.2 
+      });
     }
+  }
+  
+  // Cursor zurücksetzen, wenn nicht über interaktiven Elementen
+  container.style.cursor = "auto";
+  
+  // Normaler Hover-Handler für andere Objekte
+  if (clickHandler) {
+    clickHandler.handleHover(event, coverGroups, imageMeshes, container);
+  }
+}
 
    // ----------------------------------------------------------------------------
    // Canvas-Update-Funktionen für die einzelnen Abschnitte
