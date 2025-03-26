@@ -203,6 +203,56 @@
     fullpageApi = window.fullpage_api;
   }
   
+  // Neue Variablen für Partikel-System
+  let particles = [];
+  let particleContainer;
+  
+  // Partikel-Systemfunktionen
+  function createParticle(x, y) {
+    return {
+      x,
+      y,
+      size: Math.random() * 3 + 1, // Etwas kleinere Partikel
+      speedX: Math.random() * 2 - 1,
+      speedY: Math.random() * 2 - 1,
+      life: 80, // Etwas kürzere Lebensdauer
+      color: `rgba(255, 255, 255, ${Math.random() * 0.4 + 0.1})` // Weiße Partikel mit Transparenz
+    };
+  }
+  
+  function updateParticles() {
+    // Bewege Partikel
+    particles = particles.map(p => ({
+      ...p,
+      x: p.x + p.speedX,
+      y: p.y + p.speedY,
+      life: p.life - 1
+    })).filter(p => p.life > 0);
+    
+    // Zeichne Partikel
+    if (particleContainer) {
+      const ctx = particleContainer.getContext('2d');
+      ctx.clearRect(0, 0, particleContainer.width, particleContainer.height);
+      
+      particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+    
+    // Rufe nächsten Frame auf
+    requestAnimationFrame(updateParticles);
+  }
+  
+  function handleMouseMove(event) {
+    // Partikel an Mausposition erzeugen
+    if (Math.random() > 0.7) {
+      particles.push(createParticle(event.clientX, event.clientY));
+    }
+  }
+  
   onMount(() => {
     // Begrüßungs-Animation starten
     greetingInterval = setInterval(() => {
@@ -240,17 +290,46 @@
       initFullPage();
     });
     
-    return () => {
-      clearInterval(greetingInterval);
-      if (fullpageApi) {
-        fullpageApi.destroy('all');
-      }
-    };
+    // Canvas für Partikel-Animation initialisieren
+    if (particleContainer) {
+      particleContainer.width = window.innerWidth;
+      particleContainer.height = window.innerHeight;
+      requestAnimationFrame(updateParticles);
+      
+      // Event-Listener für Mausbewegung
+      document.addEventListener('mousemove', handleMouseMove);
+      
+      // Event-Listener für Window-Resize
+      const handleResize = () => {
+        if (particleContainer) {
+          particleContainer.width = window.innerWidth;
+          particleContainer.height = window.innerHeight;
+        }
+      };
+      
+      window.addEventListener('resize', handleResize);
+      
+      return () => {
+        // Bestehende Cleanup-Funktionen...
+        clearInterval(greetingInterval);
+        if (fullpageApi) {
+          fullpageApi.destroy('all');
+        }
+        document.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('resize', handleResize);
+      };
+    }
   });
 </script>
 
 <!-- Hidden H1 für SEO -->
 <h1 class="sr-only">Franz - Interaction Designer & Creative Developer Portfolio</h1>
+
+<!-- Füge das Canvas-Element direkt nach dem <h1 class="sr-only">...</h1> ein -->
+<canvas 
+    bind:this={particleContainer} 
+    class="particle-canvas"
+></canvas>
 
 <!-- Header-Komponente -->
 <HeaderHoverText />
@@ -273,8 +352,9 @@
     class="back-to-top" 
     on:click={scrollToTop} 
     transition:fade={{duration: 200}}
+    aria-label="Zurück nach oben"
   >
-    ↑ Back to top
+    ↑
   </button>
 {/if}
 
@@ -520,26 +600,42 @@
     font-family: 'Franz-Plex', monospace; /* Geändert zu Franz-Plex */
   }
   
-  /* Zurück-nach-oben-Button */
+  /* Zurück-nach-oben-Button neu gestaltet */
   .back-to-top {
     position: fixed;
-    top: 120px;
-    left: 28px;
+    bottom: 60px;
+    right: 45px;
     z-index: 100;
     background: rgba(0, 0, 0, 0.7);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    padding: 10px 16px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 14px;
+    border-radius: 50%; /* Rundes Design */
+    width: 50px;
+    height: 50px;
+    font-size: 20px; /* Größeres Pfeilsymbol */
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Zentriert den Pfeil */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Leichter Schatten für Tiefe */
   }
   
   .back-to-top:hover {
     background: rgba(0, 0, 0, 0.9);
-    transform: translateY(-2px);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  }
+  
+  /* Für Mobilgeräte etwas kleiner */
+  @media (max-width: 768px) {
+    .back-to-top {
+      width: 50px;
+      height: 50px;
+      font-size: 18px;
+      bottom: 30px;
+      right: 10px;
+    }
   }
   
   /* Version-Toggle */
@@ -1099,7 +1195,11 @@
   /* Responsiveness für neue Elemente */
   @media (max-width: 768px) {
     .tags {
-      margin: 1rem 0;
+      display: none;
+    }
+    
+    .content-divider {
+      display: none;
     }
     
     .collaborators {
@@ -1228,5 +1328,131 @@
     .collaborators-list {
       grid-template-columns: 1fr;
     }
+  }
+
+  @media (max-width: 768px) {
+    /* Bestehende Styles... */
+    
+    /* Intro-Text weiter nach unten verschieben */
+    .intro-text {
+      margin-top: 25vh; /* Verschiebt den Text nach unten */
+      margin-bottom: 2rem; /* Weniger Abstand nach unten */
+      margin-left: 1.5rem; /* Leichter Rand links */
+      align-self: flex-start; /* Linksbündig am Container ausrichten */
+      text-align: left; /* Text linksbündig */
+    }
+    
+    /* Greeting Container anpassen - linksbündig */
+    .greeting-container {
+      justify-content: flex-start; /* Linksbündig ausrichten */
+      margin-bottom: 0.5rem; /* Weniger Abstand */
+      height: 3rem; /* Kleinere Höhe */
+    }
+    
+    /* Überschrift und Beschreibung anpassen - linksbündig */
+    .heading-large {
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+    
+    .intro-description {
+      text-align: left;
+      margin-bottom: 1.5rem;
+      max-width: 90%; /* Verhindert, dass der Text zu breit wird */
+    }
+    
+    /* Rest der Styles bleibt unverändert... */
+  }
+
+  /* Für sehr kleine Bildschirme */
+  @media (max-width: 480px) {
+    .intro-text {
+      margin-left: 1rem; /* Etwas weniger Rand auf sehr kleinen Geräten */
+      margin-top: 15vh; /* Etwas weniger nach unten */
+    }
+  }
+
+  @media (max-width: 768px) {
+    /* Bestehende Styles... */
+    
+    /* Intro-Text weiter nach unten verschieben */
+    .intro-text {
+      margin-top: 25vh; /* Verschiebt den Text nach unten */
+      margin-bottom: 2rem; /* Weniger Abstand nach unten */
+      margin-left: 0; /* Zentriert auf mobilen Geräten */
+      align-self: center; /* Zentriert auf mobilen Geräten */
+      text-align: center; /* Text zentrieren */
+    }
+    
+    /* Greeting Container anpassen */
+    .greeting-container {
+      justify-content: left; /* Zentriert die Grußnachricht */
+      margin-bottom: 0.5rem; /* Weniger Abstand */
+      height: 3rem; /* Kleinere Höhe */
+    }
+    
+    /* Überschrift und Beschreibung anpassen */
+    .heading-large {
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+    
+    .intro-description {
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Kategorie-Toggles verbessern */
+    .category-toggles {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* Genau 2 Spalten */
+      gap: 12px; /* Kleinerer Abstand */
+      width: 90%; /* Etwas schmaler als der Container */
+      margin-top: 2rem; /* Mehr Abstand zum Text */
+      padding: 0;
+    }
+    
+    .category-toggle {
+      flex-basis: auto; /* Zurücksetzen des flex-basis */
+      margin-bottom: 0; /* Grid-Gap übernimmt den Abstand */
+      padding: 10px 15px; /* Etwas kompakter */
+      font-size: 0.9rem; /* Kleinere Schrift */
+      width: 100%; /* Volle Breite in der Grid-Zelle */
+    }
+    
+    /* Category-Header anpassen */
+    .category-header {
+      margin-bottom: 1rem; /* Weniger Abstand */
+    }
+    
+    /* Scroll-Indikator anpassen */
+    .scroll-indicator {
+      margin-top: 1.5rem;
+      margin-bottom: 0.7rem;
+    }
+  }
+  
+  /* Für sehr kleine Bildschirme einspaltiges Layout */
+  @media (max-width: 480px) {
+    .category-toggles {
+      grid-template-columns: 1fr; /* Einspaltiges Layout */
+    }
+    
+    .intro-text {
+      margin-top: 15vh; /* Etwas weniger nach unten auf sehr kleinen Geräten */
+    }
+  }
+
+  /* Bestehende Styles... */
+  
+  /* Partikel-Canvas */
+  .particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1; /* Über dem Hintergrund, aber unter dem Inhalt */
+    pointer-events: none; /* Erlaubt Interaktionen mit Elementen dahinter */
   }
 </style>
