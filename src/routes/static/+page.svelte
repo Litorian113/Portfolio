@@ -31,25 +31,33 @@
           title: 'bwegt App Redesign',
           description: 'We redesigned the bwegt mobility app to improve usability simplify navigation and enhance realtime travel information for a seamless user experience.',
           image: '/altDesktop/Design1.png', // Neues Bild verwenden
-          link: '/projectStatic/bwegt' // Geändert von '/project/nass' zu '/projectStatic/bwegt'
+          link: '/projectStatic/bwegt', // Geändert von '/project/nass' zu '/projectStatic/bwegt'
+          tags: ['UX/UI Design', 'Mobile Design'],
+          collaborators: ['Vivien Cai', 'Rebeka Tot', 'Franz Anhäupl']
         },
         {
           title: 'Nass Device',
           description: 'NASS is a portable water testing device with a simple E-Ink interface and open-data sharing, designed to make water quality analysis accessible.',
           image: '/altDesktop/Design2.png', 
-          link: '/projectStatic/nass' // Angepasst für statische Version
+          link: '/projectStatic/nass', // Angepasst für statische Version
+          tags: ['Hardware Design', 'Interface Design'],
+          collaborators: ['Jonas Wienberg', 'Philipp Maginot', 'Maria Kamenskaya', 'Franz Anhäupl']
         },
         {
           title: 'Ice Age Mammals',
           description: 'An interactive table using Reed sensors, a 3D-printed game piece, and projection mapping to let users explore the saber toothed tiger through playful interaction',
           image: '/altDesktop/Design3.png',
-          link: '/projectStatic/iceAgeMammals' // Angepasst für statische Version
+          link: '/projectStatic/iceAgeMammals', // Angepasst für statische Version
+          tags: ['Interactive Design', '3D Modeling'],
+          collaborators: ['Vivien Cai', 'Rebeka Tot', 'Franz Anhäupl']
         },
         {
           title: 'HYBRID Wallet',
           description: 'A smart wallet with NFC payment, LED feedback, fingerprint authentication and a companion app, blending digital and physical payments seamlessly.',
           image: '/altDesktop/Design4.png',
-          link: '/projectStatic/hybridWallet' // Angepasst für statische Version
+          link: '/projectStatic/hybridWallet', // Angepasst für statische Version
+          tags: ['Product Design', 'App Development'],
+          collaborators: ['Enes Cilingir', 'Moritz Beder', 'Franz Anhäupl']
         }
       ]
     },
@@ -57,28 +65,36 @@
       title: 'Code Work',
       projects: [
         {
-          title: 'Data Visualization Platform',
-          description: 'Interactive dashboard for complex data sets using D3.js and React for real-time analytics.',
-        //   image: '/data-viz.png',
-          link: '/project/data'
+          title: 'Global Missing Migrants',
+          description: 'An interactive 3D globe visualizing migration data, highlighting routes, risk areas, and key patterns to reveal the human impact behind the numbers.',
+          image: '/altDesktop/Code1.png',
+          link: '/projectStatic/migrants',
+          tags: ['Data Visualization', '3D Globe'],
+          collaborators: ['Helen Frank', 'Maurice Cadau', 'Lisa-Marie Rapp', 'Franz Anhäupl']
         },
         {
-          title: 'AI-Enhanced Photography Tool',
-          description: 'Python-based application that uses machine learning to optimize and enhance photographic images.',
-        //   image: '/ai-photo.png',
-          link: '/project/ai-photo'
+          title: 'Karincruises.de',
+          description: 'KarinCruises.de tracks my girlfriend’s cruise route in real-time with an interactive globe, live port updates, and AI-generated travel tips.',
+          image: '/altDesktop/Code2.png',
+          link: '/projectStatic/karincruises',
+          tags: ['Real-time Tracking', 'AI Integration'],
+          collaborators: ['Franz Anhäupl']
         },
         {
-          title: 'IoT Home Monitoring',
-          description: 'Full-stack solution connecting smart devices through a central Node.js backend with React Native mobile interface.',
-        //   image: '/iot-home.png',
-          link: '/project/iot'
-        },
-        {
-          title: '3D Portfolio Experience',
+          title: 'Quattera',
           description: 'Three.js based interactive portfolio showcasing creative coding and WebGL capabilities.',
-        //   image: '/3d-portfolio.png',
-          link: '/project/threejs'
+          image: '/altDesktop/Code3.png',
+          link: '/projectStatic/game',
+          tags: ['Three.js', 'WebGL'],
+          collaborators: ['Franz Anhäupl']
+        },
+        {
+          title: 'Earthquakes & Tsunami Data',
+          description: 'Interactive visualizations of earthquake and tsunami data, including a 2D world map, 3D globe, timelines, and depth analysis with filtering and hover effects.',
+          image: '/altDesktop/Code4.png',
+          link: '/projectStatic/earthquake',
+          tags: ['Data Analysis', 'Scientific Visualization'],
+          collaborators: ['Franz Anhäupl']
         }
       ]
     },
@@ -86,16 +102,20 @@
       title: 'Website Work',
       projects: [
         {
-          title: 'E-Commerce Platform',
-          description: 'Fully responsive online store with optimized checkout flow and performance-focused architecture.',
-        //   image: '/ecommerce.png',
-          link: '/project/ecommerce'
+          title: 'Zellerzahntechnik.de',
+          description: 'I redesigned the Zeller Zahntechnik website with a mobile-first approach, modernizing the outdated old design.',
+          image: '/altDesktop/Website1.png',
+          link: '/projectStatic/website1',
+          tags: ['Mobile-First Design', 'Dental Industry'],
+          collaborators: ['Franz Anhäupl']
         },
         {
-          title: 'Cultural Institution Website',
-          description: 'Accessible, multi-language website for a cultural institution with virtual exhibition capabilities.',
-        //   image: '/culture-site.png',
-          link: '/project/culture'
+          title: 'Zentrum-pferd.com',
+          description: 'I build a WordPress website for Zentrum Pferd, highlighting storytelling, usability and Instagram integration.',
+          image: '/altDesktop/Website2.png',
+          link: '/projectStatic/website2',
+          tags: ['WordPress', 'Social Media Integration'],
+          collaborators: ['Jens Kramer', 'Franz Anhäupl']
         }
       ]
     },
@@ -103,10 +123,12 @@
       title: 'Photo & Video Work',
       projects: [
         {
-          title: 'Visual Storytelling',
-          description: 'A collection of photography and videography projects focused on capturing meaningful narratives and emotions.',
-        //   image: '/photo-collection.png',
-          link: '/photo-video'
+          title: 'From Frames to Experiences',
+          description: 'My passion for photography and hyperlapses shaped my eye for detail and storytelling.',
+          image: '/altDesktop/photo-video.png',
+          link: '/projectStatic/photovideo',
+          tags: ['Commercial Photography', 'Commercial Videography'],
+          collaborators: ['Franz Anhäupl']
         }
       ]
     },
@@ -114,10 +136,11 @@
       title: 'About Me',
       projects: [
         {
-          title: 'Franz',
-          description: 'Interaction Designer & Creative Developer with a passion for merging technical expertise with artistic vision. My interdisciplinary approach combines user-centered design principles with cutting-edge technology to create meaningful digital experiences.',
-        //   image: '/about-me.png',
-          link: '/about'
+          title: 'About Franz',
+          description: 'Between design systems, camera lenses, and coffee cups. This is how AI sees me. Want to know more?  📷 🧗 ',
+          image: '/altDesktop/about-me.png',
+          tags: ['Interactive Designer', 'Design Journey'],
+          link: '/projectStatic/aboutme'
         }
       ]
     }
@@ -428,27 +451,31 @@
     {#each allProjects as project, i}
       <div class="section project-section" data-anchor="{currentCategory}-{i}">
         <div class="content-wrapper grid-container">
-          <!-- Projekt 1: Inhalt links, Bild rechts -->
-          {#if i === 0}
+          <!-- Projekt 1/3: Inhalt links, Bild rechts -->
+          {#if i === 0 || i === 2}
             <div class="project-content left-content">
               <h2>{project.title}</h2>
               <p>{project.description}</p>
               
               <div class="content-divider"></div>
               <div class="tags">
-                <div class="tag">UX/UI Design</div>
-                <div class="tag">Mobile Design</div>
+                {#each project.tags as tag}
+                  <div class="tag">{tag}</div>
+                {/each}
               </div>
               
-              <div class="content-divider"></div>
-              <div class="collaborators">
-                <h4>Collaborators</h4>
-                <div class="collaborators-list">
-                  <div class="collaborator">Vivien Cai</div>
-                  <div class="collaborator">Rebeka Tot</div>
-                  <div class="collaborator">Franz Anhäupl</div>
+              <!-- Collaborators nur für bestimmte Kategorien anzeigen -->
+              {#if currentCategory !== 'photo' && currentCategory !== 'about'}
+                <div class="content-divider"></div>
+                <div class="collaborators">
+                  <h4>Collaborators</h4>
+                  <div class="collaborators-list">
+                    {#each project.collaborators as collaborator}
+                      <div class="collaborator">{collaborator}</div>
+                    {/each}
+                  </div>
                 </div>
-              </div>
+              {/if}
               
               <a href={project.link} class="project-button">Open Project</a>
             </div>
@@ -457,8 +484,8 @@
             <div class="project-image right-image">
               <img src={project.image} alt={project.title} />
             </div>
-          <!-- Projekt 2: Bild links, Inhalt rechts -->
-          {:else if i === 1}
+          <!-- Projekt 2/4: Bild links, Inhalt rechts -->
+          {:else}
             <div class="project-image left-image">
               <img src={project.image} alt={project.title} />
             </div>
@@ -469,76 +496,23 @@
               
               <div class="content-divider"></div>
               <div class="tags">
-                <div class="tag">Hardware Design</div>
-                <div class="tag">Interface Design</div>
+                {#each project.tags as tag}
+                  <div class="tag">{tag}</div>
+                {/each}
               </div>
               
-              <div class="content-divider"></div>
-              <div class="collaborators">
-                <h4>Collaborators</h4>
-                <div class="collaborators-list">
-                  <div class="collaborator">Jonas Wienberg</div>
-                  <div class="collaborator">Philipp Maginot</div>
-                  <div class="collaborator">Maria Kamenskaya</div>
-                  <div class="collaborator">Franz Anhäupl</div>
+              <!-- Collaborators nur für bestimmte Kategorien anzeigen -->
+              {#if currentCategory !== 'photo' && currentCategory !== 'about'}
+                <div class="content-divider"></div>
+                <div class="collaborators">
+                  <h4>Collaborators</h4>
+                  <div class="collaborators-list">
+                    {#each project.collaborators as collaborator}
+                      <div class="collaborator">{collaborator}</div>
+                    {/each}
+                  </div>
                 </div>
-              </div>
-              
-              <a href={project.link} class="project-button">Open Project</a>
-            </div>
-          <!-- Projekt 3: Inhalt links, Bild rechts -->
-          {:else if i === 2}
-            <div class="project-content left-content">
-              <h2>{project.title}</h2>
-              <p>{project.description}</p>
-              
-              <div class="content-divider"></div>
-              <div class="tags">
-                <div class="tag">Interactive Design</div>
-                <div class="tag">3D Modeling</div>
-              </div>
-              
-              <div class="content-divider"></div>
-              <div class="collaborators">
-                <h4>Collaborators</h4>
-                <div class="collaborators-list">
-                  <div class="collaborator">Vivien Cai</div>
-                  <div class="collaborator">Rebeka Tot</div>
-                  <div class="collaborator">Franz Anhäupl</div>
-                </div>
-              </div>
-              
-              <a href={project.link} class="project-button">Open Project</a>
-            </div>
-            
-            <div class="project-image right-image">
-              <img src={project.image} alt={project.title} />
-            </div>
-          <!-- Projekt 4: Bild links, Inhalt rechts -->
-          {:else if i === 3}
-            <div class="project-image left-image">
-              <img src={project.image} alt={project.title} />
-            </div>
-            
-            <div class="project-content right-content">
-              <h2>{project.title}</h2>
-              <p>{project.description}</p>
-              
-              <div class="content-divider"></div>
-              <div class="tags">
-                <div class="tag">Product Design</div>
-                <div class="tag">App Development</div>
-              </div>
-              
-              <div class="content-divider"></div>
-              <div class="collaborators">
-                <h4>Collaborators</h4>
-                <div class="collaborators-list">
-                  <div class="collaborator">Enes Cilingir</div>
-                  <div class="collaborator">Moritz Beder</div>
-                  <div class="collaborator">Franz Anhäupl</div>
-                </div>
-              </div>
+              {/if}
               
               <a href={project.link} class="project-button">Open Project</a>
             </div>
