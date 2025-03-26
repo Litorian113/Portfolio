@@ -621,28 +621,29 @@
   /* Version-Toggle */
   .version-toggle {
     position: fixed;
-    top: 70px;
-    left: 28px;
-    z-index: 1000;
-    background: rgba(0, 0, 0, 0.7);
+    top: 18px;
+    right: 140px; /* Links neben dem Kontakt-Icon */
+    z-index: 9900;
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-    padding: 12px 18px;
+    background: transparent; /* Kein Hintergrund */
+    border: none; /* Keine Border im Normalzustand */
+    padding: 8px 12px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     text-decoration: none;
     display: inline-block;
   }
   
   .version-toggle:hover {
-    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Border erscheint beim Hover */
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.3); /* Leichter Hintergrund beim Hover */
     transform: translateY(-2px);
   }
   
-  /* Auf mobilen Geräten ausblenden */
+  /* Mobil-Anpassung beibehalten */
   @media (max-width: 768px) {
     .version-toggle {
       display: none; /* Button im Hauptlayout ausblenden */

@@ -170,24 +170,25 @@
     
     .version-toggle {
         position: fixed;
-        top: 70px; /* Statt bottom: 20px - jetzt höher positioniert */
-        left: 28px; /* Statt left: 20px - jetzt rechts */
+        top: 18px; /* Gleiche Höhe wie das Kontakt-Icon */
+        right: 140px; /* Links neben dem Kontakt-Icon */
         z-index: 1000;
-        background: rgba(0, 0, 0, 0.7);
         color: white;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 4px;
-        padding: 12px 18px;
+        background: transparent; /* Kein Hintergrund */
+        border: none; /* Keine Border im Normalzustand */
+        padding: 8px 12px;
         font-family: 'IBM Plex Mono', monospace;
-        font-size: 12px;
+        font-size: 14px;
         cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none; /* Link-Unterstreichung entfernen */
-        display: inline-block; /* Für bessere Padding-Anwendung */
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
     }
     
     .version-toggle:hover {
-        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.3); /* Border erscheint beim Hover */
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.3); /* Leichter Hintergrund beim Hover */
         transform: translateY(-2px);
     }
 
