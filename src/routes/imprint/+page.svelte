@@ -10,8 +10,8 @@
       document.body.style.overflow = 'auto';
     });
   
-    function goBackToFlur() {
-      goto('/');
+    function goBackToStatic() {
+      goto('/static');
     }
 </script>
   
@@ -19,7 +19,7 @@
   <div class="content-wrapper">
     <div class="top-section">
       <div class="back-btn-container">
-        <button on:click={goBackToFlur}>
+        <button on:click={goBackToStatic}>
           <img src="/leftArrow.png" alt="Back arrow" />
           Back
         </button>
