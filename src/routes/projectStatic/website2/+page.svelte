@@ -130,7 +130,7 @@
       role="figure"
       on:mousemove={handleMouseMove}
       on:mouseleave={resetTransform}>
-    <img src="/website2/website2-cover.png" alt="Zentrum Pferd website showcase featuring a responsive design with hero image and navigation menu" />
+    <img src="/website2/website2-cover.png" alt="Zentrum Pferd website showcase featuring a responsive design with hero section and navigation menu" />
     </div>
 
 
@@ -206,7 +206,7 @@
   
   
     <div class="img-section-4">
-      <div class="img-container"><img src="/website2/website2-bild1.png" alt="Layout design of Zentrum Pferd website showing service sections, typography, and image placement" /></div>
+      <div class="img-container"><img src="/website2/website2-bild1.png" alt="Zentrum Pferd website layout with service sections, typography, and content placement" /></div>
   </div>
   
   
@@ -615,17 +615,6 @@
     text-decoration: none;
     display: inline-block;
     position: relative;
-  }
-
-  .website-link h4 {
-    color: #EC0011; /* Die bestehende Farbe beibehalten */
-    transition: color 0.2s ease;
-    font-size: 2rem; /* Etwas größer als normal */
-  }
-
-  /* Hover-Effekt für den Link */
-  .website-link:hover h4 {
-    color: #e41f2c; /* Hellere Farbe beim Hover */
   }
 
   /* Optional: Unterstreichungseffekt beim Hover */

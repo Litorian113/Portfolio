@@ -1,5 +1,6 @@
 <script>
     import { fade } from 'svelte/transition';
+    import { page } from '$app/stores';
     
     // Zustand des Menüs
     export let isOpen = false;
@@ -8,6 +9,11 @@
     function toggleMenu() {
         isOpen = !isOpen;
     }
+    
+    // Bestimme, ob wir auf der statischen oder 3D-Version sind
+    $: isStaticVersion = $page.url.pathname.startsWith('/static');
+    $: versionLink = isStaticVersion ? '/' : '/static';
+    $: versionText = isStaticVersion ? 'Go to 3D Version' : 'Go to Static Version';
 </script>
 
 <!-- Burger-Menü Icon -->
@@ -21,6 +27,14 @@
 {#if isOpen}
 <div class="mobile-menu-overlay" transition:fade={{ duration: 200 }} role="dialog" aria-modal="true" aria-label="Mobile menu">
     <div class="mobile-menu-content">
+        <!-- Version Toggle als ersten Abschnitt hinzufügen -->
+        <div class="mobile-section">
+            <h3>Display Version</h3>
+            <a href={versionLink} class="version-link">{versionText}</a>
+        </div>
+        
+        <div class="mobile-divider"></div>
+        
         <!-- Legal Links -->
         <div class="mobile-section">
             <h3>Legal</h3>
@@ -153,6 +167,21 @@
         justify-content: center;
         gap: 2rem;
         margin-top: 1rem;
+    }
+    
+    /* Version Link spezielles Styling */
+    .version-link {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        margin: 0 auto;
+        max-width: 200px;
+        transition: all 0.2s ease;
+    }
+    
+    .version-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
     }
     
     /* Mobile Anpassungen */

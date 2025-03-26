@@ -475,6 +475,9 @@
                     {/each}
                   </div>
                 </div>
+              {:else}
+                <!-- Zusätzlicher Abstand für photo und about -->
+                <div class="spacer-for-photo-about"></div>
               {/if}
               
               <a href={project.link} class="project-button">Open Project</a>
@@ -512,6 +515,9 @@
                     {/each}
                   </div>
                 </div>
+              {:else}
+                <!-- Zusätzlicher Abstand für photo und about -->
+                <div class="spacer-for-photo-about"></div>
               {/if}
               
               <a href={project.link} class="project-button">Open Project</a>
@@ -617,7 +623,7 @@
     position: fixed;
     top: 70px;
     left: 28px;
-    z-index: 100;
+    z-index: 1000;
     background: rgba(0, 0, 0, 0.7);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -634,6 +640,13 @@
   .version-toggle:hover {
     background: rgba(0, 0, 0, 0.9);
     transform: translateY(-2px);
+  }
+  
+  /* Auf mobilen Geräten ausblenden */
+  @media (max-width: 768px) {
+    .version-toggle {
+      display: none; /* Button im Hauptlayout ausblenden */
+    }
   }
   
   /* Intro-Sektion */
@@ -1020,36 +1033,6 @@
     }
   }
   
-  /* Neue Styles für die Navigation */
-  .section-navigation {
-    position: fixed;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    z-index: 100;
-  }
-  
-  .nav-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .nav-dot:hover {
-    background-color: rgba(255, 255, 255, 0.7);
-    transform: scale(1.2);
-  }
-  
-  .nav-dot.active {
-    background-color: rgba(255, 255, 255, 0.9);
-  }
-  
   /* Vollbild-Sektion anpassen */
   .section {
     min-height: auto; /* Statt 100vh - fullpage.js handhabt dies selbst */
@@ -1428,5 +1411,40 @@
     height: 100vh;
     z-index: 1; /* Über dem Hintergrund, aber unter dem Inhalt */
     pointer-events: none; /* Erlaubt Interaktionen mit Elementen dahinter */
+  }
+
+  /* Abstandhalter für photo und about Kategorien */
+  .spacer-for-photo-about {
+    height: 2rem; /* Größerer Abstand */
+    width: 100%;
+  }
+
+  /* Bei mobilen Geräten etwas weniger Abstand */
+  @media (max-width: 768px) {
+    .spacer-for-photo-about {
+      height: 1.5rem;
+    }
+  }
+
+  /* Für sehr kleine Bildschirme */
+  @media (max-width: 480px) {
+    /* Toggle-Buttons bleiben zweispaltig */
+    .category-toggles {
+      grid-template-columns: 1fr 1fr; /* Zweispaltiges Layout beibehalten */
+      gap: 8px; /* Noch etwas kleinerer Abstand für bessere Passform */
+    }
+    
+    /* Kategorie-Buttons etwas kompakter gestalten */
+    .category-toggle {
+      font-size: 0.8rem; /* Kleinere Schrift */
+      padding: 8px 10px; /* Kompakteres Padding */
+    }
+    
+    /* Bestehende Anpassungen beibehalten */
+    .intro-text {
+      margin-top: 5vh; /* Etwas weniger nach unten auf sehr kleinen Geräten */
+    }
+    
+    /* Andere kleine Bildschirm-Anpassungen bleiben bestehen... */
   }
 </style>

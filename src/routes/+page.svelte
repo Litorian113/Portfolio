@@ -191,6 +191,13 @@
         transform: translateY(-2px);
     }
 
+    /* Auf mobilen Geräten ausblenden */
+    @media (max-width: 768px) {
+        .version-toggle {
+            display: none; /* Button im Hauptlayout ausblenden */
+        }
+    }
+
     /* Screen reader only class for hidden H1 */
     .sr-only {
         position: absolute;
