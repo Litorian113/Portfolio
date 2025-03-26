@@ -60,9 +60,17 @@
             currentSection = sectionId; // Aktualisiere auch den aktuellen Abschnitt
             
             gsap.to(camera.position, {
-                z: cameraStations[currentStation],
+                z: cameraStations[targetStation],
                 duration: 1.5,
                 ease: "power2.inOut",
+                // Optimierte Render-Updates während der Animation
+                onUpdate: function() {
+                    // Reduzierte Updates während der Animation für bessere Performance
+                    camera.updateProjectionMatrix();
+                    
+                    // Nur die wichtigsten Elemente aktualisieren
+                    ImageUpdater.updateAllImages(camera, imageMeshes);
+                },
                 onComplete: () => {
                     setTimeout(() => {
                         isTransitioning = false;
@@ -156,17 +164,32 @@
       }
     }
 
+    export let onLoadingProgress = (progress) => {}; // Callback für Ladefortschritt
+    export let onLoadingComplete = () => {}; // Callback wenn alles geladen ist
+
+    // Variablen für LoadingManager
+    let loadingManager;
+    let totalAssetsLoaded = 0;
+    let totalAssetsToLoad = 0;
+
     onMount(async () => {
       THREE = await import('three');
       
       // Verzögere die Initialisierung, damit der Browser zuerst die Fenstergröße bestimmen kann
-      setTimeout(() => {
+      setTimeout(async () => {
         // Prüfe explizit die Größe vor der Initialisierung
         checkDeviceSize();
-        console.log("Stage: isMobile vor IntroText-Erstellung:", isMobile);
+        
+        // Scene initialisieren
+        initScene();
+        
+        // Wichtig: ZUERST Ressourcen vorladen, bevor der Rest der Initialisierung fortgesetzt wird
+        preloadAllResources();
+        
+        // Neue Zeile: Stationen vorwärmen (nach dem Laden der Ressourcen)
+        await preWarmStations();
         
         // Rest der Initialisierung
-        initScene();
         camera.position.set(cx, cy, cz);
         initialPositionSet = true;
   
@@ -402,7 +425,7 @@ function loadAppropriateTextures() {
   
   console.log("Verfügbare Meshes:", imageMeshes.map(m => m.userData.project));
   
-  const textureLoader = new THREE.TextureLoader();
+  const textureLoader = new THREE.TextureLoader(loadingManager);
   const texturePaths = {
     desktop: {
       bild1: '/Bild2.png',
@@ -467,6 +490,31 @@ function loadAppropriateTextures() {
 }
 
     function initScene() {
+      // Initiiere LoadingManager
+      loadingManager = new THREE.LoadingManager();
+      
+      loadingManager.onStart = function(url, itemsLoaded, itemsTotal) {
+          console.log('Begonnen zu laden:', url);
+          totalAssetsToLoad = itemsTotal;
+      };
+      
+      loadingManager.onProgress = function(url, itemsLoaded, itemsTotal) {
+          totalAssetsLoaded = itemsLoaded;
+          totalAssetsToLoad = itemsTotal;
+          const progress = Math.floor((itemsLoaded / itemsTotal) * 100);
+          console.log(`Lade: ${progress}% (${itemsLoaded}/${itemsTotal})`);
+          onLoadingProgress(progress);
+      };
+      
+      loadingManager.onLoad = function() {
+          console.log('Laden abgeschlossen!');
+          onLoadingComplete();
+      };
+      
+      loadingManager.onError = function(url) {
+          console.error('Fehler beim Laden:', url);
+      };
+      
       // Szene und Hintergrund
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x01031A);
@@ -688,7 +736,7 @@ function loadAppropriateTextures() {
 
       // --------------------------------------------------------
       // 3) BILDER LADEN + HOVER-TEXTUREN (Cover-Gruppen)
-      const textureLoader = new THREE.TextureLoader();
+      const textureLoader = new THREE.TextureLoader(loadingManager);
 
       // Default-Texturen
       const cover3 = textureLoader.load('/Cover3.png');
@@ -1255,6 +1303,100 @@ function getResponsiveSize(baseSize) {
 // Nach dem Ausblenden von website2:
 
 // Position und Skalierung von website1 anpassen
+
+// Vorzeitiges Laden aller benötigten Texturen
+function preloadAllResources() {
+    if (!loadingManager || !THREE) return;
+    
+    console.log("Starte Preloading aller Ressourcen...");
+    const textureLoader = new THREE.TextureLoader(loadingManager);
+    
+    // Liste aller zu ladenden Texturen
+    const texturesToPreload = [
+        // Cover-Bilder
+        '/Cover1.png', '/Cover2.png', '/Cover3.png', '/Cover4.png',
+        '/Hover1.png', '/Hover2.png', '/HoverKarin.png', '/earthquake-flur.png',
+        
+        // Projekt-Bilder
+        '/Bild1.png', '/Bild2.png', '/Bild3.png', '/Bild4.png', 
+        '/foto-cover.png', '/Website1.png', '/Website2.png', '/photo-video.png',
+        
+        // Mobile Versionen
+        '/mobile/Bild1-mobile.png', '/mobile/Bild2-mobile.png', 
+        '/mobile/Bild3-mobile.png', '/mobile/Bild4-mobile.png',
+        '/mobile/Bild5.png'
+    ];
+    
+    // Alle Texturen vorladen
+    texturesToPreload.forEach(path => {
+        textureLoader.load(
+            path,
+            texture => {
+                texture.colorSpace = THREE.SRGBColorSpace;
+                console.log(`Textur vorgeladen: ${path}`);
+            },
+            undefined,
+            error => console.error(`Fehler beim Vorladen von ${path}:`, error)
+        );
+    });
+}
+
+// Nach preloadAllResources() hinzufügen:
+
+// Funktion zum Vorwärmen aller Stationen, um Lags zu vermeiden
+async function preWarmStations() {
+    if (!camera || !scene) return;
+    
+    console.log("Starte Vorwärmen der Stationsanimationen...");
+    
+    // Originale Kameraposition speichern
+    const originalPosition = { 
+        x: camera.position.x, 
+        y: camera.position.y, 
+        z: camera.position.z 
+    };
+    
+    // Temporäre unsichtbare Kamera erstellen für Offscreen-Rendering
+    const tempCamera = camera.clone();
+    scene.add(tempCamera);
+    
+    // Alle Stationen durchlaufen und kurz rendern
+    const allStationPromises = cameraStations.map((stationZ, index) => {
+        return new Promise(resolve => {
+            // Setze die Kamera direkt ohne Animation
+            tempCamera.position.z = stationZ;
+            
+            // Rendere einige Frames, um alle Shader zu kompilieren
+            for (let i = 0; i < 3; i++) {
+                renderer.render(scene, tempCamera);
+            }
+            
+            // Simuliere Animations-Updates
+            ImageUpdater.updateAllImages(tempCamera, imageMeshes);
+            ImageUpdater.updateImagePositions(tempCamera, imageMeshes, gsap);
+            ImageUpdater.updateCoverGroupPositions(tempCamera, coverGroups, gsap);
+            ImageUpdater.updateCoverGroupOpacity(tempCamera, coverGroups);
+            
+            // Station als vorgewärmt markieren
+            console.log(`Station ${index} (z=${stationZ}) vorgewärmt`);
+            
+            // Warte einen kurzen Moment, damit die GPU Zeit hat
+            setTimeout(resolve, 10);
+        });
+    });
+    
+    // Warte auf alle Stationen
+    await Promise.all(allStationPromises);
+    
+    // Temporäre Kamera entfernen
+    scene.remove(tempCamera);
+    
+    // Original-Position wiederherstellen
+    camera.position.set(originalPosition.x, originalPosition.y, originalPosition.z);
+    
+    console.log("Vorwärmen der Stationen abgeschlossen");
+    return true;
+}
 
 </script>
 

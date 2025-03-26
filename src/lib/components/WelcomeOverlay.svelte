@@ -2,12 +2,14 @@
   import { onMount } from 'svelte';
   import { fade, fly } from 'svelte/transition';
   
-  export let onComplete = () => {}; // Callback wenn Benutzer fortfährt
+  export let onComplete = (useStatic) => {}; // Erweitert um Parameter für Version
+  export let loadingProgress = 0;
   
   let animationComplete = true;
   let words = ['scroll', 'hover', 'click'];
   let currentWord = 0;
   let timer;
+  let showEnterButtons = false;
   
   onMount(() => {
     // Wort-Animation starten
@@ -15,16 +17,34 @@
       currentWord = (currentWord + 1) % words.length;
     }, 1500);
     
-    // Nach 5 Sekunden das Overlay ausblenden
+    // Nach 5 Sekunden die Buttons anzeigen (wenn alles geladen ist)
     setTimeout(() => {
-      animationComplete = false;
-      setTimeout(() => {
-        onComplete();
-      }, 500);
+      if (loadingProgress >= 100) {
+        showEnterButtons = true;
+      }
     }, 5000);
     
     return () => clearInterval(timer);
   });
+  
+  // Reaktiv: Wenn der Ladefortschritt 100% erreicht, Buttons anzeigen
+  $: if (loadingProgress >= 100 && !showEnterButtons && animationComplete) {
+    setTimeout(() => {
+      showEnterButtons = true;
+    }, 1000);
+  }
+  
+  function handle3DEnter() {
+    animationComplete = false;
+    setTimeout(() => {
+      onComplete(false); // 3D-Version
+    }, 500);
+  }
+  
+  function handleStaticEnter() {
+    // Direkt zur statischen Version navigieren
+    window.location.href = "/static";
+  }
 </script>
 
 <div class="overlay" class:fade-out={!animationComplete} transition:fade={{ duration: 200 }}>
@@ -37,9 +57,24 @@
       </div>
       
       <div class="progress-bar">
-        <div class="progress-fill"></div>
+        <div class="progress-fill" style="width: {loadingProgress}%"></div>
+      </div>
+      
+      <div class="loading-status">
+        {loadingProgress < 100 ? 'Loading assets...' : 'Ready!'}
       </div>
     </div>
+    
+    {#if showEnterButtons}
+      <div class="buttons-container" in:fly={{ y: 20, duration: 500 }}>
+        <button class="enter-button primary" on:click={handle3DEnter}>
+          Enter 3D Experience
+        </button>
+        <button class="enter-button secondary" on:click={handleStaticEnter}>
+          Use Static Version
+        </button>
+      </div>
+    {/if}
   </div>
 </div>
 
@@ -114,12 +149,72 @@
   .progress-fill {
     height: 100%;
     background: white;
-    width: 0%;
-    animation: fill 5s linear forwards;
+    transition: width 0.3s ease;
   }
   
-  @keyframes fill {
-    0% { width: 0%; }
-    100% { width: 100%; }
+  .loading-status {
+    margin-top: 1rem;
+    font-size: 14px;
+    opacity: 0.7;
+  }
+  
+  .buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 2rem;
+  }
+  
+  .enter-button {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    padding: 0.8rem 2rem;
+    font-size: 1.2rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 1px;
+    width: 100%;
+  }
+  
+  .enter-button.primary {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .enter-button.secondary {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    font-size: 1rem;
+  }
+  
+  .enter-button:hover {
+    transform: translateY(-2px);
+  }
+  
+  .enter-button.primary:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .enter-button.secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  button {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    padding: 0.8rem 3rem;
+    font-size: 1.2rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 2rem;
+    letter-spacing: 1px;
+  }
+  
+  button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
   }
 </style>

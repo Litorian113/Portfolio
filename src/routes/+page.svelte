@@ -11,6 +11,8 @@
 
 <script>
     import Stage from '$lib/Stage.svelte';
+    // DesktopAlternative Import entfernen, da wir stattdessen zur /static Route navigieren
+    // import DesktopAlternative from '$lib/sites/desktop.svelte';
     import { fade } from 'svelte/transition';
     import HomeFooter from '$lib/components/HomeFooter.svelte';
     import Messageform from '$lib/components/Messageform.svelte';
@@ -27,13 +29,16 @@
     
     let stageComponent;
     let currentSection = 'intro';
-    let contactFormVisible = false; 
-    let showOverlay = false; // Standardmäßig ausblenden, bis wir prüfen können
+    let contactFormVisible = false;
+    let showOverlay = false;
+    let loadingProgress = 0;
+    
+    // useStaticVersion-Variable entfernen, da wir mit Routing arbeiten
     
     export let cx;
     export let cy;
     export let cz;
-
+    
     onMount(() => {
         // Prüfen ob das Overlay bereits angezeigt wurde
         const hasSeenOverlay = localStorage.getItem('hasSeenOverlay');
@@ -43,15 +48,26 @@
             showOverlay = true;
         }
     });
-
-    function handleOverlayComplete() {
+    
+    function handleLoadingProgress(progress) {
+        loadingProgress = progress;
+    }
+    
+    function handleLoadingComplete() {
+        console.log("Alle Ressourcen geladen!");
+    }
+    
+    function handleOverlayComplete(useStatic = false) {
         showOverlay = false;
         
-        // In localStorage speichern, dass das Overlay gesehen wurde
         try {
             localStorage.setItem('hasSeenOverlay', 'true');
+            
+            // Wenn statische Version gewählt wurde, dorthin navigieren
+            if (useStatic) {
+                window.location.href = "/static";
+            }
         } catch (e) {
-            // Fallback für Fälle, in denen localStorage nicht verfügbar ist
             console.warn('LocalStorage nicht verfügbar:', e);
         }
     }
@@ -69,8 +85,6 @@
     // Form handler
     function handleSubmit(e) {
         e.preventDefault();
-        // Here you could implement an API call to send the email
-        // or open a mailto link
         contactFormVisible = false;
         alert('Thank you for your message!');
     }
@@ -106,8 +120,14 @@
 
 <!-- Begrüßungs-Overlay anzeigen, wenn showOverlay true ist -->
 {#if showOverlay}
-    <WelcomeOverlay onComplete={handleOverlayComplete} />
+    <WelcomeOverlay 
+        onComplete={handleOverlayComplete} 
+        loadingProgress={loadingProgress}
+    />
 {/if}
+
+<!-- Version-Toggle-Button als Link zur statischen Version -->
+<a href="/static" class="version-toggle">Go to Static Version</a>
 
 <!-- Hidden H1 for SEO -->
 <h1 class="sr-only">Franz - Interaction Designer & Creative Developer Portfolio</h1>
@@ -130,10 +150,12 @@
         bind:currentSection={currentSection}
         {cx}
         {cy}
-        {cz}  
+        {cz}
+        onLoadingProgress={handleLoadingProgress}
+        onLoadingComplete={handleLoadingComplete}
     />
     
-    <!-- Include Navigation component -->
+    <!-- Include Navigation component for 3D version -->
     <Nav {currentSection} {navigateTo} />
     
     <HomeFooter />
@@ -144,6 +166,29 @@
         position: relative;
         width: 100%;
         height: 100%;
+    }
+    
+    .version-toggle {
+        position: fixed;
+        top: 70px; /* Statt bottom: 20px - jetzt höher positioniert */
+        left: 28px; /* Statt left: 20px - jetzt rechts */
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+        padding: 12px 18px;
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none; /* Link-Unterstreichung entfernen */
+        display: inline-block; /* Für bessere Padding-Anwendung */
+    }
+    
+    .version-toggle:hover {
+        background: rgba(0, 0, 0, 0.9);
+        transform: translateY(-2px);
     }
 
     /* Screen reader only class for hidden H1 */
