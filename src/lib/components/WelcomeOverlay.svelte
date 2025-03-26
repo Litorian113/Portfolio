@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { fade, fly } from 'svelte/transition';
   
-  export let onComplete = (useStatic) => {}; // Erweitert um Parameter für Version
+  export let onComplete = (useStatic) => {}; 
   export let loadingProgress = 0;
   
   let animationComplete = true;
@@ -11,13 +11,30 @@
   let timer;
   let showEnterButtons = false;
   
+  // Browser-Erkennung hinzufügen
+  let isChrome = false;
+  let isDesktop = false;
+  let browserWarning = "";
+  
   onMount(() => {
-    // Wort-Animation starten
+    // Browser-Erkennung
+    isChrome = navigator.userAgent.indexOf("Chrome") > -1 && 
+              navigator.userAgent.indexOf("Edg") === -1; // Edge ausschließen
+    isDesktop = window.innerWidth >= 1024;
+    
+    if (!isChrome && !isDesktop) {
+      browserWarning = "Use Google Chrome on desktop for best experience";
+    } else if (!isChrome) {
+      browserWarning = "Chrome recommended for 3D experience";
+    } else if (!isDesktop) {
+      browserWarning = "Desktop recommended for 3D experience";
+    }
+    
+    // Rest des onMount-Codes bleibt unverändert
     timer = setInterval(() => {
       currentWord = (currentWord + 1) % words.length;
     }, 1500);
     
-    // Nach 5 Sekunden die Buttons anzeigen (wenn alles geladen ist)
     setTimeout(() => {
       if (loadingProgress >= 100) {
         showEnterButtons = true;
@@ -27,7 +44,7 @@
     return () => clearInterval(timer);
   });
   
-  // Reaktiv: Wenn der Ladefortschritt 100% erreicht, Buttons anzeigen
+  // Reaktive Statements bleiben gleich
   $: if (loadingProgress >= 100 && !showEnterButtons && animationComplete) {
     setTimeout(() => {
       showEnterButtons = true;
@@ -67,18 +84,55 @@
     
     {#if showEnterButtons}
       <div class="buttons-container" in:fly={{ y: 20, duration: 500 }}>
-        <button class="enter-button primary" on:click={handle3DEnter}>
-          Enter 3D Experience
-        </button>
-        <button class="enter-button secondary" on:click={handleStaticEnter}>
+        <!-- Statische Version zuerst (jetzt primary) -->
+        <button class="enter-button primary" on:click={handleStaticEnter}>
           Use Static Version
         </button>
+        
+        <!-- 3D Version nachfolgend (jetzt secondary) -->
+        <button class="enter-button secondary" 
+                on:click={handle3DEnter} 
+                disabled={!isChrome && !isDesktop}
+                class:disabled={!isChrome && !isDesktop}>
+          Enter 3D Experience
+        </button>
+        
+        <!-- Browser-/Gerätehinweis für 3D-Version -->
+        {#if browserWarning}
+          <div class="browser-warning">
+            {browserWarning}
+          </div>
+        {/if}
       </div>
     {/if}
   </div>
 </div>
 
 <style>
+  /* Bestehende Styles beibehalten... */
+  
+  /* Neue Styles für Warnung und disabled Button */
+  .browser-warning {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 8px;
+    font-style: italic;
+  }
+  
+  .enter-button.disabled,
+  .enter-button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .enter-button.disabled:hover,
+  .enter-button[disabled]:hover {
+    transform: none;
+    background: transparent;
+  }
+  
+  /* Die anderen bestehenden Styles bleiben unverändert */
   .overlay {
     position: fixed;
     top: 0;
