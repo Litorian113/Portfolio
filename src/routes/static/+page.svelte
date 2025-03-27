@@ -14,7 +14,7 @@
   // Fullpage.js Variablen
   let currentSection = 0;
   let fullpageApi;
-  let currentCategory = null;
+  let currentCategory = 'design';
 
   // Liste der mehrsprachigen Begrüßungen
   const greetings = ["Hello.", "你好.", "Bonjour.", "Hallo.", "안녕하세요.", "Hola."];
@@ -165,6 +165,9 @@
     setTimeout(initFullPage, 100);
   }
   
+  // Direkt im Script-Bereich die Projekte initialisieren
+  prepareProjects();
+  
   function selectCategory(category) {
     currentCategory = category;
     prepareProjects();
@@ -311,6 +314,7 @@
     // Laden und initialisieren
     loadFullPage().then(() => {
       initFullPage();
+      // Keine sofortige Navigation zur ersten Projektseite, damit Benutzer die Intro-Sektion sehen
     });
     
     // Canvas für Partikel-Animation initialisieren
