@@ -125,7 +125,10 @@
         </button>
       </div>
       <div class="heading-container">
-        <h1>Karincruises.de</h1>
+        <a href="https://karincruises.de" target="_blank" rel="noopener noreferrer" class="title-link">
+          <h1>Karincruises.de</h1>
+          <span class="link-icon">↗</span>
+        </a>
       </div>
       <div class="project-columns">
         <div class="project-column">
@@ -353,7 +356,7 @@
   }
   
   .heading-container h1 {
-    width: 100%;
+    width: auto; /* Von 100% auf auto geändert, damit das Icon Platz hat */
     text-align: left;
     font-size: 6rem;
     margin: 0;
@@ -361,6 +364,48 @@
     font-family: 'Franz-Grotesk', sans-serif;
     color: #00CCB5;
     letter-spacing: 0.1rem;
+  }
+  
+  .title-link {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative; /* Erforderlich für absolute Positionierung des Pseudoelements */
+  }
+  
+  .title-link:hover h1 {
+    text-decoration: none; /* Entferne die bestehende Unterstreichung */
+  }
+  
+  .title-link::after {
+    content: '';
+    position: absolute;
+    bottom: 8px; /* Anpassung der Position relativ zum Text */
+    left: 0;
+    width: 0; /* Beginnt mit 0 Breite */
+    height: 1px; /* Dünnere Linie als der Standard-Unterstrich */
+    background-color: #00CCB5; /* Gleiche Farbe wie der Text */
+    transition: width 0.3s ease; /* Animation von links nach rechts */
+    transform-origin: left;
+  }
+  
+  .title-link:hover::after {
+    width: 100%; /* Volle Breite beim Hover */
+  }
+  
+  .link-icon {
+    font-size: 2.5rem;
+    color: #00CCB5;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    margin-top: 0.5rem; /* Feinabstimmung für vertikale Ausrichtung */
+  }
+  
+  .title-link:hover .link-icon {
+    opacity: 1;
+    transform: translateY(-3px);
   }
   
   /* Drei Spalten Layout */
