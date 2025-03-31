@@ -208,13 +208,15 @@
       scrollingSpeed: 1000,
       css3: true,
       
+      // Wichtig: Responsive-Option hinzufügen
+      responsiveWidth: 768, // Umschalten auf normales Scrolling unter 768px
+      
       // Wichtig für Safari-Kompatibilität
       easing: 'easeInOutCubic',
       easingcss3: 'ease',
       
       // Rundlauf-Funktion aktivieren
-      loopBottom: true,  // Von letzter Sektion zur ersten scrollen
-      // loopTop: false,  // Optional: Von erster Sektion zur letzten scrollen
+      loopBottom: true,
       
       // Callback-Funktionen
       afterLoad: function(origin, destination, direction) {
@@ -1040,10 +1042,11 @@
   
   /* Vollbild-Sektion anpassen */
   .section {
-    min-height: auto; /* Statt 100vh - fullpage.js handhabt dies selbst */
+    height: 100vh !important; /* Erzwinge volle Viewport-Höhe */
+    min-height: 100vh !important; /* Sichere Mindesthöhe */
     scroll-snap-align: none; /* Entferne, da fullpage.js dies übernimmt */
   }
-  
+
   /* Modifizierte Styles für das Fullpage-Container */
   #fullpage {
     overflow-y: visible; /* Zurücksetzen zur Standardeinstellung */
@@ -1451,5 +1454,39 @@
     }
     
     /* Andere kleine Bildschirm-Anpassungen bleiben bestehen... */
+  }
+
+  /* Responsive Anpassungen für fullpage.js */
+  @media (max-width: 768px) {
+    /* Globale Anpassungen für normales Scrolling auf Mobilgeräten */
+    :global(html), :global(body) {
+      overflow: auto !important;
+      height: auto !important;
+    }
+    
+    /* Sektionen anpassen für normales Scrolling */
+    .section {
+      height: auto !important;
+      min-height: 100vh !important; /* Mindesthöhe beibehalten */
+      padding: 4rem 0 !important; /* Zusätzlicher Abstand oben und unten */
+    }
+    
+    /* Intro-Sektion speziell anpassen */
+    .intro-section {
+      height: 100vh !important; /* Erste Sektion volle Höhe lassen */
+      min-height: 600px !important; /* Minimalhöhe für kleine Displays */
+    }
+    
+    /* Navigation verstecken auf Mobilgeräten */
+    :global(#fp-nav) {
+      display: none !important;
+    }
+    
+    /* Zurück-nach-oben-Button anpassen */
+    .back-to-top {
+      display: flex !important; /* Immer anzeigen, wenn gescrollt wird */
+      bottom: 80px; /* Über dem Footer platzieren */
+      right: 15px;
+    }
   }
 </style>
