@@ -6,6 +6,10 @@
   import HeaderHoverText from '$lib/components/HeaderHoverText.svelte';
   import BurgerMenu from '$lib/components/BurgerMenu.svelte';
   import ContactIcon from '$lib/components/ContactIcon.svelte';
+
+    // Fullpage.js importieren
+    import 'fullpage.js/dist/fullpage.min.css';
+  import fullpage from 'fullpage.js';
   
   // Für Formular und UI-Steuerung
   let contactFormVisible = false;
@@ -187,38 +191,27 @@
   }
   
   function initFullPage() {
-    // Globale Variablen prüfen - typisch für externe JS-Bibliotheken
-    if (typeof window === 'undefined' || !window.fullpage) {
-      console.error('fullpage.js nicht geladen');
-      return;
-    }
-    
     // Zuerst zerstören, falls es bereits initialisiert wurde
     if (fullpageApi) {
       fullpageApi.destroy('all');
     }
     
-    // Dann neu initialisieren
-    const fullpage = new window.fullpage('#fullpage', {
-      // Bestehende Optionen beibehalten
+    // Dann neu initialisieren mit Lizenzschlüssel direkt in den Optionen
+    const fullpageInstance = new fullpage('#fullpage', {
+      // Lizenzschlüssel als Option
+      licenseKey: 'NY3B6-D9AK9-K2SL6-J659H-BKYKN',
+      
+      // Bestehende Optionen
       anchors: sectionAnchors,
       navigation: true,
       navigationPosition: 'right',
       navigationTooltips: sectionAnchors,
       scrollingSpeed: 1000,
       css3: true,
-      
-      // Wichtig: Responsive-Option hinzufügen
-      responsiveWidth: 768, // Umschalten auf normales Scrolling unter 768px
-      
-      // Wichtig für Safari-Kompatibilität
+      responsiveWidth: 768,
       easing: 'easeInOutCubic',
       easingcss3: 'ease',
-      
-      // Rundlauf-Funktion aktivieren
       loopBottom: true,
-      
-      // Callback-Funktionen
       afterLoad: function(origin, destination, direction) {
         currentSection = destination.index;
         isScrolling = false;
@@ -228,7 +221,7 @@
       }
     });
     
-    fullpageApi = window.fullpage_api;
+    fullpageApi = fullpageInstance;
   }
   
   // Neue Variablen für Partikel-System
@@ -296,28 +289,8 @@
       }
     }, 2500);
     
-    // fullpage.js dynamisch laden (kostenlose Version)
-    const loadFullPage = () => {
-      return new Promise((resolve) => {
-        // Stylesheet einbinden
-        const cssLink = document.createElement('link');
-        cssLink.rel = 'stylesheet';
-        cssLink.href = 'https://unpkg.com/fullpage.js/dist/fullpage.min.css';
-        document.head.appendChild(cssLink);
-        
-        // JavaScript einbinden
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/fullpage.js/dist/fullpage.min.js';
-        script.onload = () => resolve();
-        document.body.appendChild(script);
-      });
-    };
-    
-    // Laden und initialisieren
-    loadFullPage().then(() => {
-      initFullPage();
-      // Keine sofortige Navigation zur ersten Projektseite, damit Benutzer die Intro-Sektion sehen
-    });
+    // fullpage.js direkt initialisieren
+    initFullPage();
     
     // Canvas für Partikel-Animation initialisieren
     if (particleContainer) {

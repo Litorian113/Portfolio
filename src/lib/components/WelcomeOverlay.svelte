@@ -11,23 +11,33 @@
   let timer;
   let showEnterButtons = false;
   
-  // Browser-Erkennung hinzufügen
-  let isChrome = false;
-  let isDesktop = false;
+  // Browser-Erkennung verbessern
+  let isCompatibleBrowser = false;
   let browserWarning = "";
   
   onMount(() => {
-    // Browser-Erkennung
-    isChrome = navigator.userAgent.indexOf("Chrome") > -1 && 
-              navigator.userAgent.indexOf("Edg") === -1; // Edge ausschließen
-    isDesktop = window.innerWidth >= 1024;
+    // Verbesserte Browser-Erkennung für Chrome
+    const isChrome = /Chrome/.test(navigator.userAgent) && 
+                    !/Edg|Edge|OPR|Opera|Firefox/i.test(navigator.userAgent);
+    const isDesktop = !(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
     
+    // Beide Bedingungen müssen erfüllt sein
+    isCompatibleBrowser = isChrome && isDesktop;
+    
+    console.log("Browser-Erkennung:", { 
+      userAgent: navigator.userAgent, 
+      isChrome, 
+      isDesktop, 
+      isCompatibleBrowser 
+    });
+    
+    // Warnungstext basierend auf Erkennung
     if (!isChrome && !isDesktop) {
-      browserWarning = "Use Google Chrome on desktop for best experience";
+      browserWarning = "Use Google Chrome on desktop for best 3D experience";
     } else if (!isChrome) {
-      browserWarning = "Chrome recommended for 3D experience";
+      browserWarning = "Google Chrome is required for 3D experience";
     } else if (!isDesktop) {
-      browserWarning = "Desktop recommended for 3D experience";
+      browserWarning = "Desktop is required for 3D experience";
     }
     
     // Rest des onMount-Codes bleibt unverändert
@@ -52,6 +62,8 @@
   }
   
   function handle3DEnter() {
+    if (!isCompatibleBrowser) return; // Extra Sicherheit
+    
     animationComplete = false;
     setTimeout(() => {
       onComplete(false); // 3D-Version
@@ -84,21 +96,32 @@
     
     {#if showEnterButtons}
       <div class="buttons-container" in:fly={{ y: 20, duration: 500 }}>
-        <!-- Statische Version zuerst (jetzt primary) -->
-        <button class="enter-button primary" on:click={handleStaticEnter}>
-          Use Static Version
-        </button>
-        
-        <!-- 3D Version nachfolgend (jetzt secondary) -->
-        <button class="enter-button secondary" 
-                on:click={handle3DEnter} 
-                disabled={!isChrome && !isDesktop}
-                class:disabled={!isChrome && !isDesktop}>
-          Enter 3D Experience
-        </button>
-        
-        <!-- Browser-/Gerätehinweis für 3D-Version -->
-        {#if browserWarning}
+        <!-- Dynamische Reihenfolge der Buttons basierend auf Browser-Kompatibilität -->
+        {#if isCompatibleBrowser}
+          <!-- Kompatibel: 3D zuerst -->
+          <button class="enter-button primary" on:click={handle3DEnter}>
+            Enter 3D Experience
+          </button>
+          
+          <button class="enter-button secondary" on:click={handleStaticEnter}>
+            Use Static Version
+          </button>
+        {:else}
+          <!-- Nicht kompatibel: Static zuerst -->
+          <button class="enter-button primary" on:click={handleStaticEnter}>
+            Use Static Version
+          </button>
+          
+          <button 
+            class="enter-button secondary disabled" 
+            on:click|preventDefault
+            disabled={true}
+            title="Google Chrome on desktop required for 3D experience"
+          >
+            Enter 3D Experience
+          </button>
+          
+          <!-- Browser-Warnung immer anzeigen, wenn nicht kompatibel -->
           <div class="browser-warning">
             {browserWarning}
           </div>
@@ -122,14 +145,30 @@
   .enter-button.disabled,
   .enter-button[disabled] {
     opacity: 0.5;
-    cursor: not-allowed;
+    cursor: not-allowed !important;
     border-color: rgba(255, 255, 255, 0.3);
+    position: relative;
   }
   
   .enter-button.disabled:hover,
   .enter-button[disabled]:hover {
     transform: none;
     background: transparent;
+  }
+  
+  /* Tooltip-Style für bessere UX */
+  .enter-button.disabled:hover::after {
+    content: "Google Chrome required";
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
   }
   
   /* Die anderen bestehenden Styles bleiben unverändert */

@@ -271,6 +271,29 @@
     function handleToolHover(index, isHovering) {
         // Diese Variable wird für Animation verwendet
     }
+
+// Formular-Variablen
+let formName = '';
+let formEmail = '';
+let formMessage = '';
+
+// Funktion zum Absenden des Formulars
+function handleFormSubmit() {
+    // E-Mail-Subject erstellen
+    const subject = `Message from ${formName} via Portfolio`;
+    
+    // E-Mail-Body erstellen
+    const body = `Name: ${formName}\nEmail: ${formEmail}\n\nMessage:\n${formMessage}`;
+    
+    // mailto-Link erstellen und öffnen
+    const mailtoLink = `mailto:franzanhaeupl@web.de?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+    
+    // Formular zurücksetzen
+    formName = '';
+    formEmail = '';
+    formMessage = '';
+}
 </script>
 
 <!-- Canvas für Partikel-Hintergrund - von pointer-events:none zu auto geändert -->
@@ -460,8 +483,72 @@
             </div>
         {/if}
 
-		    <!-- Footer -->
-			<Footer />
+        <!-- Contact Section - Direkt unterhalb des Content-Bereichs, aber vor dem Footer -->
+        <div class="contact-section">
+            <div class="glass-card">
+                <FadeInSection>
+                    <div class="contact-container">
+                        <p class="contact-intro">
+                            I'm currently looking for internship opportunities in interaction design and UX/UI. 
+                            If you have a position available or would like to collaborate on a project, 
+                            don't hesitate to reach out. I'm always open to new challenges and experiences.
+                        </p>
+                        
+                        <form class="contact-form" on:submit|preventDefault={handleFormSubmit}>
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input 
+                                    type="text" 
+                                    id="name" 
+                                    bind:value={formName} 
+                                    required 
+                                    placeholder="Your name"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    bind:value={formEmail} 
+                                    required 
+                                    placeholder="Your email address"
+                                />
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label for="message">Message</label>
+                                <textarea 
+                                    id="message" 
+                                    bind:value={formMessage} 
+                                    rows="5" 
+                                    required 
+                                    placeholder="Your message here..."
+                                ></textarea>
+                            </div>
+                            
+                            <button type="submit" class="submit-button">
+                                <span class="button-text">Send Message</span>
+                                <span class="button-icon">→</span>
+                            </button>
+                        </form>
+                        
+                        <div class="form-divider">
+                            <span>or</span>
+                        </div>
+                        
+                        <a href="mailto:franzanhaeupl@web.de" class="email-button">
+                            <span class="button-text">Send me a direct email</span>
+                            <span class="button-icon">→</span>
+                        </a>
+                    </div>
+                </FadeInSection>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <Footer />
     </div>
     
 </div>
@@ -963,6 +1050,169 @@
         font-size: 0.9rem;
     }
     
+    /* Kontaktformular Styles */
+    .contact-section {
+        margin: 6rem 0 4rem 0;
+        position: relative;
+    }
+
+    .contact-section:before {
+        content: '';
+        position: absolute;
+        top: -3rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        max-width: 400px;
+        height: 1px;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+    }
+
+    .contact-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .contact-intro {
+        margin-bottom: 2.5rem;
+        color: rgba(255, 255, 255, 0.8);
+        width: 100%;
+        max-width: 600px; /* Gleiche Breite wie das Formular */
+    }
+
+    .email-button {
+        background: rgba(125, 170, 98, 0.2);
+        border: 1px solid #7DAA62;
+        color: white;
+        font-family: 'Franz-Plex', mono;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+        text-decoration: none;
+        width: fit-content;
+    }
+
+    .email-button:hover {
+        background: rgba(125, 170, 98, 0.3);
+        transform: translateY(-3px);
+    }
+
+    /* Kontaktformular Styles erweitern */
+    .contact-form {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-family: 'Franz-Plex', mono;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 1rem;
+        color: white;
+        font-family: 'Franz-Grotesk', sans-serif;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #7DAA62;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 0 2px rgba(125, 170, 98, 0.1);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .submit-button {
+        background: rgba(125, 170, 98, 0.2);
+        border: 1px solid #7DAA62;
+        color: white;
+        font-family: 'Franz-Plex', mono;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .submit-button:hover {
+        background: rgba(125, 170, 98, 0.3);
+        transform: translateY(-3px);
+    }
+
+    .form-divider {
+        display: flex;
+        align-items: center;
+        margin: 2rem 0;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .form-divider::before,
+    .form-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .form-divider span {
+        padding: 0 1rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-family: 'Franz-Plex', mono;
+        font-size: 0.9rem;
+    }
+
+    /* Responsive Anpassungen für das Formular */
+    @media (max-width: 768px) {
+        .contact-form {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-group.full-width {
+            grid-column: span 1;
+        }
+        
+        .submit-button {
+            grid-column: span 1;
+        }
+        
+        .contact-section {
+            margin: 4rem 0 3rem 0;
+        }
+    }
+
     /* Responsive Design */
     @media (max-width: 968px) {
         .about-grid {

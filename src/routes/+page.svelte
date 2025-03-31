@@ -39,7 +39,13 @@
     export let cy;
     export let cz;
     
+    // Neue Variable für Browser-Erkennung
+    let isCompatibleBrowser = false;
+    
     onMount(() => {
+        // Browser-Kompatibilität prüfen
+        checkBrowserCompatibility();
+        
         // Prüfen ob das Overlay bereits angezeigt wurde
         const hasSeenOverlay = localStorage.getItem('hasSeenOverlay');
         
@@ -49,6 +55,25 @@
         }
     });
     
+    // Funktion zur Überprüfung der Browser-/Gerätekompatibilität
+    function checkBrowserCompatibility() {
+        // Nur im Browser ausführen
+        if (typeof window === 'undefined') return;
+        
+        // 1. Ist es ein Desktop?
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        // 2. Ist es Chrome?
+        const isChrome = /Chrome/.test(navigator.userAgent) && !/Edge|Edg/.test(navigator.userAgent);
+        
+        // 3. Ausnahme: Safari auf Mac kann auch meist gut mit WebGL umgehen
+        const isSafariOnMac = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) && 
+                              /Macintosh/.test(navigator.userAgent);
+        
+        // Setze die Kompatibilitätsvariable
+        isCompatibleBrowser = (!isMobile && (isChrome || isSafariOnMac));
+    }
+    
     function handleLoadingProgress(progress) {
         loadingProgress = progress;
     }
@@ -57,14 +82,15 @@
         console.log("Alle Ressourcen geladen!");
     }
     
+    // Modifizierte handleOverlayComplete-Funktion
     function handleOverlayComplete(useStatic = false) {
         showOverlay = false;
         
         try {
             localStorage.setItem('hasSeenOverlay', 'true');
             
-            // Wenn statische Version gewählt wurde, dorthin navigieren
-            if (useStatic) {
+            // Wenn statische Version gewählt oder Browser nicht kompatibel
+            if (useStatic || !isCompatibleBrowser) {
                 window.location.href = "/static";
             }
         } catch (e) {

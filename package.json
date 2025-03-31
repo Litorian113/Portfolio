@@ -24,6 +24,7 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
+		"fullpage.js": "^4.0.34",
 		"gsap": "^3.12.7",
 		"three": "^0.174.0"
 	}
