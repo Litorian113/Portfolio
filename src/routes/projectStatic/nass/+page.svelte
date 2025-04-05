@@ -8,20 +8,19 @@
 
   $: url = $page.url;
 
-  // SEO-Konfiguration für diese Projektseite
+  // SEO configuration for this project page
   const pageTitle = "NASS Device | Water Testing Solution | FXMA Design";
   const pageDescription = "NASS is a portable water testing device with E-Ink interface, designed to make water quality analysis accessible and help combat waterborne diseases in regions like Uganda.";
   const pageKeywords = "water testing device, E-Ink interface, NASS device, water quality, portable device, UI design, Franz portfolio";
 
-  // Stelle sicher, dass Scrollen auf dieser Seite funktioniert
+  // Enable scrolling and initialize lazy loading
   onMount(() => {
-    // Aktiviere das Scrollen explizit
+    // Explicitly enable scrolling for this page
     document.documentElement.style.overflow = 'auto';
     document.body.style.overflow = 'auto';
-    console.log("Project page: Enabling scroll");
 
     if (browser) {
-      // Benutze Intersection Observer für Lazy Loading
+      // Set up intersection observer for lazy loading images
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -35,42 +34,45 @@
           }
         });
       }, {
-        rootMargin: '200px 0px'
+        rootMargin: '200px 0px' // Preload buffer
       });
       
-      // Wende auf alle Bilder mit data-src Attribut an
+      // Apply to all images with data-src attribute
       document.querySelectorAll('img[data-src]').forEach(img => {
         observer.observe(img);
       });
     }
   });
 
-  // Die Funktion goBackToFlur() wird entfernt, da sie nicht mehr benötigt wird
-
+  // Navigate back to static projects page with proper anchor
   function goBackToStatic() {
-    goto('/static'); // Direkter Link zurück zur statischen Hauptseite
+    goto('/static#nass-device'); // Direct link to the NASS section on static page
   }
 
+  // Handle mouse movement for parallax effect on cover image
   function handleMouseMove(e) {
     const container = e.currentTarget;
     const rect = container.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    // Berechne relative Position (zwischen -0.5 und 0.5)
+    
+    // Calculate relative position (-1 to 0)
     const percentX = (x / rect.width) - 1;
     const percentY = (y / rect.height) - 1;
-    // Multipliziere mit einem Faktor (z. B. 10px maximaler Versatz)
+    
+    // Apply movement with maximum 150px offset
     const moveX = percentX * 150;
     const moveY = percentY * 150;
     container.querySelector('img').style.transform = `translate(${moveX}px, ${moveY}px)`;
   }
 
+  // Reset transform when mouse leaves image area
   function resetTransform(e) {
     e.currentTarget.querySelector('img').style.transform = 'translate(0,0)';
   }
 </script>
 
-<!-- Seitenspezifische SEO-Tags -->
+<!-- SEO meta tags -->
 <svelte:head>
   <title>{pageTitle}</title>
   <meta name="description" content={pageDescription}>
@@ -79,14 +81,14 @@
   <!-- Canonical URL -->
   <link rel="canonical" href="https://fxma.design/project/nass">
   
-  <!-- Open Graph Tags für Social Media -->
+  <!-- Open Graph Tags for Social Media -->
   <meta property="og:title" content={pageTitle}>
   <meta property="og:description" content={pageDescription}>
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://fxma.design/project/nass">
   <meta property="og:image" content="https://fxma.design/Nass-cover.png">
   
-  <!-- Strukturierte Daten für Google -->
+  <!-- Structured Data for Google -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -108,9 +110,10 @@
   </script>
 </svelte:head>
 
-<!-- Füge eine wrapper-Klasse hinzu, um sicherzustellen, dass dieser Bereich scrollbar ist -->
+<!-- Main scrollable container -->
 <div class="scroll-container">
 <div class="content-wrapper">
+  <!-- Header section with navigation and project overview -->
   <div class="top-section">
     <div class="back-btn-container">
       <button on:click={goBackToStatic}>
@@ -119,7 +122,6 @@
       </button>
     </div>
     <div class="heading-container">
-      <!-- H2 durch H1 ersetzen, aber CSS-Klasse beibehalten -->
       <h1>Nass Device</h1>
     </div>
     <div class="project-columns">
@@ -134,7 +136,6 @@
         <h3>Project Overview</h3>
         <div class="divider"></div>
         <p>NASS is a portable water testing device with a simple E-Ink interface and open-data sharing, designed to make water quality analysis accessible.
-
         </p>
       </div>
       <div class="project-column">
@@ -151,34 +152,32 @@
         </div>
       </div>
     </div>
-
-
   </div>
 
-
-
+  <!-- Cover image with parallax effect -->
   <div class="cover-section"
-  role="figure"
-  on:mousemove={handleMouseMove}
-  on:mouseleave={resetTransform}>
-<img src="/Nass-cover.png" alt="NASS project cover showing the device design displayed on a laptop screen" />
-</div>
+    role="figure"
+    on:mousemove={handleMouseMove}
+    on:mouseleave={resetTransform}>
+    <img src="/Nass-cover.png" alt="NASS project cover showing the device design displayed on a laptop screen" />
+  </div>
 
-
+  <!-- Introduction section -->
   <div class="grid-section1">
     <div class="text-grid1">
       <FadeInSection>
-      <div>
-      <h4>Introduction</h4>
-      <br>
-      <p class="text-doku">
-        During our Innovation 1 course at HfG, we explored solutions for one of the world’s most pressing issues: unsafe drinking water. Every year, millions suffer from waterborne diseases, especially in regions like Uganda, where contaminated water—often carrying E. coli bacteria—poses a severe health risk.</p>
-      <br><p class="text-doku"> To address this, we developed NASS (Network for Aquatic Substance Sensors)—a portable water testing device that allows non-specialists to quickly check water quality. The collected data is shared on an open platform, helping local communities and NGOs make informed decisions about water safety. Our goal was to create an affordable, accessible, and intuitive solution to prevent waterborne illnesses and save lives.</p>
+        <div>
+          <h4>Introduction</h4>
+          <br>
+          <p class="text-doku">
+            During our Innovation 1 course at HfG, we explored solutions for one of the world's most pressing issues: unsafe drinking water. Every year, millions suffer from waterborne diseases, especially in regions like Uganda, where contaminated water—often carrying E. coli bacteria—poses a severe health risk.</p>
+          <br><p class="text-doku"> To address this, we developed NASS (Network for Aquatic Substance Sensors)—a portable water testing device that allows non-specialists to quickly check water quality. The collected data is shared on an open platform, helping local communities and NGOs make informed decisions about water safety. Our goal was to create an affordable, accessible, and intuitive solution to prevent waterborne illnesses and save lives.</p>
+        </div>
+      </FadeInSection>
     </div>
-  </FadeInSection>
-  </div>
   </div>
 
+  <!-- Project documentation images in 2 columns -->
   <div class="img-section-2col">
     <div class="img-container-left">
       <img src="/Nass-Doku1.png" alt="Interactive prototype of the NASS website displayed on a MacBook screen" />
@@ -188,193 +187,209 @@
     </div>
   </div>
 
+  <!-- Research process section -->
   <div class="grid-section1">
     <div class="text-grid1">
       <FadeInSection>
         <div>
-      <h4>Research</h4>
-      <br>
-      <p class="text-doku">
-        Initially, we envisioned a universal water testing device, but research revealed the need for a more focused approach. Testing multiple contaminants in one device proved technically complex, and water issues vary by region.
-      </p> <br>
-      <p class="text-doku">
-        We shifted our focus to Uganda, where unsafe drinking water is a major health risk. Our goal was to design a user-friendly, affordable device that enables non-specialists to detect key contaminants like E. coli. By integrating an open-data platform, NASS helps communities and NGOs take informed action against waterborne diseases.
-      </p>
-    </div>
-    </FadeInSection>
+          <h4>Research</h4>
+          <br>
+          <p class="text-doku">
+            Initially, we envisioned a universal water testing device, but research revealed the need for a more focused approach. Testing multiple contaminants in one device proved technically complex, and water issues vary by region.
+          </p> <br>
+          <p class="text-doku">
+            We shifted our focus to Uganda, where unsafe drinking water is a major health risk. Our goal was to design a user-friendly, affordable device that enables non-specialists to detect key contaminants like E. coli. By integrating an open-data platform, NASS helps communities and NGOs take informed action against waterborne diseases.
+          </p>
+        </div>
+      </FadeInSection>
     </div>
   </div>
 
+  <!-- Color palette documentation -->
   <div class="img-section-4">
     <div class="img-container"><img src="/Nass-Doku3.png" alt="Color palette presentation showing the four main colors used throughout the NASS project" /></div>
-</div>
+  </div>
 
-
-
-
+  <!-- Universal icon language section -->
   <div class="grid-section1">
     <div class="text-grid1">
       <FadeInSection>
         <div>
-      <h4>Universal Icon Language</h4>
-      <br>
-      <p class="text-doku">
-        To ensure clarity and usability, we developed a minimalist visual style with a strong focus on intuitive iconography. We used the Untitled UI library as a foundation and created custom icons to fit the specific needs of our device and interface.      </p>
-      <br><p class="text-doku">
-        Given the international context, we carefully considered cultural differences in symbol interpretation, ensuring that icons were universally recognizable—even for users with low literacy levels. The icons were designed to be easily readable on both the website and the small E-Ink display, maintaining high contrast and simplicity for maximum accessibility.      </p>
-    </div>
-    </FadeInSection>
+          <h4>Universal Icon Language</h4>
+          <br>
+          <p class="text-doku">
+            To ensure clarity and usability, we developed a minimalist visual style with a strong focus on intuitive iconography. We used the Untitled UI library as a foundation and created custom icons to fit the specific needs of our device and interface.
+          </p>
+          <br><p class="text-doku">
+            Given the international context, we carefully considered cultural differences in symbol interpretation, ensuring that icons were universally recognizable—even for users with low literacy levels. The icons were designed to be easily readable on both the website and the small E-Ink display, maintaining high contrast and simplicity for maximum accessibility.
+          </p>
+        </div>
+      </FadeInSection>
     </div>
   </div>
 
+  <!-- Icon set display -->
   <div class="img-section-4">
     <div class="img-container"><img src="/Nass-Doku4.png" alt="Grid display of the custom icon set designed for NASS, arranged in 3 rows with 4 icons per row" /></div>
-</div>
+  </div>
 
-<div class="img-section-4">
-  <div class="img-container"><img src="/Nass-Doku5.png" alt="Device UI screen showing the implementation of our custom icons in the E-Ink display" /></div>
-</div>
+  <!-- Device UI implementation -->
+  <div class="img-section-4">
+    <div class="img-container"><img src="/Nass-Doku5.png" alt="Device UI screen showing the implementation of our custom icons in the E-Ink display" /></div>
+  </div>
 
-
-<div class="grid-section1">
-  <div class="text-grid1">
-    <FadeInSection>
-      <div>
-    <h4>Final Product</h4>
-    <br>
-    <p class="text-doku">
-      Our water testing device was designed for ease of use, efficiency, and durability. The ergonomic shape ensures comfortable handling, with a dedicated slot for replaceable test tubes. A simple two-button interface allows for intuitive navigation, while the E-Ink display provides high contrast and low power consumption, ensuring readability in all conditions. The UI guides users step by step, minimizing errors. The final prototype was modeled in Fusion 360, 3D-printed, and assembled with key functional elements, creating a practical and accessible solution for real-world use.     </p>
+  <!-- Final product section -->
+  <div class="grid-section1">
+    <div class="text-grid1">
+      <FadeInSection>
+        <div>
+          <h4>Final Product</h4>
+          <br>
+          <p class="text-doku">
+            Our water testing device was designed for ease of use, efficiency, and durability. The ergonomic shape ensures comfortable handling, with a dedicated slot for replaceable test tubes. A simple two-button interface allows for intuitive navigation, while the E-Ink display provides high contrast and low power consumption, ensuring readability in all conditions. The UI guides users step by step, minimizing errors. The final prototype was modeled in Fusion 360, 3D-printed, and assembled with key functional elements, creating a practical and accessible solution for real-world use.
+          </p>
+        </div>
+      </FadeInSection>
     </div>
-    </FadeInSection>
   </div>
-</div>
 
-<div class="image-section">
-  <img src="/Nass-Doku6.png" alt="Three detailed images showing the prototype building process, with the final product being held by a user in the last image" />
-</div>
+  <!-- Prototype building process -->
+  <div class="image-section">
+    <img src="/Nass-Doku6.png" alt="Three detailed images showing the prototype building process, with the final product being held by a user in the last image" />
+  </div>
 
+  <!-- Data visualization and web platform -->
+  <div class="grid-section1">
+    <div class="text-grid1">
+      <FadeInSection>
+        <div>
+          <h4>Turning Data into Action</h4>
+          <br>
+          <p class="text-doku">
+            To support the device, we designed a clean and structured website that provides essential information and enhances usability. The platform offers a visual representation of collected water data, allowing users to analyze results through an interactive dashboard. Each device has a unique ID, enabling users to log in and track personalized test results over time.
+          </p>
+          <br>
+          <p class="text-doku">
+            Beyond data visualization, the website explains the technology behind NASS, shares insights into the project, and invites NGOs and individuals to get involved. The design focuses on clarity, readability, and accessibility, ensuring a seamless experience for all users.
+          </p>
+        </div>
+      </FadeInSection>
+    </div>
+  </div>
 
-<div class="grid-section1">
-  <div class="text-grid1">
+  <!-- Website design showcase -->
+  <div class="image-section">
+    <img src="/Nass-Doku7.png" alt="Overview of the NASS website design showing two different subpage layouts and navigation styles" />
+  </div>
+
+  <!-- User handbook section -->
+  <div class="grid-section1">
+    <div class="text-grid1">
+      <FadeInSection>
+        <div>
+          <h4>User Handbook</h4>
+          <br>
+          <p class="text-doku">
+            To make NASS easy to use, we designed a compact A5 handbook that guides users step by step, mirroring the E-Ink display UI. It serves as a physical reference, ensuring accessibility even without digital instructions. Beyond daily use, it supports training and community workshops, making water testing intuitive for everyone.
+          </p>
+        </div>
+      </FadeInSection>
+    </div>
+  </div>
+
+  <!-- Handbook design showcase -->
+  <div class="image-section">
+    <img src="/Nass-Doku8.png" alt="Detailed view of the instructional manual designed to help users easily understand how to operate the NASS device" />
+  </div>
+
+  <!-- Project reflection and future potential -->
+  <div class="grid-section1">
+    <div class="text-grid1">
+      <FadeInSection>
+        <div>
+          <h4>Future Potential</h4>
+          <br>
+          <p class="text-doku">
+            NASS was an exciting project that challenged us to think beyond traditional interaction design and explore how technology could solve real-world problems. While our prototype remains a conceptual model, the process helped us understand the challenges of designing for usability, accessibility, and clear user guidance in a complex system.
+            By focusing on intuitive interaction, clear visual communication, and a seamless user flow, we created a vision for how a water testing device could work in the future. This project reinforced the importance of prototyping, iteration, and user-centered design in shaping meaningful solutions.
+          </p>
+        </div>
+      </FadeInSection>
+    </div>
+  </div>
+
+  <!-- Team and tools section -->
+  <div class="collaborators-section">
+    <div class="divider-large"></div>
+    
     <FadeInSection>
-      <div>
-    <h4>Turning Data into Action</h4>
-    <br>
-    <p class="text-doku">
-      To support the device, we designed a clean and structured website that provides essential information and enhances usability. The platform offers a visual representation of collected water data, allowing users to analyze results through an interactive dashboard. Each device has a unique ID, enabling users to log in and track personalized test results over time.    </p>
-    <br>
-    <p class="text-doku">
-      Beyond data visualization, the website explains the technology behind NASS, shares insights into the project, and invites NGOs and individuals to get involved. The design focuses on clarity, readability, and accessibility, ensuring a seamless experience for all users.    </p>
-  </div>
-  </FadeInSection>
-  </div>
-</div>
-
-<div class="image-section">
-  <img src="/Nass-Doku7.png" alt="Overview of the NASS website design showing two different subpage layouts and navigation styles" />
-</div>
-
-<div class="grid-section1">
-  <div class="text-grid1">
-    <FadeInSection>
-      <div>
-    <h4>Turning Data into Action</h4>
-    <br>
-    <p class="text-doku">
-      To make NASS easy to use, we designed a compact A5 handbook that guides users step by step, mirroring the E-Ink display UI. It serves as a physical reference, ensuring accessibility even without digital instructions. Beyond daily use, it supports training and community workshops, making water testing intuitive for everyone.  </div>
-  </FadeInSection>
-  </div>
-</div>
-
-<div class="image-section">
-  <img src="/Nass-Doku8.png" alt="Detailed view of the instructional manual designed to help users easily understand how to operate the NASS device" />
-</div>
-
-
-<div class="grid-section1">
-  <div class="text-grid1">
-    <FadeInSection>
-      <div>
-    <h4>Future Potential</h4>
-    <br>
-    <p class="text-doku">
-      NASS was an exciting project that challenged us to think beyond traditional interaction design and explore how technology could solve real-world problems. While our prototype remains a conceptual model, the process helped us understand the challenges of designing for usability, accessibility, and clear user guidance in a complex system.
-      By focusing on intuitive interaction, clear visual communication, and a seamless user flow, we created a vision for how a water testing device could work in the future. This project reinforced the importance of prototyping, iteration, and user-centered design in shaping meaningful solutions.  </FadeInSection>
-  </div>
-</div>
-
-
-<div class="collaborators-section">
-  <div class="divider-large"></div>
-  
-  <FadeInSection>
-    <div class="collaborators-content">
-      <h4>The People Behind the Project</h4>
-      <div class="collaborators-list">
-        <div class="collaborator">Jonas Wienberg</div>
-        <div class="collaborator">Philipp Maginot</div>
-        <div class="collaborator">Maria Kamenskaya</div>
-        <div class="collaborator">Franz Anhäupl</div>
-      </div>
-      
-      <!-- Neuer Abschnitt für Creative Arsenal -->
-      <div class="creative-arsenal">
-        <h4>Our Creative Arsenal</h4>
-        <p class="arsenal-intro">Crafting this experience with our digital toolbelt:</p>
-        <div class="tools-container">
-          <div class="tool">
-            <span class="tool-name">Figma</span>
-            <span class="tool-role">UI/UX Design</span>
-          </div>
-          <div class="tool">
-            <span class="tool-name">Miro</span>
-            <span class="tool-role">Collaboration & Ideation</span>
-          </div>
-          <div class="tool">
-            <span class="tool-name">Dall-E 3</span>
-            <span class="tool-role">AI Image Generation</span>
-          </div>
-          <div class="tool">
-            <span class="tool-name">Premiere Pro</span>
-            <span class="tool-role">Video Editing</span>
-          </div>
-          <div class="tool">
-            <span class="tool-name">After Effects</span>
-            <span class="tool-role">Motion Design</span>
-          </div>
-          <div class="tool">
-            <span class="tool-name">FigJam</span>
-            <span class="tool-role">Collaborative Whiteboarding</span>
-          </div>
-          <div class="tool">
-            <span class="tool-name">Autodesk</span>
-            <span class="tool-role">3D Design</span>
-          </div>
-          <div class="tool">
-            <span class="tool-name">Ultimaker</span>
-            <span class="tool-role">3D Printing</span>
+      <div class="collaborators-content">
+        <h4>The People Behind the Project</h4>
+        <div class="collaborators-list">
+          <div class="collaborator">Jonas Wienberg</div>
+          <div class="collaborator">Philipp Maginot</div>
+          <div class="collaborator">Maria Kamenskaya</div>
+          <div class="collaborator">Franz Anhäupl</div>
+        </div>
+        
+        <!-- Creative tools section -->
+        <div class="creative-arsenal">
+          <h4>Our Creative Arsenal</h4>
+          <p class="arsenal-intro">Crafting this experience with our digital toolbelt:</p>
+          <div class="tools-container">
+            <div class="tool">
+              <span class="tool-name">Figma</span>
+              <span class="tool-role">UI/UX Design</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Miro</span>
+              <span class="tool-role">Collaboration & Ideation</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Dall-E 3</span>
+              <span class="tool-role">AI Image Generation</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Premiere Pro</span>
+              <span class="tool-role">Video Editing</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">After Effects</span>
+              <span class="tool-role">Motion Design</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">FigJam</span>
+              <span class="tool-role">Collaborative Whiteboarding</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Autodesk</span>
+              <span class="tool-role">3D Design</span>
+            </div>
+            <div class="tool">
+              <span class="tool-name">Ultimaker</span>
+              <span class="tool-role">3D Printing</span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </FadeInSection>
-</div>
+    </FadeInSection>
+  </div>
 
+  <!-- Bottom back button -->
+  <div class="back-btn-container bottom-back">
+    <button on:click={goBackToStatic}>
+      <img src="/leftArrow.png" alt="Back arrow icon" />
+      Back to Projects
+    </button>
+  </div>
 
-<div class="back-btn-container bottom-back">
-  <button on:click={goBackToStatic}>
-    <img src="/leftArrow.png" alt="Back arrow icon" />
-    Back to Projects
-  </button>
-</div>
-
-<Footer />
+  <Footer />
 
 </div>
 </div>
 
 <style>
-/* IBM Plex Mono Regular */
+/* Font definitions */
 @font-face {
   font-family: 'Franz-Plex';
   src: url('/fonts/IBM_Plex_Mono/IBMPlexMono-Regular.ttf') format('truetype');
@@ -383,7 +398,6 @@
   font-display: swap;
 }
 
-/* Space Grotesk Regular */
 @font-face {
   font-family: 'Franz-Grotesk';
   src: url('/fonts/Space_Grotesk/static/SpaceGrotesk-Light.ttf') format('truetype');
@@ -392,14 +406,15 @@
   font-display: swap;
 }
 
+/* Layout container */
 .content-wrapper {
   width: 92%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 4rem 4rem;
+  padding: 4rem;
 }
 
-/* Top-Section: 80vh hoch, Flexbox-Layout für die Elemente */
+/* Top section with title and project info */
 .top-section {
   height: 70%;
   display: flex;
@@ -407,7 +422,7 @@
   justify-content: flex-start;
 }
 
-/* Button-Container: 100% Breite, Button linksbündig */
+/* Back button styling */
 .back-btn-container {
   width: 100%;
 }
@@ -425,15 +440,19 @@
   font-size: 1rem;
   text-align: left;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-/* Optional: Größe und Ausrichtung des Pfeils anpassen */
+.back-btn-container button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
 .back-btn-container button img {
   height: 1.2em;
   width: auto;
 }
 
-/* Überschrift-Container: 100% Breite, h2 linksbündig */
+/* Page title styling */
 .heading-container {
   width: 100%;
   height: 30vh;
@@ -452,7 +471,7 @@
   letter-spacing: 0.1rem;
 }
 
-/* Drei Spalten Layout */
+/* Project metadata columns */
 .project-columns {
   display: flex;
   flex-wrap: wrap;
@@ -463,8 +482,7 @@
   max-width: 100%;
 }
 
-/* Jede Spalte */
-.project-columns .project-column {
+.project-column {
   flex: 1;
   min-width: 320px;
   display: flex;
@@ -472,7 +490,7 @@
   align-items: flex-start;
 }
 
-.project-columns .project-column h3 {
+.project-column h3 {
   width: 100%;
   text-align: left;
   font-size: 1.5rem;
@@ -482,14 +500,14 @@
   font-family: 'Franz-Grotesk', sans-serif;
 }
 
-.project-columns .project-column .divider {
+.project-column .divider {
   width: 95%;
   height: 2px;
   background-color: grey;
   margin-bottom: 0.5rem;
 }
 
-.project-columns .project-column p {
+.project-column p {
   width: 95%;
   text-align: left;
   font-size: 1.5rem;
@@ -499,7 +517,7 @@
   line-height: 1.6;
 }
 
-/* Container für die Tags */
+/* Tags styling */
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -508,7 +526,6 @@
   margin-top: 1rem;
 }
 
-/* Einzelnes Tag-Element */
 .tag {
   display: inline-flex;
   align-items: center;
@@ -520,6 +537,7 @@
   font-family: 'Franz-Grotesk', sans-serif;
 }
 
+/* Cover image with parallax effect */
 .cover-section {
   width: 100%;
   position: relative;
@@ -535,6 +553,7 @@
   will-change: transform;
 }
 
+/* Full-width image sections */
 .image-section {
   width: 100%;
   align-content: center;
@@ -548,6 +567,7 @@
   object-position: center;
 }
 
+/* Grid layout for text sections */
 .grid-section1 {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -560,6 +580,7 @@
   grid-column: span 4 / span 4;
 }
 
+/* Typography */
 h4 {
   font-family: 'Franz-Plex', mono;
   color: #1359FF;
@@ -574,8 +595,7 @@ h4 {
   font-size: 1.5rem;
 }
 
-
-
+/* Image section with 4-span grid */
 .img-section-4 {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -588,9 +608,10 @@ h4 {
   grid-column: span 4 / span 4;
 }
 
+/* Two column image layout */
 .img-section-2col {
   display: grid;
-  grid-template-columns: 4fr 2fr; /* 4:2 Verhältnis wie gewünscht */
+  grid-template-columns: 4fr 2fr; /* 4:2 ratio */
   gap: 2rem;
   margin-top: 10rem;
   width: 100%;
@@ -598,9 +619,9 @@ h4 {
 
 .img-container-left, .img-container-right {
   width: 100%;
-  display: flex;         /* Für die Zentrierung */
-  justify-content: center; /* Horizontal zentrieren */
-  align-items: center;    /* Vertikal zentrieren */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .img-container-left img, .img-container-right img {
@@ -610,19 +631,7 @@ h4 {
   object-position: center;
 }
 
-@media (max-width: 768px) {
-  .img-section-2col {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-    margin-top: 5rem;
-  }
-  
-  .img-container-left, .img-container-right {
-    width: 100%;
-  }
-}
-
+/* Image styling */
 img {
   width: 100%;
   height: 100%;
@@ -630,136 +639,14 @@ img {
   object-position: center;
 }
 
-/* Stelle sicher, dass diese Seite scrollbar ist */
+/* Scrollable container */
 .scroll-container {
   overflow-y: auto;
   width: 100%;
   height: 100%;
 }
 
-/* Mobile Anpassungen */
-@media (max-width: 768px) {
-  /* Anpassung der Textpassagen */
-  .grid-section1 {
-    display: block;
-    margin-top: 4rem;
-  }
-  
-  .text-grid1 {
-    width: 100%;
-  }
-  
-  .text-doku {
-    font-size: 1.2rem;
-  }
-  
-  h4 {
-    font-size: 1.4rem;
-  }
-  
-  .project-columns .project-column .divider,
-  .project-columns .project-column p,
-  .tags {
-    width: 100%;
-  }
-
-  /* Anpassung der Überschriftengröße und -höhe */
-  .heading-container {
-    height: auto;
-    margin-top: 1rem;
-    margin-bottom: 2rem;
-  }
-  
-  .heading-container h1 {
-    font-size: 4rem;
-    line-height: 1.1;
-  }
-  
-  /* Andere Bilder sollen die volle Breite behalten */
-  .img-section-4 {
-    display: block;
-    margin-top: 5rem;
-  }
-  
-  .img-container {
-    width: 100%;
-  }
-  
-  .image-section {
-    margin-top: 5rem;
-  }
-  
-  /* Anpassung der Projektspaltenlayouts */
-  .project-columns {
-    flex-direction: column;
-    gap: 2rem;
-  }
-  
-  .project-columns .project-column {
-    min-width: 100%;
-  }
-}
-
-/* Noch kleinere Geräte */
-@media (max-width: 480px) {
-  .heading-container h1 {
-    font-size: 3rem;
-  }
-  
-  .content-wrapper {
-    padding: 2rem 1.5rem;
-    width: 95%;
-  }
-  
-  h4 {
-    font-size: 1.3rem;
-  }
-  
-  .text-doku {
-    font-size: 1.1rem;
-  }
-  
-
-  
-  .back-btn-container button {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
-  }
-  
-  .project-columns .project-column h3 {
-    font-size: 1.3rem;
-  }
-  
-  .project-columns .project-column p {
-    font-size: 1.2rem;
-  }
-}
-
-
-/* Zusätzliches Styling für den unteren Back-Button */
-.bottom-back {
-  margin-top: 10rem;
-  margin-bottom: 3rem;
-  display: flex;
-  justify-content: flex-start; /* Linksbündig statt zentriert */
-}
-
-/* Optional: Nur für den unteren Button eine leicht andere Darstellung */
-.bottom-back button {
-  padding: 0.8rem 2.5rem; /* Etwas breiter als der obere Button */
-}
-
-/* Mobile Anpassungen für den unteren Button */
-@media (max-width: 768px) {
-  .bottom-back {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-  }
-}
-
-
-
-
+/* Team section */
 .collaborators-section {
   margin-top: 10rem;
   margin-bottom: 5rem;
@@ -792,19 +679,7 @@ img {
   font-size: 1.3rem;
 }
 
-/* Mobile Anpassungen */
-@media (max-width: 768px) {
-  .collaborators-section {
-    margin-top: 6rem;
-    margin-bottom: 3rem;
-  }
-  
-  .collaborators-list {
-    flex-direction: column;
-    gap: 1rem;
-  }
-}
-
+/* Tools section */
 .creative-arsenal {
   margin-top: 4rem;
   display: grid;
@@ -861,8 +736,100 @@ img {
   font-size: 0.9rem;
 }
 
-/* Mobile Anpassungen */
+/* Bottom back button */
+.bottom-back {
+  margin-top: 10rem;
+  margin-bottom: 3rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Responsive styles for tablets */
 @media (max-width: 768px) {
+  /* Two column layout becomes single column */
+  .img-section-2col {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    margin-top: 5rem;
+  }
+  
+  .img-container-left, .img-container-right {
+    width: 100%;
+  }
+  
+  /* Text section adjustments */
+  .grid-section1 {
+    display: block;
+    margin-top: 4rem;
+  }
+  
+  .text-grid1 {
+    width: 100%;
+  }
+  
+  .text-doku {
+    font-size: 1.2rem;
+  }
+  
+  h4 {
+    font-size: 1.4rem;
+  }
+  
+  /* Project columns become full width */
+  .project-columns {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .project-columns .project-column {
+    min-width: 100%;
+  }
+  
+  .project-column .divider,
+  .project-column p,
+  .tags {
+    width: 100%;
+  }
+
+  /* Heading adjustments */
+  .heading-container {
+    height: auto;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .heading-container h1 {
+    font-size: 4rem;
+    line-height: 1.1;
+  }
+  
+  /* Image sections become full width */
+  .img-section-4 {
+    display: block;
+    margin-top: 5rem;
+  }
+  
+  .img-container {
+    width: 100%;
+  }
+  
+  .image-section {
+    margin-top: 5rem;
+  }
+  
+  /* Team section adjustments */
+  .collaborators-section {
+    margin-top: 6rem;
+    margin-bottom: 3rem;
+  }
+  
+  .collaborators-list {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  /* Tools section becomes full width */
   .creative-arsenal {
     margin-top: 3rem;
     display: block;
@@ -876,9 +843,50 @@ img {
   .tool {
     padding: 0.8rem 1.2rem;
   }
+  
+  /* Bottom back button */
+  .bottom-back {
+    margin-top: 4rem;
+    margin-bottom: 2rem;
+  }
 }
 
+/* Mobile styles */
 @media (max-width: 480px) {
+  .content-wrapper {
+    padding: 2rem 1.5rem;
+    width: 95%;
+  }
+  
+  /* Typography adjustments */
+  .heading-container h1 {
+    font-size: 3rem;
+  }
+  
+  h4 {
+    font-size: 1.3rem;
+  }
+  
+  .text-doku {
+    font-size: 1.1rem;
+  }
+  
+  /* Button adjustments */
+  .back-btn-container button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Project columns adjustments */
+  .project-column h3 {
+    font-size: 1.3rem;
+  }
+  
+  .project-column p {
+    font-size: 1.2rem;
+  }
+  
+  /* Tools grid for small screens */
   .tools-container {
     display: flex;
     flex-direction: row;
@@ -901,13 +909,5 @@ img {
   .tool-role {
     font-size: 0.8rem;
   }
-}
-
-/* Zusätzliches Styling für den unteren Back-Button */
-.bottom-back {
-  margin-top: 10rem;
-  margin-bottom: 3rem;
-  display: flex;
-  justify-content: flex-start; /* Linksbündig statt zentriert */
 }
 </style>

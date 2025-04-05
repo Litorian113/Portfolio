@@ -753,7 +753,7 @@ function loadAppropriateTextures() {
       hover3.colorSpace = THREE.SRGBColorSpace;
       const hover2 = textureLoader.load('/Hover2.png');
       hover2.colorSpace = THREE.SRGBColorSpace;
-      const hover1 = textureLoader.load('/Hover1.png');
+      const hover1 = textureLoader.load('/quatteraFlur.png');
       hover1.colorSpace = THREE.SRGBColorSpace;
       const hover4 = textureLoader.load('/HoverKarin.png');
       hover4.colorSpace = THREE.SRGBColorSpace;

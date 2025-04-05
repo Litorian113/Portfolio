@@ -47,7 +47,7 @@
     });
 
     function goBackToStatic() {
-      goto('/static'); // Direkter Link zurück zur statischen Hauptseite
+      goto('/static#bwegt'); // Direkter Link zurück zur statischen Hauptseite
     }
   
     function handleMouseMove(e) {

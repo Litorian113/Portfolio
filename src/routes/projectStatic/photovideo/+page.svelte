@@ -6,14 +6,14 @@
   <!-- Canonical URL -->
   <link rel="canonical" href="https://fxma.design/project/photovideo">
   
-  <!-- Open Graph Tags für Social Media -->
+  <!-- Open Graph Tags for Social Media -->
   <meta property="og:title" content={pageTitle}>
   <meta property="og:description" content={pageDescription}>
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://fxma.design/project/photovideo">
   <meta property="og:image" content="https://fxma.design/mode/Tasche1.jpg">
   
-  <!-- Strukturierte Daten für Google -->
+  <!-- Structured Data for Google -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -42,190 +42,27 @@
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
-	import Footer from '$lib/Footer.svelte';
+    import Footer from '$lib/Footer.svelte';
   
     $: url = $page.url;
   
-    // SEO-Konfiguration für diese Projektseite
+    // SEO configuration for this project page
     const pageTitle = "Photography & Videography Portfolio | FXMA Design";
     const pageDescription = "Explore a diverse collection of photography and videography work spanning sports, fashion, and urban scenes captured through a unique creative perspective.";
     const pageKeywords = "photography portfolio, video production, sports photography, fashion photography, videography, camera work, Franz portfolio";
 
-    // Stelle sicher, dass Scrollen auf dieser Seite funktioniert
-    onMount(() => {
-      // Aktiviere das Scrollen explizit
-      document.documentElement.style.overflow = 'auto';
-      document.body.style.overflow = 'auto';
-      console.log("Project page: Enabling scroll");
-  
-      if (browser) {
-        // Benutze Intersection Observer für Lazy Loading
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              const img = entry.target;
-              const src = img.dataset.src;
-              if (src) {
-                img.src = src;
-                img.removeAttribute('data-src');
-              }
-              observer.unobserve(img);
-            }
-          });
-        }, {
-          rootMargin: '200px 0px'
-        });
-        
-        // Wende auf alle Bilder mit data-src Attribut an
-        document.querySelectorAll('img[data-src]').forEach(img => {
-          observer.observe(img);
-        });
-      }
-
-      // Initial die mobilen Anzeigeeinstellungen anwenden
-      if (window.innerWidth <= 768) {
-        adjustMobileSportImages(currentSportIndex);
-      }
-      
-      // Event-Listener für Bildschirmgrößenänderungen
-      const handleResize = () => {
-        if (window.innerWidth <= 768) {
-          adjustMobileSportImages(currentSportIndex);
-        } else {
-          // Desktop-Modus: Alle Bilder anzeigen
-          const sportsItems = document.querySelectorAll('.sports-grid-section .sports-item');
-          sportsItems.forEach(item => {
-            item.style.display = 'block';
-          });
-        }
-      };
-      
-      window.addEventListener('resize', handleResize);
-
-      // Masonry-Layout nach dem Laden der Bilder aktualisieren
-      function resizeMasonryItems() {
-        const grid = document.querySelector('.masonry-gallery');
-        if (!grid) return;
-        
-        const rowHeight = 1;
-        const rowGap = parseInt(window.getComputedStyle(grid).getPropertyValue('grid-row-gap')) || 10; 
-        
-        const items = document.querySelectorAll('.masonry-item');
-        items.forEach(item => {
-          const img = item.querySelector('img');
-          if (!img || !img.complete) return;
-          
-          const imgHeight = img.getBoundingClientRect().height;
-          // Exakte Berechnung ohne Rundungsfehler
-          const rowSpan = Math.floor(imgHeight / rowHeight) + Math.floor(rowGap / rowHeight);
-          item.style.gridRowEnd = `span ${rowSpan}`;
-        });
-      }
-      
-      // Nach dem Laden aller Bilder Größen neu berechnen
-      const masonryImages = document.querySelectorAll('.masonry-gallery img');
-      let loadedImages = 0;
-      
-      masonryImages.forEach(img => {
-        if (img.complete) {
-          loadedImages++;
-          if (loadedImages === masonryImages.length) {
-            resizeMasonryItems();
-          }
-        } else {
-          img.addEventListener('load', () => {
-            loadedImages++;
-            if (loadedImages === masonryImages.length) {
-              resizeMasonryItems();
-            }
-            resizeMasonryItems(); // Aktualisiere Grid, wenn jedes Bild geladen wird
-          });
-        }
-      });
-      
-      // Bei Resize Größen neu berechnen
-      window.addEventListener('resize', resizeMasonryItems);
-      
-      resizeMasonryItems();
-      setupImageResizeHandlers();
-      
-      // Mehrfache Aktualisierung um sicherzugehen (Browser-Quirks)
-      setTimeout(resizeMasonryItems, 500);
-      setTimeout(resizeMasonryItems, 2000);
-
-      // Nach dem Laden der Bilder das Layout optimieren
-      optimizeMasonryLayout();
-      
-      // Mehrfache Aktualisierung für dynamisch nachgeladene Bilder
-      setTimeout(optimizeMasonryLayout, 1000);
-      setTimeout(optimizeMasonryLayout, 3000);
-
-      // Masonry mehrfach initialisieren, um sicherzustellen, dass es richtig berechnet wird
-      setTimeout(initializeMasonry, 1000);
-      setTimeout(initializeMasonry, 3000);
-      
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        window.removeEventListener('resize', resizeMasonryItems);
-        window.removeEventListener('resize', handleMasonryResize);
-      };
-    });
-  
-    // Neue Funktion für die Navigation zur statischen Hauptseite
-    function goBackToStatic() {
-      console.log("Navigating back to static page");
-      goto('/static'); // Direkter Link zurück zur statischen Hauptseite
-    }
-  
-    function handleMouseMove(e) {
-      const container = e.currentTarget;
-      const rect = container.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      // Berechne relative Position (zwischen -0.5 und 0.5)
-      const percentX = (x / rect.width) - 1;
-      const percentY = (y / rect.height) - 1;
-      // Multipliziere mit einem Faktor (z. B. 10px maximaler Versatz)
-      const moveX = percentX * 150;
-      const moveY = percentY * 150;
-      container.querySelector('img').style.transform = `translate(${moveX}px, ${moveY}px)`;
-    }
-  
-    function resetTransform(e) {
-      e.currentTarget.querySelector('img').style.transform = 'translate(0,0)';
-    }
-  
-    // Neue Video-Steuerung hinzufügen
+    // Initialize UI state variables
     let currentVideoIndex = 0;
+    let currentSportIndex = 0;
+    
+    // Video source definitions
     const videoSources = [
       '/videos/video-mitte.mp4',
       '/videos/video-mitte2.mp4',
       '/videos/video-mitte3.mp4'
     ];
     
-    // Funktion zum Wechseln des Videos
-    function changeVideo(index) {
-      currentVideoIndex = index;
-      
-      // Alle Video-Elemente aktualisieren
-      const videoElements = document.querySelectorAll('.video-grid-section video');
-      videoElements.forEach(video => {
-        // Aktuelle Wiedergabeposition und Status speichern
-        const wasPlaying = !video.paused;
-        
-        // Quelle aktualisieren
-        video.src = videoSources[index];
-        video.load();
-        
-        // Wiedergabe fortsetzen, wenn das Video vorher abgespielt wurde
-        if (wasPlaying) {
-          video.play();
-        }
-      });
-    }
-
-    // Neue Bildergalerie-Steuerung
-    let currentSportIndex = 0;
+    // Sports image category definitions
     const sportCategories = [
       {
         name: "Paragliding",
@@ -240,41 +77,150 @@
         images: [
           "/sport/Sport4.jpg",
           "/sport/Sport5.jpg",
-          "/sport/Sport6.jpg" // Ich nehme an, hier sollte Sport6.jpg stehen
+          "/sport/Sport6.jpg"
         ]
       }
     ];
+
+    // Enable scrolling and initialize UI components
+    onMount(() => {
+      // Enable scrolling explicitly for this page
+      document.documentElement.style.overflow = 'auto';
+      document.body.style.overflow = 'auto';
+  
+      if (browser) {
+        // Set up lazy loading with Intersection Observer
+        setupLazyLoading();
+        
+        // Apply mobile display settings if needed
+        if (window.innerWidth <= 768) {
+          adjustMobileSportImages(currentSportIndex);
+        }
+        
+        // Add resize handler for responsive adjustments
+        const handleResize = debounce(() => {
+          if (window.innerWidth <= 768) {
+            adjustMobileSportImages(currentSportIndex);
+          } else {
+            // Desktop mode: Show all images
+            document.querySelectorAll('.sports-grid-section .sports-item').forEach(item => {
+              item.style.display = 'block';
+            });
+          }
+          
+          // Update masonry layout on resize
+          updateMasonryLayout();
+        }, 200);
+        
+        window.addEventListener('resize', handleResize);
+        
+        // Initialize masonry layout
+        initMasonry();
+        
+        // Clean up event listeners on component unmount
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+      }
+    });
     
-    // Funktion zum Wechseln der Sportbilder
+    // Debounce function to limit execution frequency
+    function debounce(func, wait) {
+      let timeout;
+      return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+      };
+    }
+    
+    // Setup lazy loading for images
+    function setupLazyLoading() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            const src = img.dataset.src;
+            if (src) {
+              img.src = src;
+              img.removeAttribute('data-src');
+            }
+            observer.unobserve(img);
+          }
+        });
+      }, {
+        rootMargin: '200px 0px' // Preload buffer
+      });
+      
+      // Apply to all images with data-src attribute
+      document.querySelectorAll('img[data-src]').forEach(img => {
+        observer.observe(img);
+      });
+    }
+  
+    // Navigate back to static projects page
+    function goBackToStatic() {
+      goto('/static#photo-video'); // Direct link back to static main page with anchor
+    }
+    
+    // Handle mouse movement for parallax effect
+    function handleMouseMove(e) {
+      const container = e.currentTarget;
+      const rect = container.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      // Calculate relative position (-1 to 0)
+      const percentX = (x / rect.width) - 1;
+      const percentY = (y / rect.height) - 1;
+      
+      // Apply movement with maximum 150px offset
+      const moveX = percentX * 150;
+      const moveY = percentY * 150;
+      container.querySelector('img').style.transform = `translate(${moveX}px, ${moveY}px)`;
+    }
+  
+    // Reset transform when mouse leaves
+    function resetTransform(e) {
+      e.currentTarget.querySelector('img').style.transform = 'translate(0,0)';
+    }
+    
+    // Change video source for all video elements
+    function changeVideo(index) {
+      currentVideoIndex = index;
+      
+      // Update all video elements
+      const videoElements = document.querySelectorAll('.video-grid-section video');
+      videoElements.forEach(video => {
+        const wasPlaying = !video.paused;
+        video.src = videoSources[index];
+        video.load();
+        
+        // Resume playback if video was playing
+        if (wasPlaying) {
+          video.play();
+        }
+      });
+    }
+    
+    // Change sports category and update display
     function changeSportCategory(index) {
       currentSportIndex = index;
       
-      // Data-Attribut für alternative CSS-Lösung setzen
+      // Set data attribute for alternative CSS solution
       const gridSection = document.querySelector('.sports-grid-section');
       if (gridSection) {
         gridSection.dataset.currentSportIndex = index;
       }
       
-      // Bei Mobilgeräten anpassen, welche Bilder angezeigt werden
+      // On mobile devices, adjust which images are shown
       if (window.innerWidth <= 768) {
-        const sportsItems = document.querySelectorAll('.sports-grid-section .sports-item');
-        sportsItems.forEach((item, i) => {
-          // Für Paragliding zeige nur das erste Bild (Sport1.jpg)
-          if (index === 0 && i === 0) {
-            item.style.display = 'block';
-          } 
-          // Für Soccer zeige nur das zweite Bild (Sport5.jpg)
-          else if (index === 1 && i === 1) {
-            item.style.display = 'block';
-          } 
-          else {
-            item.style.display = 'none';
-          }
-        });
+        adjustMobileSportImages(index);
       }
     }
 
-    // Hilfsfunktion zur Anpassung der mobilen Sport-Bild-Anzeige
+    // Helper function to adjust mobile sport image display
     function adjustMobileSportImages(index) {
       const sportsItems = document.querySelectorAll('.sports-grid-section .sports-item');
       sportsItems.forEach((item, i) => {
@@ -286,449 +232,103 @@
       });
     }
 
-    // Masonry-Layout auch aktualisieren, wenn Bilder im Hintergrund nachladen
-    function setupImageResizeHandlers() {
-      window.addEventListener('resize', resizeMasonryItems);
+    // Optimized masonry layout initialization
+    function initMasonry() {
+      const grid = document.querySelector('.masonry-gallery');
+      if (!grid) return;
       
-      const masonryImages = document.querySelectorAll('.masonry-gallery img');
-      masonryImages.forEach((img) => {
-        // Event-Listener für Bilder die noch nicht vollständig geladen sind
-        if (!img.complete) {
-          img.addEventListener('load', () => {
-            resizeMasonryItems();
-            // Manchmal braucht der Browser etwas Zeit für korrekte Berechnungen
-            setTimeout(resizeMasonryItems, 200);
-          });
-        }
-        
-        // Erneute Berechnung bei Änderungen des Bildinhalts
-        img.addEventListener('error', resizeMasonryItems);
-      });
-    }
-
-    function optimizeMasonryLayout() {
-      // Alle Bilder finden
+      // Process all masonry items
       const items = document.querySelectorAll('.masonry-item');
-      
       items.forEach(item => {
         const img = item.querySelector('img');
         
-        // Nach dem Laden des Bildes das Seitenverhältnis prüfen
+        // Handle aspect ratio based layout
         if (img.complete) {
-          adjustImageSpan(img, item);
+          adjustImageLayout(img, item);
         } else {
-          img.onload = () => adjustImageSpan(img, item);
+          img.onload = () => adjustImageLayout(img, item);
         }
+        
+        // Monitor image load events to update layout
+        img.addEventListener('load', updateMasonryLayout);
       });
       
-      // Nach einer kurzen Verzögerung die Zeilenhöhen neu berechnen
-      setTimeout(resizeMasonryItems, 300);
+      // Initial layout update
+      updateMasonryLayout();
     }
     
-    // Hilfsfunktion zum Anpassen der Spaltenspanne basierend auf dem Seitenverhältnis
-    function adjustImageSpan(img, item) {
+    // Update masonry layout sizing
+    function updateMasonryLayout() {
+      const grid = document.querySelector('.masonry-gallery');
+      if (!grid) return;
+      
+      // Calculate column count based on viewport
+      const columnCount = window.innerWidth <= 480 ? 1 : 
+                          window.innerWidth <= 768 ? 2 : 3;
+      
+      // Setup columns
+      const columnGap = 10;
+      const gridWidth = grid.clientWidth;
+      const columnWidth = (gridWidth - (columnGap * (columnCount - 1))) / columnCount;
+      const columnHeights = Array(columnCount).fill(0);
+      
+      // Position each item
+      const items = Array.from(grid.querySelectorAll('.masonry-item'));
+      items.forEach(item => {
+        // Find shortest column
+        const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+        
+        // Calculate position
+        const x = shortestColumnIndex * (columnWidth + columnGap);
+        const y = columnHeights[shortestColumnIndex];
+        
+        // Position item
+        item.style.position = 'absolute';
+        item.style.left = `${x}px`;
+        item.style.top = `${y}px`;
+        item.style.width = `${columnWidth}px`;
+        
+        // Update column height
+        columnHeights[shortestColumnIndex] += item.clientHeight + columnGap;
+      });
+      
+      // Set container height
+      grid.style.height = `${Math.max(...columnHeights)}px`;
+    }
+    
+    // Adjust image layout based on aspect ratio
+    function adjustImageLayout(img, item) {
       const aspectRatio = img.naturalWidth / img.naturalHeight;
       
-      // Querformatbilder bekommen mehr Spalten
+      // Assign column span based on image aspect ratio
       if (aspectRatio > 1.3) {
         if (aspectRatio > 2) {
-          // Besonders breite Bilder (Panorama)
+          // Panoramic images
           item.style.gridColumn = 'span 3';
         } else {
-          // Standard-Querformat
+          // Standard landscape
           item.style.gridColumn = 'span 2';
         }
       } else {
-        // Hochformatbilder
+        // Portrait images
         item.style.gridColumn = 'span 1';
       }
     }
-
-    // Neue Masonry-Funktionen für bessere Performance und Layout
-    let masonryReady = false;
-
-    function handleImageLoad(e, index) {
+    
+    // Handler for image load events in masonry
+    function handleImageLoad(e) {
       const img = e.target;
       const item = img.parentElement;
       
-      // Bild-Seitenverhältnis bestimmen
-      const aspectRatio = img.naturalWidth / img.naturalHeight;
-      
-      // Spaltenspanne basierend auf Seitenverhältnis setzen
-      if (aspectRatio > 1.5) {
-        // Sehr breite Bilder
-        item.style.gridColumn = window.innerWidth <= 768 ? 'span 1' : 'span 2';
-      }
-      
-      // Layout neu berechnen, wenn alle Bilder geladen sind
-      setTimeout(() => {
-        if (!masonryReady) {
-          initializeMasonry();
-          masonryReady = true;
-        }
-      }, 100);
+      adjustImageLayout(img, item);
+      updateMasonryLayout();
     }
-
-    function initializeMasonry() {
-      // Echtes Masonry-Layout, das immer funktioniert
-      const grid = document.querySelector('.masonry-gallery');
-      if (!grid) return;
-      
-      // Warten, bis alle Bilder geladen sind
-      setTimeout(() => {
-        const items = grid.querySelectorAll('.masonry-item');
-        
-        // Immer genau 3 Spalten auf Desktop, weniger auf mobil
-        const columnCount = window.innerWidth <= 480 ? 2 : 
-                             window.innerWidth <= 768 ? 2 : 3;
-        
-        // Höhen der Spalten initialisieren
-        const columnHeights = Array(columnCount).fill(0);
-        const columnGap = 10; // Gleich wie grid-gap
-        
-        // Breite einer Spalte berechnen (ohne gaps)
-        const gridWidth = grid.clientWidth;
-        const columnWidth = (gridWidth - (columnGap * (columnCount - 1))) / columnCount;
-        
-        // Elemente positionieren
-        items.forEach(item => {
-          // Finde die kürzeste Spalte
-          const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
-          
-          // Position berechnen
-          const x = shortestColumnIndex * (columnWidth + columnGap);
-          const y = columnHeights[shortestColumnIndex];
-          
-          // Element positionieren
-          item.style.position = 'absolute';
-          item.style.left = `${x}px`;
-          item.style.top = `${y}px`;
-          item.style.width = `${columnWidth}px`;
-          
-          // Spaltenhöhe aktualisieren
-          columnHeights[shortestColumnIndex] += item.clientHeight + columnGap;
-        });
-        
-        // Containerhöhe anpassen
-        grid.style.height = `${Math.max(...columnHeights)}px`;
-      }, 200);
-    }
-
-    // Beim Fenstergrößenwechsel neu berechnen
-    function handleMasonryResize() {
-      if (masonryReady) {
-        initializeMasonry();
-      }
-    }
-
-    // Ladestatus-Variablen
-    let isLoading = true;
-    let loadProgress = 0;
-    let totalAssets = 0;
-    let loadedAssets = 0;
-    
-    // Füge diese Funktion zur Verfolgung des Ladefortschritts hinzu
-    function trackLoadingProgress() {
-      // Zähle alle Bilder und Videos
-      const images = document.querySelectorAll('img');
-      const videos = document.querySelectorAll('video');
-      totalAssets = images.length + videos.length;
-      
-      // Verfolge den Ladefortschritt für Bilder
-      images.forEach(img => {
-        if (img.complete) {
-          loadedAssets++;
-          updateProgress();
-        } else {
-          img.addEventListener('load', () => {
-            loadedAssets++;
-            updateProgress();
-          });
-          
-          img.addEventListener('error', () => {
-            loadedAssets++;
-            updateProgress();
-          });
-        }
-      });
-      
-      // Verfolge den Ladefortschritt für Videos
-      videos.forEach(video => {
-        video.addEventListener('loadeddata', () => {
-          loadedAssets++;
-          updateProgress();
-        });
-        
-        video.addEventListener('error', () => {
-          loadedAssets++;
-          updateProgress();
-        });
-      });
-      
-      // Falls keine Assets gefunden wurden, verstecke den Loader
-      if (totalAssets === 0) {
-        completeLoading();
-      }
-    }
-    
-    // Aktualisiere den Ladefortschritt
-    function updateProgress() {
-      loadProgress = Math.floor((loadedAssets / totalAssets) * 100);
-      if (loadProgress >= 100) {
-        // Gib etwas zusätzliche Zeit für Rendering
-        setTimeout(completeLoading, 500);
-      }
-    }
-    
-    // Schließe den Ladevorgang ab
-    function completeLoading() {
-      loadProgress = 100;
-      // Sanfte Überblendung mit kleiner Verzögerung
-      setTimeout(() => {
-        isLoading = false;
-      }, 600);
-    }
-    
-    onMount(() => {
-      // Bestehender onMount-Code
-      
-      // Starte den Ladefortschritt-Tracker
-      trackLoadingProgress();
-      
-      // Als Fallback: Nach einer gewissen Zeit auf jeden Fall ausblenden
-      setTimeout(() => {
-        if (isLoading) completeLoading();
-      }, 8000);
-      
-      return () => {
-        // Bestehende Cleanup-Code
-      };
-    });
-
-    function setupOptimizedImageLoading() {
-      // Verbesserte Intersection Observer-Konfiguration
-      const imageObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (!entry.isIntersecting) return;
-          
-          const img = entry.target;
-          const dataSrc = img.dataset.src;
-          
-          // Progressive Loading-Strategie
-          if (dataSrc) {
-            // Ersetze kleines Platzhalterbild durch das vollständige Bild
-            const fullImage = new Image();
-            fullImage.onload = () => {
-              img.src = dataSrc;
-              img.classList.add('loaded');
-            };
-            fullImage.src = dataSrc;
-            
-            // Observer entfernen, nachdem das Bild geladen wurde
-            imageObserver.unobserve(img);
-          }
-        });
-      }, {
-        rootMargin: '200px 0px', // 200px Vorladepuffer
-        threshold: 0.01 // Schon bei geringer Sichtbarkeit laden
-      });
-      
-      // Auf alle Bilder anwenden (außer Bilder, die sofort sichtbar sein müssen)
-      document.querySelectorAll('img:not(.priority-image)').forEach(img => {
-        // Kleine Vorschaubilder für alles außer den wichtigsten Bildern verwenden
-        if (!img.classList.contains('priority-image')) {
-          const originalSrc = img.src;
-          const smallSrc = originalSrc.replace(/\.(jpg|jpeg|png)$/, '-small.$1');
-          
-          // Original-URL in data-src speichern
-          img.dataset.src = originalSrc;
-          // Kleines Bild zuerst anzeigen
-          img.src = smallSrc;
-          
-          // Für moderne Browser WebP verwenden, wenn verfügbar
-          if (supportsWebp()) {
-            const webpSrc = originalSrc.replace(/\.(jpg|jpeg|png)$/, '.webp');
-            img.dataset.src = webpSrc;
-          }
-          
-          imageObserver.observe(img);
-        }
-      });
-    }
-
-    // Webp-Unterstützung prüfen
-    function supportsWebp() {
-      const elem = document.createElement('canvas');
-      if (elem.getContext && elem.getContext('2d')) {
-        return elem.toDataURL('image/webp').indexOf('data:image/webp') === 0;
-      }
-      return false;
-    }
-
-    onMount(() => {
-      // Bestehender onMount-Code
-      setupOptimizedImageLoading();
-    });
-
-    // Verbesserte Masonry-Implementierung
-    function createResponsiveMasonry() {
-      const grid = document.querySelector('.masonry-gallery');
-      if (!grid) return;
-      
-      // Bisher geladene Bilder erfassen
-      const loadedImages = new Set();
-      
-      // Layout-Funktion
-      function layoutMasonry() {
-        const items = Array.from(grid.querySelectorAll('.masonry-item'));
-        if (items.length === 0) return;
-        
-        // Spaltenanzahl basierend auf Bildschirmbreite
-        let columnCount;
-        if (window.innerWidth <= 480) {
-          columnCount = 1;  // Einzelne Spalte auf kleinen Smartphones
-        } else if (window.innerWidth <= 768) {
-          columnCount = 2;  // 2 Spalten auf Tablets/größeren Smartphones
-        } else {
-          columnCount = 3;  // 3 Spalten auf Desktop
-        }
-        
-        // Spaltenbreite berechnen
-        const containerWidth = grid.offsetWidth;
-        const columnWidth = containerWidth / columnCount;
-        const gap = 10;  // Abstand zwischen den Bildern
-        
-        // Spalten initialisieren
-        const columns = Array(columnCount).fill().map(() => []);
-        const columnHeights = Array(columnCount).fill(0);
-        
-        // Elemente in Spalten verteilen
-        items.forEach((item) => {
-          // Kürzeste Spalte finden
-          const shortestColumn = columnHeights.indexOf(Math.min(...columnHeights));
-          
-          // Element zur Spalte hinzufügen
-          columns[shortestColumn].push(item);
-          
-          // Statische Größenprüfung zur Höhenberechnung
-          const img = item.querySelector('img');
-          let itemHeight = 0;
-          
-          if (img && img.complete) {
-            // Proportionales Verhältnis berechnen
-            const ratio = img.naturalHeight / img.naturalWidth || 1;
-            // Höhe basierend auf neuer Breite und Bildverhältnis
-            itemHeight = (columnWidth * ratio) + gap;
-          } else {
-            // Fallback für noch nicht geladene Bilder
-            itemHeight = 200 + gap;
-          }
-          
-          // Spaltenhöhe aktualisieren
-          columnHeights[shortestColumn] += itemHeight;
-        });
-        
-        // Elemente positionieren
-        let currentItem = 0;
-        grid.style.position = 'relative';
-        
-        // Höchste Spalte finden für Container-Höhe
-        let maxHeight = Math.max(...columnHeights);
-        grid.style.height = `${maxHeight}px`;
-        
-        // Jede Spalte durchgehen
-        columns.forEach((column, columnIndex) => {
-          let currentY = 0;
-          
-          // Jedes Element in der Spalte positionieren
-          column.forEach((item) => {
-            // Positionieren
-            item.style.position = 'absolute';
-            item.style.top = `${currentY}px`;
-            item.style.left = `${columnIndex * columnWidth}px`;
-            item.style.width = `${columnWidth - gap}px`;
-            
-            // Höhe des aktuellen Elements berechnen
-            const img = item.querySelector('img');
-            let itemHeight = 0;
-            
-            if (img && img.complete) {
-              const ratio = img.naturalHeight / img.naturalWidth || 1;
-              itemHeight = columnWidth * ratio;
-            } else {
-              itemHeight = 200; // Fallback
-            }
-            
-            // Y-Position für nächstes Element aktualisieren
-            currentY += itemHeight + gap;
-          });
-        });
-      }
-      
-      // Event-Listener für geladene Bilder
-      const images = grid.querySelectorAll('img');
-      images.forEach((img) => {
-        // Bereits geladene Bilder überspringen
-        if (img.complete) {
-          if (!loadedImages.has(img.src)) {
-            loadedImages.add(img.src);
-          }
-        } else {
-          img.onload = () => {
-            if (!loadedImages.has(img.src)) {
-              loadedImages.add(img.src);
-              layoutMasonry();
-            }
-          };
-        }
-      });
-      
-      // Initial Layout erstellen
-      layoutMasonry();
-      
-      // Resize-Handler
-      const resizeHandler = debounce(layoutMasonry, 200);
-      window.addEventListener('resize', resizeHandler);
-      
-      // Debounce-Funktion zur Leistungsoptimierung
-      function debounce(func, wait) {
-        let timeout;
-        return function() {
-          const context = this;
-          const args = arguments;
-          clearTimeout(timeout);
-          timeout = setTimeout(() => func.apply(context, args), wait);
-        };
-      }
-      
-      // Mehrfache Layout-Updates, um sicherzustellen, dass alle Bilder korrekt angezeigt werden
-      setTimeout(layoutMasonry, 500);
-      setTimeout(layoutMasonry, 2000);
-      
-      return {
-        update: layoutMasonry
-      };
-    }
-
-    // Ersetze die bestehenden Masonry-bezogenen Funktionen in deinem onMount mit diesem Aufruf:
-    onMount(() => {
-      // Bestehender Code...
-      
-      // Neu: Responsives Masonry erstellen
-      const masonryLayout = createResponsiveMasonry();
-      
-      // Bestehende Event-Handler beibehalten und aufräumen
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        // Andere Event-Listener-Entfernungen...
-      };
-    });
-  </script>
+</script>
   
-  
-  <!-- Füge eine wrapper-Klasse hinzu, um sicherzustellen, dass dieser Bereich scrollbar ist -->
-  <div class="scroll-container">
+<!-- Scrollable container for the page -->
+<div class="scroll-container">
   <div class="content-wrapper">
+    <!-- Header section with back button and title -->
     <div class="top-section">
       <div class="back-btn-container">
         <button on:click={goBackToStatic}>
@@ -739,325 +339,305 @@
         <div class="heading-container">
             <h1>Seeing the World My Way.</h1>
           </div>
+    </div>
 
+    <!-- Video showcase section -->
+    <div class="video-grid-section">
+      <div class="video-item">
+        <video autoplay muted loop playsinline>
+          <source src={videoSources[currentVideoIndex]} type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+      </div>
+      <div class="video-item">
+        <video autoplay muted loop playsinline>
+          <source src={videoSources[currentVideoIndex]} type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+      </div>
+      <div class="video-item">
+        <video autoplay muted loop playsinline>
+          <source src={videoSources[currentVideoIndex]} type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+      </div>
+    </div>
 
+    <!-- Location selector for videos -->
+    <div class="video-toggle-container">
+      <div class="video-toggle-buttons">
+        <button 
+          class:active={currentVideoIndex === 0}
+          on:click={() => changeVideo(0)}
+          aria-label="Taipeh Street Photography"
+        >
+          <span>Taipeh</span>
+        </button>
+        <button 
+          class:active={currentVideoIndex === 1}
+          on:click={() => changeVideo(1)}
+          aria-label="London Architecture Photography"
+        >
+          <span>London</span>
+        </button>
+        <button 
+          class:active={currentVideoIndex === 2}
+          on:click={() => changeVideo(2)}
+          aria-label="Rotterdam Urban Photography"
+        >
+          <span>Rotterdam</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Introduction section -->
+    <div class="grid-section1">
+      <div class="text-grid1">
+        <FadeInSection>
+          <div>
+            <h4>Capturing Time, Framing Stories.</h4>
+            <br>
+            <p class="text-doku">
+              Photography and videography have always been more than just a passion for me—they are my way of exploring movement, light, and perspective. Especially through hyperlapses, I love transforming moments into dynamic visual narratives. This creative drive led me to turn my second passion into a profession, contributing to video and photo productions for several years, where I honed my skills in bringing ideas to life through the lens.
+            </p>
+          </div>
+        </FadeInSection>
+      </div>
+    </div>
   
+    <!-- Sports photography section -->
+    <div class="grid-section1">
+      <div class="text-grid1">
+        <FadeInSection>
+          <div>
+            <h4>Sports Photography</h4>
+            <br>
+            <p class="text-doku">
+              Sports photography allows me to capture raw emotion and dynamic movement in a single frame.
+            </p>
+            <br>
+            <br>
+          </div>
+        </FadeInSection>
+      </div>
+    </div>
   
+    <!-- Sports image gallery with category selector -->
+    <div class="sports-grid-section">
+      <div class="sports-item">
+        <img src={sportCategories[currentSportIndex].images[0]} alt={`${sportCategories[currentSportIndex].name} photography 1`} />
+      </div>
+      <div class="sports-item">
+        <img src={sportCategories[currentSportIndex].images[1]} alt={`${sportCategories[currentSportIndex].name} photography 2`} />
+      </div>
+      <div class="sports-item">
+        <img src={sportCategories[currentSportIndex].images[2]} alt={`${sportCategories[currentSportIndex].name} photography 3`} />
+      </div>
     </div>
 
-    
+    <!-- Sport category toggle buttons -->
+    <div class="sports-toggle-container">
+      <div class="sports-toggle-buttons">
+        <button 
+          class:active={currentSportIndex === 0}
+          on:click={() => changeSportCategory(0)}
+          aria-label="Paragliding Photography"
+        >
+          <span>Paragliding</span>
+        </button>
+        <button 
+          class:active={currentSportIndex === 1}
+          on:click={() => changeSportCategory(1)}
+          aria-label="Soccer Photography"
+        >
+          <span>Soccer</span>
+        </button>
+      </div>
+    </div>
 
-  <div class="video-grid-section">
-    <div class="video-item">
-      <video autoplay muted loop playsinline>
-        <source src={videoSources[currentVideoIndex]} type="video/mp4">
-        Dein Browser unterstützt keine Videos.
+    <!-- Fashion photography section -->
+    <div class="grid-section1">
+      <div class="text-grid1">
+        <FadeInSection>
+          <div>
+            <h4>Fashion Photography</h4>
+            <br>
+            <p class="text-doku">
+              Fashion photography merges artistic vision with commercial appeal. These shots showcase my work with accessories and fashion items, where lighting and composition work together to highlight textures and details.
+            </p>
+            <br>
+            <br>
+          </div>
+        </FadeInSection>
+      </div>
+    </div>
+
+    <!-- Fashion photography gallery -->
+    <div class="fashion-grid">
+      <div class="fashion-item">
+        <img src="/mode/Tasche1.jpg" alt="Fashion photography - bag design" />
+      </div>
+      <div class="fashion-item">
+        <img src="/mode/Tasche2.jpg" alt="Fashion photography - accessory detail" />
+      </div>
+    </div>
+
+    <!-- Accessory showcase video -->
+    <div class="company-video-container">
+      <video autoplay muted loop playsinline preload="metadata">
+        <source src="/videos/tasche.mp4" type="video/mp4">
+        Your browser does not support video playback.
       </video>
     </div>
-    <div class="video-item">
-      <video autoplay muted loop playsinline>
-        <source src={videoSources[currentVideoIndex]} type="video/mp4">
-        Dein Browser unterstützt keine Videos.
+
+    <!-- Company video section -->
+    <div class="grid-section1">
+      <div class="text-grid1">
+        <FadeInSection>
+          <div>
+            <h4>Company Video</h4>
+            <br>
+            <p class="text-doku">
+              Professional video production for corporate clients requires technical precision and storytelling skills. 
+              This project demonstrates my approach to creating engaging content that aligns with brand identity while 
+              maintaining visual excellence.
+            </p>
+            <br>
+          </div>
+        </FadeInSection>
+      </div>
+    </div>
+
+    <!-- Corporate video showcase -->
+    <div class="company-video-container">
+      <video autoplay muted loop playsinline preload="metadata">
+        <source src="/videos/Lang_Final.mp4" type="video/mp4">
+        Your browser does not support video playback.
       </video>
     </div>
-    <div class="video-item">
-      <video autoplay muted loop playsinline>
-        <source src={videoSources[currentVideoIndex]} type="video/mp4">
-        Dein Browser unterstützt keine Videos.
-      </video>
+
+    <!-- Photography gallery introduction -->
+    <div class="grid-section1">
+      <div class="text-grid1">
+        <FadeInSection>
+          <div>
+            <h4>Feel free to explore</h4>
+            <br>
+            <p class="text-doku">
+              A selection of moments I've captured over the years. Each photograph represents a unique 
+              perspective – from urban landscapes to quiet moments. These images reflect my evolving style 
+              and approach to visual storytelling.
+            </p>
+            <br>
+          </div>
+        </FadeInSection>
+      </div>
     </div>
-  </div>
 
-  <!-- Video-Toggle hinzufügen -->
-  <div class="video-toggle-container">
-    <div class="video-toggle-buttons">
-      <button 
-        class:active={currentVideoIndex === 0}
-        on:click={() => changeVideo(0)}
-        aria-label="Street Photography"
-      >
-        <span>Taipeh</span>
-      </button>
-      <button 
-        class:active={currentVideoIndex === 1}
-        on:click={() => changeVideo(1)}
-        aria-label="Architecture Photography"
-      >
-        <span>London</span>
-      </button>
-      <button 
-        class:active={currentVideoIndex === 2}
-        on:click={() => changeVideo(2)}
-        aria-label="Portrait Photography"
-      >
-        <span>Rotterdam</span>
-      </button>
+    <!-- Masonry photo gallery -->
+    <div class="masonry-container">
+      <div class="masonry-gallery">
+        {#each [
+          'man1.jpeg', 'man2.jpg', 'man3.jpg', 'man4.jpg',
+          'man5.jpg', 'man6.jpg', 'man7.jpg', 'man8.jpg', 'man9.jpg',
+          'man10.jpg', 'man11.jpg', 'man12.jpg', 'man13.jpg',
+          'man15.jpg', 'man16.jpg', 'man17.jpg', 'man18.jpg', 'man19.jpeg',
+          'man20.jpg', 'man21.jpg', 'man22.jpg', 'man23.jpeg', 'man24.jpg', 'man25.jpg', 'man26.jpg'
+        ] as filename}
+          <div class="masonry-item">
+            <img 
+              src={`/mansory/${filename}`} 
+              alt="Photography gallery" 
+              loading="lazy"
+              on:load={handleImageLoad}
+            />
+          </div>
+        {/each}
+      </div>
     </div>
-  </div>
 
-
-  <div class="grid-section1">
-    <div class="text-grid1">
+    <!-- Equipment and tools section -->
+    <div class="collaborators-section">
+      <div class="divider-large"></div>
+      
       <FadeInSection>
-      <div>
-      <h4>Capturing Time, Framing Stories.</h4>
-      <br>
-      <p class="text-doku">
-          Photography and videography have always been more than just a passion for me—they are my way of exploring movement, light, and perspective. Especially through hyperlapses, I love transforming moments into dynamic visual narratives. This creative drive led me to turn my second passion into a profession, contributing to video and photo productions for several years, where I honed my skills in bringing ideas to life through the lens.
-                    </p>
-    </div>
-  </FadeInSection>
-  </div>
-  </div>
-  
-  <div class="grid-section1">
-    <div class="text-grid1">
-      <FadeInSection>
-        <div>
-          <h4>Sports Photography</h4>
-          <br>
-          <p class="text-doku">
-            Sports photography allows me to capture raw emotion and dynamic movement in a single frame.
-          </p>
-          <br>
-          <br>
+        <div class="creative-arsenal">
+          <h4>My Creative Arsenal</h4>
+          <p class="arsenal-intro">Crafting these pictures and videos with these tools</p>
+          <div class="tools-container">
+            <div class="tool">
+              <span class="tool-name">Canon 90D</span>
+              <span class="tool-role">B-Roll & Backup Cam</span>
+            </div>
+        
+            <div class="tool">
+              <span class="tool-name">Canon R6 Mark II</span>
+              <span class="tool-role">Primary Camera</span>
+            </div>
+        
+            <div class="tool">
+              <span class="tool-name">DJI Ronin RS2</span>
+              <span class="tool-role">Camera Stabilization</span>
+            </div>
+        
+            <div class="tool">
+              <span class="tool-name">Photoshop</span>
+              <span class="tool-role">Retouching & Compositing</span>
+            </div>
+        
+            <div class="tool">
+              <span class="tool-name">Lightroom</span>
+              <span class="tool-role">Photo Color Grading</span>
+            </div>
+        
+            <div class="tool">
+              <span class="tool-name">Premiere Pro</span>
+              <span class="tool-role">Video Editing</span>
+            </div>
+        
+            <div class="tool">
+              <span class="tool-name">After Effects</span>
+              <span class="tool-role">Motion Graphics & VFX</span>
+            </div>
+        
+            <div class="tool">
+              <span class="tool-name">Canon RF 70–200mm f/2.8</span>
+              <span class="tool-role">Telephoto Zoom Lens</span>
+            </div>
+        
+            <div class="tool">
+              <span class="tool-name">Canon RF 24–70mm f/2.8</span>
+              <span class="tool-role">Allround Zoom Lens</span>
+            </div>
+        
+            <div class="tool">
+              <span class="tool-name">GoPro Hero 10 Black</span>
+              <span class="tool-role">Action & POV Shots</span>
+            </div>
+        
+            <div class="tool">
+              <span class="tool-name">DJI Mavic Air 2</span>
+              <span class="tool-role">Aerial Footage</span>
+            </div>
+          </div>
         </div>
       </FadeInSection>
     </div>
-  </div>
-  
-  <!-- Neues Sport-Bild-Grid -->
-  <div class="sports-grid-section">
-    <div class="sports-item">
-      <img src={sportCategories[currentSportIndex].images[0]} alt={`${sportCategories[currentSportIndex].name} photography 1`} />
-    </div>
-    <div class="sports-item">
-      <img src={sportCategories[currentSportIndex].images[1]} alt={`${sportCategories[currentSportIndex].name} photography 2`} />
-    </div>
-    <div class="sports-item">
-      <img src={sportCategories[currentSportIndex].images[2]} alt={`${sportCategories[currentSportIndex].name} photography 3`} />
-    </div>
-  </div>
 
-  
-  <!-- Sport-Toggle hinzufügen -->
-  <div class="sports-toggle-container">
-    <div class="sports-toggle-buttons">
-      <button 
-        class:active={currentSportIndex === 0}
-        on:click={() => changeSportCategory(0)}
-        aria-label="Paragliding Photography"
-      >
-        <span>Paragliding</span>
-      </button>
-      <button 
-        class:active={currentSportIndex === 1}
-        on:click={() => changeSportCategory(1)}
-        aria-label="Soccer Photography"
-      >
-        <span>Soccer</span>
+    <!-- Bottom back button -->
+    <div class="back-btn-container bottom-back">
+      <button on:click={goBackToStatic}>
+        <img src="/leftArrow.png" alt="Back navigation arrow" />
+        Back to Projects
       </button>
     </div>
-  </div>
-
-
-
-  <div class="grid-section1">
-  <div class="text-grid1">
-    <FadeInSection>
-      <div>
-        <h4>Fashion Photography</h4>
-        <br>
-        <p class="text-doku">
-          Fashion photography merges artistic vision with commercial appeal. These shots showcase my work with accessories and fashion items, where lighting and composition work together to highlight textures and details.
-        </p>
-        <br>
-        <br>
-      </div>
-    </FadeInSection>
+  
+    <Footer />
   </div>
 </div>
-
-<!-- Fashion-Bilder im Vollbreite-Grid -->
-<div class="fashion-grid">
-  <div class="fashion-item">
-    <img src="/mode/Tasche1.jpg" alt="Fashion photography - bag design" />
-  </div>
-  <div class="fashion-item">
-    <img src="/mode/Tasche2.jpg" alt="Fashion photography - accessory detail" />
-  </div>
-</div>
-
-<div class="company-video-container">
-  <video autoplay muted loop playsinline preload="metadata">
-    <source src="/videos/tasche.mp4" type="video/mp4">
-    Dein Browser unterstützt keine Videos.
-  </video>
-</div>
-
-<!-- Füge diesen Block nach dem Fashion-Grid ein -->
-<div class="grid-section1">
-  <div class="text-grid1">
-    <FadeInSection>
-      <div>
-        <h4>Company Video</h4>
-        <br>
-        <p class="text-doku">
-          Professional video production for corporate clients requires technical precision and storytelling skills. 
-          This project demonstrates my approach to creating engaging content that aligns with brand identity while 
-          maintaining visual excellence.
-        </p>
-        <br>
-      </div>
-    </FadeInSection>
-  </div>
-</div>
-
-<!-- Company Video Container - Controls entfernt, Autoplay hinzugefügt -->
-<div class="company-video-container">
-  <video autoplay muted loop playsinline preload="metadata">
-    <source src="/videos/Lang_Final.mp4" type="video/mp4">
-    Dein Browser unterstützt keine Videos.
-  </video>
-</div>
-
-<!-- Nach dem Company Video Container hinzufügen -->
-<div class="grid-section1">
-  <div class="text-grid1">
-    <FadeInSection>
-      <div>
-        <h4>Feel free to explore</h4>
-        <br>
-        <p class="text-doku">
-          A selection of moments I've captured over the years. Each photograph represents a unique 
-          perspective – from urban landscapes to quiet moments. These images reflect my evolving style 
-          and approach to visual storytelling.
-        </p>
-        <br>
-      </div>
-    </FadeInSection>
-  </div>
-</div>
-
-<!-- Masonry Gallery mit voller Breite -->
-<div class="masonry-container">
-  <div class="masonry-gallery">
-    {#each [
-      'man1.jpeg', 'man2.jpg', 'man3.jpg', 'man4.jpg',
-      'man5.jpg', 'man6.jpg', 'man7.jpg', 'man8.jpg', 'man9.jpg',
-      'man10.jpg', 'man11.jpg', 'man12.jpg', 'man13.jpg',
-      'man15.jpg', 'man16.jpg', 'man17.jpg', 'man18.jpg', 'man19.jpeg',
-      'man20.jpg', 'man21.jpg', 'man22.jpg', 'man23.jpeg', 'man24.jpg', 'man25.jpg', 'man26.jpg'
-    ] as filename}
-      <div class="masonry-item">
-        <img 
-          src={`/mansory/${filename}`} 
-          alt="Photography gallery" 
-          loading="lazy"
-          on:load={handleImageLoad}
-        />
-      </div>
-    {/each}
-  </div>
-</div>
-
-
-
-<div class="collaborators-section">
-  <div class="divider-large"></div>
   
-  <FadeInSection>
-      
-      <!-- Neuer Abschnitt für Creative Arsenal -->
-      <div class="creative-arsenal">
-        <h4>My Creative Arsenal</h4>
-        <p class="arsenal-intro">Crafting these pictures and videos with these tools</p>
-        <div class="tools-container">
-      
-          <div class="tool">
-            <span class="tool-name">Canon 90D</span>
-            <span class="tool-role">B-Roll & Backup Cam</span>
-          </div>
-      
-          <div class="tool">
-            <span class="tool-name">Canon R6 Mark II</span>
-            <span class="tool-role">Primary Camera</span>
-          </div>
-      
-          <div class="tool">
-            <span class="tool-name">DJI Ronin RS2</span>
-            <span class="tool-role">Camera Stabilization</span>
-          </div>
-      
-          <div class="tool">
-            <span class="tool-name">Photoshop</span>
-            <span class="tool-role">Retouching & Compositing</span>
-          </div>
-      
-          <div class="tool">
-            <span class="tool-name">Lightroom</span>
-            <span class="tool-role">Photo Color Grading</span>
-          </div>
-      
-          <div class="tool">
-            <span class="tool-name">Premiere Pro</span>
-            <span class="tool-role">Video Editing</span>
-          </div>
-      
-          <div class="tool">
-            <span class="tool-name">After Effects</span>
-            <span class="tool-role">Motion Graphics & VFX</span>
-          </div>
-      
-          <div class="tool">
-            <span class="tool-name">Canon RF 70–200mm f/2.8</span>
-            <span class="tool-role">Telephoto Zoom Lens</span>
-          </div>
-      
-          <div class="tool">
-            <span class="tool-name">Canon RF 24–70mm f/2.8</span>
-            <span class="tool-role">Allround Zoom Lens</span>
-          </div>
-      
-          <div class="tool">
-            <span class="tool-name">GoPro Hero 10 Black</span>
-            <span class="tool-role">Action & POV Shots</span>
-          </div>
-      
-          <div class="tool">
-            <span class="tool-name">DJI Mavic Air 2</span>
-            <span class="tool-role">Aerial Footage</span>
-          </div>
-      
-        </div>
-      </div>
-
-  </FadeInSection>
-</div>
-
-<div class="back-btn-container bottom-back">
-  <button on:click={goBackToStatic}>
-    <img src="/leftArrow.png" alt="Back navigation arrow" />
-    Back to Projects
-  </button>
-</div>
-  
-
-<Footer />
-
-  
-
-  
-  
-  </div>
-  </div>
-  
-  
-  
-  
-  
-  <style>
-  /* IBM Plex Mono Regular */
+<style>
+  /* Font definitions */
   @font-face {
     font-family: 'Franz-Plex';
     src: url('/fonts/IBM_Plex_Mono/IBMPlexMono-Regular.ttf') format('truetype');
@@ -1066,7 +646,6 @@
     font-display: swap;
   }
   
-  /* Space Grotesk Regular */
   @font-face {
     font-family: 'Franz-Grotesk';
     src: url('/fonts/Space_Grotesk/static/SpaceGrotesk-Light.ttf') format('truetype');
@@ -1075,6 +654,7 @@
     font-display: swap;
   }
   
+  /* Layout container */
   .content-wrapper {
     width: 92%;
     max-width: 1400px;
@@ -1082,7 +662,7 @@
     padding: 4rem 4rem;
   }
   
-  /* Top-Section: 80vh hoch, Flexbox-Layout für die Elemente */
+  /* Top section layout */
   .top-section {
     height: 70%;
     display: flex;
@@ -1090,7 +670,7 @@
     justify-content: flex-start;
   }
   
-  /* Button-Container: 100% Breite, Button linksbündig */
+  /* Back button styling */
   .back-btn-container {
     width: 100%;
   }
@@ -1110,13 +690,12 @@
     cursor: pointer;
   }
   
-  /* Optional: Größe und Ausrichtung des Pfeils anpassen */
   .back-btn-container button img {
     height: 1.2em;
     width: auto;
   }
   
-  /* Überschrift-Container: 100% Breite, h2 linksbündig */
+  /* Header styling */
   .heading-container {
     width: 100%;
     height: 30vh;
@@ -1135,9 +714,7 @@
     letter-spacing: 0.1rem;
   }
   
-
-  
-  
+  /* Grid layout for content sections */
   .grid-section1 {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -1150,6 +727,7 @@
     grid-column: span 4 / span 4;
   }
   
+  /* Typography */
   h4 {
     font-family: 'Franz-Plex', mono;
     color: #EFE4C6;
@@ -1164,6 +742,7 @@
     font-size: 1.5rem;
   }
   
+  /* Image styling */
   img {
     width: 100%;
     height: 100%;
@@ -1171,13 +750,14 @@
     object-position: center;
   }
   
-  /* Stelle sicher, dass diese Seite scrollbar ist */
+  /* Scrollable container */
   .scroll-container {
     overflow-y: auto;
     width: 100%;
     height: 100%;
   }
   
+  /* Video grid layout */
   .video-grid-section {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -1187,37 +767,19 @@
   }
   
   .video-item {
-    grid-column: span 2; /* Jedes Video nimmt 2 Spalten ein */
+    grid-column: span 2; /* Each video takes 2 columns */
   }
   
   .video-item video {
     width: 100%;
     height: auto;
     display: block;
-    border-radius: 8px; /* Optional für abgerundete Ecken */
-    aspect-ratio: 9/16; /* Bewahrt das Seitenverhältnis */
-    object-fit: cover; /* Füllt das Container-Element komplett aus */
+    border-radius: 8px;
+    aspect-ratio: 9/16;
+    object-fit: cover;
   }
   
-  /* Mobil-Anpassungen */
-  @media (max-width: 768px) {
-    .video-grid-section {
-      grid-template-columns: 1fr;
-      gap: 24px;
-    }
-    
-    .video-item {
-      grid-column: span 1; /* Im Handy-Layout untereinander */
-      display: none; /* Standardmäßig alle ausblenden */
-    }
-    
-    /* Nur das erste Video anzeigen */
-    .video-item:first-child {
-      display: block;
-    }
-  }
-  
-  /* Neue Styles für die Video-Toggle-Buttons */
+  /* Video toggle buttons */
   .video-toggle-container {
     display: flex;
     justify-content: center;
@@ -1261,105 +823,7 @@
     transform: translateY(-1px);
   }
   
-  /* Mobile Anpassung */
-  @media (max-width: 768px) {
-    .video-toggle-buttons {
-      flex-direction: row;
-      padding: 0.5rem;
-      width: 90%;
-    }
-    
-    .video-toggle-buttons button {
-      flex: 1;
-      padding: 0.7rem 0.5rem;
-      font-size: 0.85rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .video-toggle-buttons button {
-      padding: 0.6rem 0.4rem;
-      font-size: 0.75rem;
-    }
-  }
-  
-  /* Bestehende Styles beibehalten... */
-  
-  /* Mobile Anpassungen */
-  @media (max-width: 768px) {
-    /* Anpassung der Textpassagen */
-    .grid-section1 {
-      display: block;
-      margin-top: 4rem;
-    }
-    
-    .text-grid1 {
-      width: 100%;
-    }
-    
-    .text-doku {
-      font-size: 1.2rem;
-    }
-    
-    h4 {
-      font-size: 1.4rem;
-    }
-  
-    /* Anpassung der Überschriftengröße und -höhe */
-    .heading-container {
-      height: auto;
-      margin-top: 1rem;
-      margin-bottom: 2rem;
-    }
-    
-    .heading-container h1 {
-      font-size: 4rem;
-      line-height: 1.1;
-    }
-    
-
-  }
-  
-  /* Noch kleinere Geräte */
-  @media (max-width: 480px) {
-    .heading-container h1 {
-      font-size: 2rem;
-    }
-    
-    .content-wrapper {
-      padding: 2rem 1.5rem;
-      width: 95%;
-    }
-    
-    h4 {
-      font-size: 1.3rem;
-    }
-    
-    .text-doku {
-      font-size: 1.1rem;
-    }
-    
-    .back-btn-container button {
-      padding: 0.6rem 1.2rem;
-      font-size: 0.9rem;
-    }
-    
-  }
-
-
-  @media (max-width: 360px) {
-  .heading-container h1 {
-    font-size: 2rem;  /* Noch kompaktere Größe für sehr schmale Displays */
-    word-break: break-word; /* Erlaubt Umbrüche bei langen Projektnamen */
-  }
-  
-  .back-btn-container button {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-  }
-}
-
-  /* Neue Styles für das Sports-Grid */
+  /* Sports grid layout */
   .sports-grid-section {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -1369,8 +833,8 @@
   }
   
   .sports-item {
-    grid-column: span 2; /* Jedes Bild nimmt 2 Spalten ein */
-    aspect-ratio: 9/16; /* Standard-Fotoseitenverhältnis */
+    grid-column: span 2;
+    aspect-ratio: 9/16;
     overflow: hidden;
     border-radius: 8px;
   }
@@ -1378,15 +842,15 @@
   .sports-item img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Füllt das Container-Element komplett aus */
+    object-fit: cover;
     transition: transform 0.5s ease;
   }
   
   .sports-item:hover img {
-    transform: scale(1.1); /* Leichter Zoom-Effekt beim Hover */
+    transform: scale(1.1);
   }
   
-  /* Styles für die Sport-Toggle-Buttons (ähnlich wie Video-Toggle-Buttons) */
+  /* Sports toggle buttons */
   .sports-toggle-container {
     display: flex;
     justify-content: center;
@@ -1429,34 +893,8 @@
     background: rgba(255, 255, 255, 0.05);
     transform: translateY(-1px);
   }
-  
-  /* Mobile Anpassung */
-  @media (max-width: 768px) {
-    .sports-grid-section {
-      grid-template-columns: 1fr;
-      gap: 24px;
-    }
-    
-    .sports-item {
-      grid-column: span 1; /* Im Handy-Layout untereinander */
-      display: none; /* Standardmäßig verstecken */
-    }
-    
-    
-    .sports-toggle-buttons {
-      flex-direction: row;
-      padding: 0.5rem;
-      width: 90%;
-    }
-    
-    .sports-toggle-buttons button {
-      flex: 1;
-      padding: 0.7rem 0.5rem;
-      font-size: 0.85rem;
-    }
-  }
 
-  /* Fashion Photography Grid Styles */
+  /* Fashion grid layout */
   .fashion-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -1482,16 +920,8 @@
   .fashion-item:hover img {
     transform: scale(1.02);
   }
-  
-  /* Mobile Anpassungen */
-  @media (max-width: 768px) {
-    .fashion-grid {
-      gap: 24px;
-      margin: 1.5rem 0 4rem 0;
-    }
-  }
 
-  /* Company Video Styles */
+  /* Company video container */
   .company-video-container {
     width: 100%;
     margin: 1rem 0 5rem 0;
@@ -1504,191 +934,306 @@
     width: 100%;
     height: auto;
     display: block;
-    max-height: 80vh; /* Verhindert zu große Videos */
+    max-height: 80vh;
     border-radius: 8px;
   }
+
+  /* Masonry gallery layout */
+  .masonry-container {
+    width: 100%;
+    margin: 2rem 0 7rem 0;
+    grid-column: 1 / span 6;
+  }
   
-  /* Mobile Anpassungen */
-  @media (max-width: 768px) {
-    .company-video-container {
-      margin: 1rem 0 4rem 0;
-    }
-  }
-
-  /* Masonry Gallery Styles für volle Breite mit 3 Spalten */
-.masonry-container {
-  width: 100%;
-  margin: 2rem 0 7rem 0;
-  grid-column: 1 / span 6; /* Volle Breite im 6er-Grid */
-}
-
-.masonry-gallery {
-  position: relative; /* Wichtig für absolute Positionierung der Kinder */
-  width: 100%;
-}
-
-.masonry-item {
-  position: absolute; /* Wird durch JS gesetzt */
-  overflow: hidden;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
-
-.masonry-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  z-index: 1;
-}
-
-.masonry-item img {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: transform 0.5s ease;
-}
-
-/* Mobile Anpassungen */
-@media (max-width: 768px) {
   .masonry-gallery {
-    grid-template-columns: repeat(2, 1fr);
+    position: relative;
+    width: 100%;
   }
-}
-
-@media (max-width: 480px) {
-  .masonry-gallery {
-    grid-template-columns: 1fr;
+  
+  .masonry-item {
+    position: absolute;
+    overflow: hidden;
+    border-radius: 4px;
+    transition: all 0.3s ease;
   }
-}
-
-
-
-
-.collaborators-section {
-  margin-top: 10rem;
-  margin-bottom: 5rem;
-  width: 100%;
-}
-
-.divider-large {
-  width: 100%;
-  height: 1px;
-  background-color: rgba(255, 255, 255, 0.1);
-  margin-bottom: 4rem;
-}
-
-
-/* Mobile Anpassungen */
-@media (max-width: 768px) {
-  .collaborators-section {
-    margin-top: 6rem;
-    margin-bottom: 3rem;
+  
+  .masonry-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1;
   }
-}
-
-.creative-arsenal {
-  margin-top: 4rem;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-}
-
-.arsenal-intro {
-  grid-column: span 4 / span 4;
-  color: rgba(255, 255, 255, 0.7);
-  font-family: 'Franz-Grotesk', sans-serif;
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-  margin-top: 0.5rem;
-}
-
-.creative-arsenal h4 {
-  grid-column: span 4 / span 4;
-}
-
-.tools-container {
-  grid-column: span 4 / span 4;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  width: 100%;
-}
-
-.tool {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  flex: 0 1 auto;
-}
-
-.tool:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-3px);
-}
-
-.tool-name {
-  color: #EFE4C6;
-  font-family: 'Franz-Plex', mono;
-  font-size: 1.1rem;
-  margin-bottom: 0.3rem;
-}
-
-.tool-role {
-  color: rgba(255, 255, 255, 0.7);
-  font-family: 'Franz-Grotesk', sans-serif;
-  font-size: 0.9rem;
-}
-
-/* Mobile Anpassungen */
-@media (max-width: 768px) {
-  .creative-arsenal {
-    margin-top: 3rem;
+  
+  .masonry-item img {
+    width: 100%;
+    height: auto;
     display: block;
+    transition: transform 0.5s ease;
   }
-  
-  .tools-container {
-    gap: 1rem;
-    width: 100%;
-  }
-  
-  .tool {
-    padding: 0.8rem 1.2rem;
-  }
-}
 
-@media (max-width: 480px) {
+  /* Tools and equipment section */
+  .collaborators-section {
+    margin-top: 10rem;
+    margin-bottom: 5rem;
+    width: 100%;
+  }
+  
+  .divider-large {
+    width: 100%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin-bottom: 4rem;
+  }
+  
+  .creative-arsenal {
+    margin-top: 4rem;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+  }
+  
+  .arsenal-intro {
+    grid-column: span 4 / span 4;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: 'Franz-Grotesk', sans-serif;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .creative-arsenal h4 {
+    grid-column: span 4 / span 4;
+  }
+  
   .tools-container {
+    grid-column: span 4 / span 4;
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
-    gap: 0.7rem;
+    gap: 1.5rem;
     width: 100%;
   }
   
   .tool {
-    flex: 0 0 calc(50% - 0.7rem);
-    max-width: calc(50% - 0.7rem);
-    padding: 0.7rem 0.8rem;
-    margin-bottom: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    flex: 0 1 auto;
+  }
+  
+  .tool:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
   }
   
   .tool-name {
-    font-size: 0.9rem;
+    color: #EFE4C6;
+    font-family: 'Franz-Plex', mono;
+    font-size: 1.1rem;
+    margin-bottom: 0.3rem;
   }
   
   .tool-role {
-    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: 'Franz-Grotesk', sans-serif;
+    font-size: 0.9rem;
   }
-}
 
-/* Zusätzliches Styling für den unteren Back-Button */
-.bottom-back {
-  margin-top: 10rem;
-  margin-bottom: 3rem;
-  display: flex;
-  justify-content: flex-start; /* Linksbündig statt zentriert */
-}
+  /* Bottom back button */
+  .bottom-back {
+    margin-top: 10rem;
+    margin-bottom: 3rem;
+    display: flex;
+    justify-content: flex-start;
+  }
 
-  </style>
+  /* Responsive design for tablets and smaller screens */
+  @media (max-width: 768px) {
+    /* Video layout */
+    .video-grid-section {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    
+    .video-item {
+      grid-column: span 1;
+      display: none;
+    }
+    
+    .video-item:first-child {
+      display: block;
+    }
+    
+    .video-toggle-buttons {
+      flex-direction: row;
+      padding: 0.5rem;
+      width: 90%;
+    }
+    
+    .video-toggle-buttons button {
+      flex: 1;
+      padding: 0.7rem 0.5rem;
+      font-size: 0.85rem;
+    }
+    
+    /* Sports layout */
+    .sports-grid-section {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    
+    .sports-item {
+      grid-column: span 1;
+      display: none;
+    }
+    
+    .sports-toggle-buttons {
+      flex-direction: row;
+      padding: 0.5rem;
+      width: 90%;
+    }
+    
+    .sports-toggle-buttons button {
+      flex: 1;
+      padding: 0.7rem 0.5rem;
+      font-size: 0.85rem;
+    }
+    
+    /* Text layout */
+    .grid-section1 {
+      display: block;
+      margin-top: 4rem;
+    }
+    
+    .text-grid1 {
+      width: 100%;
+    }
+    
+    .text-doku {
+      font-size: 1.2rem;
+    }
+    
+    h4 {
+      font-size: 1.4rem;
+    }
+    
+    /* Header */
+    .heading-container {
+      height: auto;
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .heading-container h1 {
+      font-size: 4rem;
+      line-height: 1.1;
+    }
+    
+    /* Masonry layout */
+    .masonry-gallery {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Fashion grid */
+    .fashion-grid {
+      gap: 24px;
+      margin: 1.5rem 0 4rem 0;
+    }
+    
+    /* Video containers */
+    .company-video-container {
+      margin: 1rem 0 4rem 0;
+    }
+    
+    /* Tools section */
+    .collaborators-section {
+      margin-top: 6rem;
+      margin-bottom: 3rem;
+    }
+    
+    .creative-arsenal {
+      margin-top: 3rem;
+      display: block;
+    }
+    
+    .tools-container {
+      gap: 1rem;
+      width: 100%;
+    }
+    
+    .tool {
+      padding: 0.8rem 1.2rem;
+    }
+  }
+
+  /* Mobile design for phones */
+  @media (max-width: 480px) {
+    .heading-container h1 {
+      font-size: 2rem;
+    }
+    
+    .content-wrapper {
+      padding: 2rem 1.5rem;
+      width: 95%;
+    }
+    
+    h4 {
+      font-size: 1.3rem;
+    }
+    
+    .text-doku {
+      font-size: 1.1rem;
+    }
+    
+    .back-btn-container button {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+    }
+    
+    .video-toggle-buttons button {
+      padding: 0.6rem 0.4rem;
+      font-size: 0.75rem;
+    }
+    
+    .masonry-gallery {
+      grid-template-columns: 1fr;
+    }
+    
+    .tools-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      width: 100%;
+    }
+    
+    .tool {
+      flex: 0 0 calc(50% - 0.7rem);
+      max-width: calc(50% - 0.7rem);
+      padding: 0.7rem 0.8rem;
+      margin-bottom: 0.7rem;
+    }
+    
+    .tool-name {
+      font-size: 0.9rem;
+    }
+    
+    .tool-role {
+      font-size: 0.8rem;
+    }
+  }
+
+  /* Extra small screens */
+  @media (max-width: 360px) {
+    .heading-container h1 {
+      font-size: 2rem;
+      word-break: break-word;
+    }
+    
+    .back-btn-container button {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+  }
+</style>

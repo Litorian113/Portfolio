@@ -36,6 +36,7 @@
           description: 'We redesigned the bwegt mobility app to improve usability simplify navigation and enhance realtime travel information for a seamless user experience.',
           image: '/altDesktop/Design1.png', // Neues Bild verwenden
           link: '/projectStatic/bwegt', // Geändert von '/project/nass' zu '/projectStatic/bwegt'
+          anchor: 'bwegt',
           tags: ['UX/UI Design', 'Mobile Design'],
           collaborators: ['Vivien Cai', 'Rebeka Tot', 'Franz Anhäupl']
         },
@@ -44,6 +45,7 @@
           description: 'NASS is a portable water testing device with a simple E-Ink interface and open-data sharing, designed to make water quality analysis accessible.',
           image: '/altDesktop/Design2.png', 
           link: '/projectStatic/nass', // Angepasst für statische Version
+          anchor: 'nass-device',
           tags: ['Hardware Design', 'Interface Design'],
           collaborators: ['Jonas Wienberg', 'Philipp Maginot', 'Maria Kamenskaya', 'Franz Anhäupl']
         },
@@ -52,6 +54,7 @@
           description: 'An interactive table using Reed sensors, a 3D-printed game piece, and projection mapping to let users explore the saber toothed tiger through playful interaction',
           image: '/altDesktop/Design3.png',
           link: '/projectStatic/iceAgeMammals', // Angepasst für statische Version
+          anchor: 'ice-age-mammals',
           tags: ['Interactive Design', '3D Modeling'],
           collaborators: ['Vivien Cai', 'Rebeka Tot', 'Franz Anhäupl']
         },
@@ -60,6 +63,7 @@
           description: 'A smart wallet with NFC payment, LED feedback, fingerprint authentication and a companion app, blending digital and physical payments seamlessly.',
           image: '/altDesktop/Design4.png',
           link: '/projectStatic/hybridWallet', // Angepasst für statische Version
+          anchor: 'hybrid-wallet',
           tags: ['Product Design', 'App Development'],
           collaborators: ['Enes Cilingir', 'Moritz Beder', 'Franz Anhäupl']
         }
@@ -73,6 +77,7 @@
           description: 'An interactive 3D globe visualizing migration data, highlighting routes, risk areas, and key patterns to reveal the human impact behind the numbers.',
           image: '/altDesktop/Code1.png',
           link: '/projectStatic/migrants',
+          anchor: 'global-missing-migrants',
           tags: ['Data Visualization', '3D Globe'],
           collaborators: ['Helen Frank', 'Maurice Cadau', 'Lisa-Marie Rapp', 'Franz Anhäupl']
         },
@@ -81,6 +86,7 @@
           description: 'KarinCruises.de tracks my girlfriend’s cruise route in real-time with an interactive globe, live port updates, and AI-generated travel tips.',
           image: '/altDesktop/Code2.png',
           link: '/projectStatic/karincruises',
+          anchor: 'karincruises',
           tags: ['Real-time Tracking', 'AI Integration'],
           collaborators: ['Franz Anhäupl']
         },
@@ -89,6 +95,7 @@
           description: 'Three.js based interactive portfolio showcasing creative coding and WebGL capabilities.',
           image: '/altDesktop/Code3.png',
           link: '/projectStatic/game',
+          anchor: 'game',
           tags: ['Three.js', 'WebGL'],
           collaborators: ['Franz Anhäupl']
         },
@@ -97,6 +104,7 @@
           description: 'Interactive visualizations of earthquake and tsunami data, including a 2D world map, 3D globe, timelines, and depth analysis with filtering and hover effects.',
           image: '/altDesktop/Code4.png',
           link: '/projectStatic/earthquake',
+          anchor: 'earthquakes-and-tsunami-data',
           tags: ['Data Analysis', 'Scientific Visualization'],
           collaborators: ['Franz Anhäupl']
         }
@@ -110,6 +118,7 @@
           description: 'I redesigned the Zeller Zahntechnik website with a mobile-first approach, modernizing the outdated old design.',
           image: '/altDesktop/Website1.png',
           link: '/projectStatic/website1',
+          anchor: 'website-1',
           tags: ['Mobile-First Design', 'Dental Industry'],
           collaborators: ['Franz Anhäupl']
         },
@@ -118,6 +127,7 @@
           description: 'I build a WordPress website for Zentrum Pferd, highlighting storytelling, usability and Instagram integration.',
           image: '/altDesktop/Website2.png',
           link: '/projectStatic/website2',
+          anchor: 'website-2',
           tags: ['WordPress', 'Social Media Integration'],
           collaborators: ['Jens Kramer', 'Franz Anhäupl']
         }
@@ -131,6 +141,7 @@
           description: 'My passion for photography and hyperlapses shaped my eye for detail and storytelling.',
           image: '/altDesktop/photo-video.png',
           link: '/projectStatic/photovideo',
+          anchor: 'photo-video-work',
           tags: ['Commercial Photography', 'Commercial Videography'],
           collaborators: ['Franz Anhäupl']
         }
@@ -144,6 +155,7 @@
           description: 'Between design systems, camera lenses, and coffee cups. This is how AI sees me. Want to know more?  📷 🧗 ',
           image: '/altDesktop/about-me.png',
           tags: ['Interactive Designer', 'Design Journey'],
+          anchor: 'about-me',
           link: '/projectStatic/aboutme'
         }
       ]
@@ -160,9 +172,10 @@
     
     if (!currentCategory) return;
     
-    categories[currentCategory].projects.forEach((project, index) => {
+    categories[currentCategory].projects.forEach((project) => {
       allProjects.push(project);
-      sectionAnchors.push(`${currentCategory}-${index}`);
+      // Verwende den spezifischen Anker oder generiere einen Fallback
+      sectionAnchors.push(project.anchor || `${currentCategory}-${allProjects.length-1}`);
     });
     
     // Nach DOM-Update Fullpage neu initialisieren
