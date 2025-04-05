@@ -40,46 +40,46 @@
     import { fade, fly } from 'svelte/transition';
     import { goto } from '$app/navigation';
 
-    // SEO-Konfiguration
+    // SEO configuration
     const pageTitle = "About Me | Franz | Designer & Developer";
     const pageDescription = "Franz is a designer working at the intersection of design and technology, specializing in UI/UX, programming, and data visualizations at the AI+D Lab.";
     const pageKeywords = "Franz, designer, developer, UI/UX, data visualization, interaction design, portfolio, AI+D Lab";
 
-    // State Management für Kategorien
+    // Category state management
     let activeCategory = 'about'; // 'about', 'journey', 'tools', 'tech'
     
-    // State für Partikel-Animation und Mausverfolgung (gemeinsam verwendet)
+    // Particle animation and mouse tracking
     let particles = [];
     let particleContainer;
     let mouseX = 0;
     let mouseY = 0;
     let hoveredHobby = null;
     
-    // Verbesserte Springs mit angepassten Parametern für flüssigere Animation
+    // Improved springs for smoother animation
     const cursorPosition = spring({ x: -100, y: -100 }, {
-        stiffness: 0.07,  // Reduziert für sanftere Bewegung
-        damping: 0.35     // Angepasst für natürlicheren "Schwung"
+        stiffness: 0.07,
+        damping: 0.35
     });
     
-    // Zweite Position für den Sekundär-Cursor mit stärkerer Verzögerung
+    // Second position for delayed cursor
     const cursorPositionDelayed = spring({ x: -100, y: -100 }, {
-        stiffness: 0.03,  // Noch langsamere Reaktion
-        damping: 0.5      // Stärkere Dämpfung
+        stiffness: 0.03,
+        damping: 0.5
     });
     
-    // Cursor-Größe-Animation für Klick-Effekt
+    // Cursor size animation for click effect
     const cursorScale = spring(1, {
         stiffness: 0.2,
         damping: 0.4
     });
     
-    // Variable für aktuelle Cursor-Variation (Standard, Hover, Klick)
+    // Current cursor variation
     let cursorVariation = 'default';
     
-    // Flag für Cursor-Sichtbarkeit
+    // Flag for cursor visibility
     let isCursorVisible = false;
     
-    // Timeline-Daten - In umgekehrter Reihenfolge (aktuellstes zuerst)
+    // Timeline data - in reverse order (most recent first)
     const timeline = [
         { year: '2025-present', title: 'Assistant', location: 'AI+D Lab, KITeGG, HfG Schwäbisch Gmünd', description: 'Research work in AI-driven interactive technologies' },
         { year: '2024-present', title: 'Student Parliament', location: 'HfG Schwäbisch Gmünd', description: 'Representing student interests' },
@@ -88,11 +88,11 @@
         { year: '2017-2023', title: 'Media Informatics', location: 'University of Ulm', description: 'Foundations in computer science and media design' }
     ];
     
-    // Tools mit Kategorisierung (P5.js wurde entfernt und zur Tech-Kategorie verschoben)
+    // Tools with categorization
     const tools = [
         { name: 'Figma', category: 'Design' },
-		{ name: 'Miro', category: 'Design' },
-		{ name: 'FigJam', category: 'Design' },
+        { name: 'Miro', category: 'Design' },
+        { name: 'FigJam', category: 'Design' },
         { name: 'VS Code', category: 'Development' },
         { name: 'Arduino IDE', category: 'Development' },
         { name: 'MongoDB', category: 'Development' },
@@ -104,7 +104,7 @@
         { name: 'Ultimaker', category: 'Prototyping' }
     ];
     
-    // AI models and tech stack (neue Kategorie)
+    // AI models and tech stack
     const techStack = [
         { name: 'DALL·E 3', category: 'AI Image Generation' },
         { name: 'Claude 3.7', category: 'AI Assistant' },
@@ -121,7 +121,7 @@
         { name: 'Nuxt.js', category: 'Vue Framework' }
     ];
     
-    // Hobbies mit Icons (können später durch echte Icons ersetzt werden)
+    // Hobbies with icons
     const hobbies = [
         { name: 'Bouldering', icon: '🧗' },
         { name: 'Traveling', icon: '✈️' },
@@ -133,7 +133,7 @@
         { name: 'Fitness', icon: '💪' }
     ];
 
-    // Interaktives Partikel-System
+    // Interactive particle system
     function createParticle(x, y) {
         return {
             x,
@@ -142,12 +142,12 @@
             speedX: Math.random() * 2 - 1,
             speedY: Math.random() * 2 - 1,
             life: 100,
-            color: `rgba(125, 170, 98, ${Math.random() * 0.5 + 0.2})` // Variationen der Akzentfarbe
+            color: `rgba(125, 170, 98, ${Math.random() * 0.5 + 0.2})` // Variations of accent color
         };
     }
     
     function updateParticles() {
-        // Bewege Partikel
+        // Move particles
         particles = particles.map(p => ({
             ...p,
             x: p.x + p.speedX,
@@ -155,7 +155,7 @@
             life: p.life - 1
         })).filter(p => p.life > 0);
         
-        // Zeichne Partikel
+        // Draw particles
         if (particleContainer) {
             const ctx = particleContainer.getContext('2d');
             ctx.clearRect(0, 0, particleContainer.width, particleContainer.height);
@@ -168,62 +168,85 @@
             });
         }
         
-        // Rufe nächsten Frame auf
+        // Request next frame
         requestAnimationFrame(updateParticles);
     }
     
     function handleMouseMove(event) {
-        // Position für den globalen Cursor-Follower aktualisieren
+        // Update position for global cursor follower
         mouseX = event.clientX;
         mouseY = event.clientY;
         
-        // Springs mit neuer Position aktualisieren
+        // Update springs with new position
         cursorPosition.set({ x: mouseX, y: mouseY });
         cursorPositionDelayed.set({ x: mouseX, y: mouseY });
         
-        // Mache Cursor sichtbar, sobald Maus bewegt wird
+        // Make cursor visible once mouse moves
         isCursorVisible = true;
         
-        // Partikel an Mausposition erzeugen
+        // Create particles at mouse position
         if (Math.random() > 0.7) {
             particles.push(createParticle(mouseX, mouseY));
         }
     }
     
-    // Cursor-Effekt bei Mausklick
+    // Cursor effect on mouse click
     function handleMouseDown() {
-        // Cursor verkleinern beim Klicken
+        // Shrink cursor on click
         cursorScale.set(0.7);
         cursorVariation = 'click';
         setTimeout(() => cursorVariation = 'default', 300);
     }
     
     function handleMouseUp() {
-        // Cursor zur normalen Größe zurückkehren
+        // Return cursor to normal size
         cursorScale.set(1.2);
         setTimeout(() => cursorScale.set(1), 150);
     }
     
-    // Card Flip Effekt für Tool-Karten
+    // Card flip effect for tool cards
     let flippedCard = null;
     
     function flipCard(index) {
         flippedCard = flippedCard === index ? null : index;
     }
 
+    // Form variables
+    let formName = '';
+    let formEmail = '';
+    let formMessage = '';
+
+    // Function to submit the form
+    function handleFormSubmit() {
+        // Create email subject
+        const subject = `Message from ${formName} via Portfolio`;
+        
+        // Create email body
+        const body = `Name: ${formName}\nEmail: ${formEmail}\n\nMessage:\n${formMessage}`;
+        
+        // Create and open mailto link
+        const mailtoLink = `mailto:franzanhaeupl@web.de?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailtoLink;
+        
+        // Reset form
+        formName = '';
+        formEmail = '';
+        formMessage = '';
+    }
+
     onMount(() => {
-        // Canvas für Partikel-Animation initialisieren
+        // Initialize particle animation canvas
         if (particleContainer) {
             particleContainer.width = window.innerWidth;
             particleContainer.height = window.innerHeight;
             requestAnimationFrame(updateParticles);
         }
         
-        // Stelle sicher, dass Scrollen auf dieser Seite funktioniert
+        // Enable scrolling on this page
         document.documentElement.style.overflow = 'auto';
         document.body.style.overflow = 'auto';
         
-        // Event-Listener für Window-Resize
+        // Event listener for window resize
         const handleResize = () => {
             if (particleContainer) {
                 particleContainer.width = window.innerWidth;
@@ -233,10 +256,10 @@
         
         window.addEventListener('resize', handleResize);
         
-        // Globales Mausevent hinzufügen
+        // Add global mouse event
         document.addEventListener('mousemove', handleMouseMove);
         
-        // Zusätzliche Event-Listener für Maus-Interaktionen
+        // Additional event listeners for mouse interactions
         document.addEventListener('mousedown', handleMouseDown);
         document.addEventListener('mouseup', handleMouseUp);
         
@@ -248,16 +271,15 @@
         };
     });
     
-    // Funktion zum Zurückgehen zur Hauptseite mit Debug-Ausgaben
+    // Function to navigate back to main page
     function goBackToFlur() {
-        console.log('Button clicked');
         const cx = 0;
         const cy = 0;
         const cz = -31.5;
         goto(`/?cx=${cx}&cy=${cy}&cz=${cz}`);
     }
 
-    // Funktion zur Aktualisierung der Mausposition innerhalb der Karte
+    // Function to update mouse position within card
     function updateHobbyGlow(event, index) {
         hoveredHobby = index;
         const rect = event.currentTarget.getBoundingClientRect();
@@ -265,14 +287,14 @@
         mouseY = event.clientY - rect.top;
     }
     
-    // Funktion um den Hover zu beenden
+    // Function to end hover
     function endHobbyHover() {
         hoveredHobby = null;
     }
     
-    // Alternative zum Card-Flip für Tools
+    // Alternative to card-flip for tools
     function handleToolHover(index, isHovering) {
-        // Diese Variable wird für Animation verwendet
+        // This variable is used for animation
     }
 </script>
 
@@ -463,8 +485,72 @@
             </div>
         {/if}
 
-		    <!-- Footer -->
-			<Footer />
+        <!-- Contact Section - Added from static version -->
+        <div class="contact-section">
+            <div class="glass-card">
+                <FadeInSection>
+                    <div class="contact-container">
+                        <p class="contact-intro">
+                            I'm currently looking for internship opportunities in interaction design and UX/UI. 
+                            If you have a position available or would like to collaborate on a project, 
+                            don't hesitate to reach out. I'm always open to new challenges and experiences.
+                        </p>
+                        
+                        <form class="contact-form" on:submit|preventDefault={handleFormSubmit}>
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input 
+                                    type="text" 
+                                    id="name" 
+                                    bind:value={formName} 
+                                    required 
+                                    placeholder="Your name"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    bind:value={formEmail} 
+                                    required 
+                                    placeholder="Your email address"
+                                />
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label for="message">Message</label>
+                                <textarea 
+                                    id="message" 
+                                    bind:value={formMessage} 
+                                    rows="5" 
+                                    required 
+                                    placeholder="Your message here..."
+                                ></textarea>
+                            </div>
+                            
+                            <button type="submit" class="submit-button">
+                                <span class="button-text">Send Message</span>
+                                <span class="button-icon">→</span>
+                            </button>
+                        </form>
+                        
+                        <div class="form-divider">
+                            <span>or</span>
+                        </div>
+                        
+                        <a href="mailto:franzanhaeupl@web.de" class="email-button">
+                            <span class="button-text">Send me a direct email</span>
+                            <span class="button-icon">→</span>
+                        </a>
+                    </div>
+                </FadeInSection>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <Footer />
     </div>
     
 </div>
@@ -964,6 +1050,168 @@
         font-family: 'Franz-Grotesk', sans-serif;
         color: rgba(255, 255, 255, 0.7);
         font-size: 0.9rem;
+    }
+    
+    /* Contact form styles - Added from static version */
+    .contact-section {
+        margin: 6rem 0 4rem 0;
+        position: relative;
+    }
+
+    .contact-section:before {
+        content: '';
+        position: absolute;
+        top: -3rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        max-width: 400px;
+        height: 1px;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+    }
+
+    .contact-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .contact-intro {
+        margin-bottom: 2.5rem;
+        color: rgba(255, 255, 255, 0.8);
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .contact-form {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-family: 'Franz-Plex', mono;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 1rem;
+        color: white;
+        font-family: 'Franz-Grotesk', sans-serif;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #7DAA62;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 0 2px rgba(125, 170, 98, 0.1);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .submit-button {
+        background: rgba(125, 170, 98, 0.2);
+        border: 1px solid #7DAA62;
+        color: white;
+        font-family: 'Franz-Plex', mono;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .submit-button:hover {
+        background: rgba(125, 170, 98, 0.3);
+        transform: translateY(-3px);
+    }
+
+    .email-button {
+        background: rgba(125, 170, 98, 0.2);
+        border: 1px solid #7DAA62;
+        color: white;
+        font-family: 'Franz-Plex', mono;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+        text-decoration: none;
+        width: fit-content;
+    }
+
+    .email-button:hover {
+        background: rgba(125, 170, 98, 0.3);
+        transform: translateY(-3px);
+    }
+
+    .form-divider {
+        display: flex;
+        align-items: center;
+        margin: 2rem 0;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .form-divider::before,
+    .form-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .form-divider span {
+        padding: 0 1rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-family: 'Franz-Plex', mono;
+        font-size: 0.9rem;
+    }
+
+    /* Responsive adjustments for form */
+    @media (max-width: 768px) {
+        .contact-form {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-group.full-width {
+            grid-column: span 1;
+        }
+        
+        .submit-button {
+            grid-column: span 1;
+        }
+        
+        .contact-section {
+            margin: 4rem 0 3rem 0;
+        }
     }
     
     /* Responsive Design */

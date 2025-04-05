@@ -7,26 +7,26 @@
   import BurgerMenu from '$lib/components/BurgerMenu.svelte';
   import ContactIcon from '$lib/components/ContactIcon.svelte';
 
-    // Fullpage.js importieren
-    import 'fullpage.js/dist/fullpage.min.css';
+  // Import Fullpage.js
+  import 'fullpage.js/dist/fullpage.min.css';
   import fullpage from 'fullpage.js';
   
-  // Für Formular und UI-Steuerung
+  // Form and UI control variables
   let contactFormVisible = false;
   let isScrolling = false;
   
-  // Fullpage.js Variablen
+  // Fullpage.js variables
   let currentSection = 0;
   let fullpageApi;
   let currentCategory = 'design';
 
-  // Liste der mehrsprachigen Begrüßungen
+  // List of multilingual greetings
   const greetings = ["Hello.", "你好.", "Bonjour.", "Hallo.", "안녕하세요.", "Hola."];
   let currentGreeting = 0;
   let greetingText = greetings[0];
   let greetingInterval;
   
-  // Kategorien und ihre Projekte
+  // Categories and their projects
   const categories = {
     'design': {
       title: 'Design Work',
@@ -34,8 +34,8 @@
         {
           title: 'bwegt App Redesign',
           description: 'We redesigned the bwegt mobility app to improve usability simplify navigation and enhance realtime travel information for a seamless user experience.',
-          image: '/altDesktop/Design1.png', // Neues Bild verwenden
-          link: '/projectStatic/bwegt', // Geändert von '/project/nass' zu '/projectStatic/bwegt'
+          image: '/altDesktop/Design1.png',
+          link: '/projectStatic/bwegt',
           anchor: 'bwegt',
           tags: ['UX/UI Design', 'Mobile Design'],
           collaborators: ['Vivien Cai', 'Rebeka Tot', 'Franz Anhäupl']
@@ -44,7 +44,7 @@
           title: 'Nass Device',
           description: 'NASS is a portable water testing device with a simple E-Ink interface and open-data sharing, designed to make water quality analysis accessible.',
           image: '/altDesktop/Design2.png', 
-          link: '/projectStatic/nass', // Angepasst für statische Version
+          link: '/projectStatic/nass',
           anchor: 'nass-device',
           tags: ['Hardware Design', 'Interface Design'],
           collaborators: ['Jonas Wienberg', 'Philipp Maginot', 'Maria Kamenskaya', 'Franz Anhäupl']
@@ -53,7 +53,7 @@
           title: 'Ice Age Mammals',
           description: 'An interactive table using Reed sensors, a 3D-printed game piece, and projection mapping to let users explore the saber toothed tiger through playful interaction',
           image: '/altDesktop/Design3.png',
-          link: '/projectStatic/iceAgeMammals', // Angepasst für statische Version
+          link: '/projectStatic/iceAgeMammals',
           anchor: 'ice-age-mammals',
           tags: ['Interactive Design', '3D Modeling'],
           collaborators: ['Vivien Cai', 'Rebeka Tot', 'Franz Anhäupl']
@@ -62,7 +62,7 @@
           title: 'HYBRID Wallet',
           description: 'A smart wallet with NFC payment, LED feedback, fingerprint authentication and a companion app, blending digital and physical payments seamlessly.',
           image: '/altDesktop/Design4.png',
-          link: '/projectStatic/hybridWallet', // Angepasst für statische Version
+          link: '/projectStatic/hybridWallet',
           anchor: 'hybrid-wallet',
           tags: ['Product Design', 'App Development'],
           collaborators: ['Enes Cilingir', 'Moritz Beder', 'Franz Anhäupl']
@@ -77,13 +77,13 @@
           description: 'An interactive 3D globe visualizing migration data, highlighting routes, risk areas, and key patterns to reveal the human impact behind the numbers.',
           image: '/altDesktop/Code1.png',
           link: '/projectStatic/migrants',
-          anchor: 'global-missing-migrants',
+          anchor: 'data-viz',
           tags: ['Data Visualization', '3D Globe'],
           collaborators: ['Helen Frank', 'Maurice Cadau', 'Lisa-Marie Rapp', 'Franz Anhäupl']
         },
         {
           title: 'Karincruises.de',
-          description: 'KarinCruises.de tracks my girlfriend’s cruise route in real-time with an interactive globe, live port updates, and AI-generated travel tips.',
+          description: 'KarinCruises.de tracks my girlfriends cruise route in real-time with an interactive globe, live port updates, and AI-generated travel tips.',
           image: '/altDesktop/Code2.png',
           link: '/projectStatic/karincruises',
           anchor: 'karincruises',
@@ -141,7 +141,7 @@
           description: 'My passion for photography and hyperlapses shaped my eye for detail and storytelling.',
           image: '/altDesktop/photo-video.png',
           link: '/projectStatic/photovideo',
-          anchor: 'photo-video-work',
+          anchor: 'photo-video',
           tags: ['Commercial Photography', 'Commercial Videography'],
           collaborators: ['Franz Anhäupl']
         }
@@ -162,7 +162,7 @@
     }
   };
   
-  // Alle Projekte für Fullpage-Sektionen zusammenführen
+  // Prepare projects for fullpage sections
   let allProjects = [];
   let sectionAnchors = ['intro'];
 
@@ -174,22 +174,22 @@
     
     categories[currentCategory].projects.forEach((project) => {
       allProjects.push(project);
-      // Verwende den spezifischen Anker oder generiere einen Fallback
+      // Use the specific anchor or generate a fallback
       sectionAnchors.push(project.anchor || `${currentCategory}-${allProjects.length-1}`);
     });
     
-    // Nach DOM-Update Fullpage neu initialisieren
+    // Initialize fullpage.js after DOM update
     setTimeout(initFullPage, 100);
   }
   
-  // Direkt im Script-Bereich die Projekte initialisieren
+  // Initialize projects in script section
   prepareProjects();
   
   function selectCategory(category) {
     currentCategory = category;
     prepareProjects();
     
-    // Nach Fullpage-Initialisierung zur ersten Projektseite scrollen
+    // Scroll to first project page after fullpage initialization
     setTimeout(() => {
       if (fullpageApi) {
         fullpageApi.moveTo(2);
@@ -203,18 +203,16 @@
     }
   }
   
+  // Initialize fullpage.js with configuration
   function initFullPage() {
-    // Zuerst zerstören, falls es bereits initialisiert wurde
+    // Destroy first if already initialized
     if (fullpageApi) {
       fullpageApi.destroy('all');
     }
     
-    // Dann neu initialisieren mit Lizenzschlüssel direkt in den Optionen
+    // Initialize with license key directly in options
     const fullpageInstance = new fullpage('#fullpage', {
-      // Lizenzschlüssel als Option
       licenseKey: 'NY3B6-D9AK9-K2SL6-J659H-BKYKN',
-      
-      // Bestehende Optionen
       anchors: sectionAnchors,
       navigation: true,
       navigationPosition: 'right',
@@ -237,25 +235,26 @@
     fullpageApi = fullpageInstance;
   }
   
-  // Neue Variablen für Partikel-System
+  // Particle system variables
   let particles = [];
   let particleContainer;
   
-  // Partikel-Systemfunktionen
+  // Particle system functions
   function createParticle(x, y) {
     return {
       x,
       y,
-      size: Math.random() * 3 + 1, // Etwas kleinere Partikel
+      size: Math.random() * 3 + 1, // Slightly smaller particles
       speedX: Math.random() * 2 - 1,
       speedY: Math.random() * 2 - 1,
-      life: 80, // Etwas kürzere Lebensdauer
-      color: `rgba(255, 255, 255, ${Math.random() * 0.4 + 0.1})` // Weiße Partikel mit Transparenz
+      life: 80, // Shorter lifespan
+      color: `rgba(255, 255, 255, ${Math.random() * 0.4 + 0.1})` // White particles with transparency
     };
   }
   
+  // Update and render particles
   function updateParticles() {
-    // Bewege Partikel
+    // Move particles
     particles = particles.map(p => ({
       ...p,
       x: p.x + p.speedX,
@@ -263,7 +262,7 @@
       life: p.life - 1
     })).filter(p => p.life > 0);
     
-    // Zeichne Partikel
+    // Draw particles
     if (particleContainer) {
       const ctx = particleContainer.getContext('2d');
       ctx.clearRect(0, 0, particleContainer.width, particleContainer.height);
@@ -276,19 +275,20 @@
       });
     }
     
-    // Rufe nächsten Frame auf
+    // Request next animation frame
     requestAnimationFrame(updateParticles);
   }
   
+  // Create particles on mouse movement (throttled for performance)
   function handleMouseMove(event) {
-    // Partikel an Mausposition erzeugen
     if (Math.random() > 0.7) {
       particles.push(createParticle(event.clientX, event.clientY));
     }
   }
   
+  // Initialize components on mount
   onMount(() => {
-    // Begrüßungs-Animation starten
+    // Start greeting animation
     greetingInterval = setInterval(() => {
       const greetingElement = document.querySelector('.greeting-text');
       if (greetingElement) {
@@ -302,19 +302,19 @@
       }
     }, 2500);
     
-    // fullpage.js direkt initialisieren
+    // Initialize fullpage.js
     initFullPage();
     
-    // Canvas für Partikel-Animation initialisieren
+    // Initialize particle animation canvas
     if (particleContainer) {
       particleContainer.width = window.innerWidth;
       particleContainer.height = window.innerHeight;
       requestAnimationFrame(updateParticles);
       
-      // Event-Listener für Mausbewegung
+      // Add mousemove event listener with rate limiting
       document.addEventListener('mousemove', handleMouseMove);
       
-      // Event-Listener für Window-Resize
+      // Handle window resize for canvas
       const handleResize = () => {
         if (particleContainer) {
           particleContainer.width = window.innerWidth;
@@ -324,8 +324,8 @@
       
       window.addEventListener('resize', handleResize);
       
+      // Clean up event listeners and intervals on unmount
       return () => {
-        // Bestehende Cleanup-Funktionen...
         clearInterval(greetingInterval);
         if (fullpageApi) {
           fullpageApi.destroy('all');
@@ -337,44 +337,44 @@
   });
 </script>
 
-<!-- Hidden H1 für SEO -->
+<!-- Hidden H1 for SEO -->
 <h1 class="sr-only">Franz - Interaction Designer & Creative Developer Portfolio</h1>
 
-<!-- Füge das Canvas-Element direkt nach dem <h1 class="sr-only">...</h1> ein -->
+<!-- Canvas for particle animation -->
 <canvas 
     bind:this={particleContainer} 
     class="particle-canvas"
 ></canvas>
 
-<!-- Header-Komponente -->
+<!-- Header component -->
 <HeaderHoverText />
 
-<!-- Zurück-zur-3D-Version Button -->
+<!-- Back to 3D version button -->
 <a href="/" class="version-toggle">Go to 3D Version</a>
 
-<!-- Kontakt-Icon-Komponente -->
+<!-- Contact icon component -->
 <ContactIcon on:open={() => contactFormVisible = true} />
 
-<!-- Burger-Menü-Komponente -->
+<!-- Burger menu component -->
 <BurgerMenu />
 
-<!-- Kontaktformular-Komponente -->
+<!-- Contact form component -->
 <Messageform visible={contactFormVisible} on:close={() => contactFormVisible = false} />
 
-<!-- Zurück-nach-oben-Button, sichtbar wenn nicht in Intro-Sektion -->
+<!-- Back to top button, visible when not in intro section -->
 {#if currentSection > 0}
   <button 
     class="back-to-top" 
     on:click={scrollToTop} 
     transition:fade={{duration: 200}}
-    aria-label="Zurück nach oben"
+    aria-label="Back to top"
   >
     ↑
   </button>
 {/if}
 
 <div id="fullpage">
-  <!-- Intro-Sektion: Das fehlerhafte {/if} wurde entfernt -->
+  <!-- Intro section -->
   <div class="section intro-section" data-anchor="intro">
     <div class="content-wrapper">
       <div class="intro-text">
@@ -388,7 +388,7 @@
         </p>
       </div>
 
-      <!-- Scroll-Indikator VOR den Kategorie-Toggles -->
+      <!-- Scroll indicator BEFORE category toggles -->
       {#if !currentCategory}
         <div class="scroll-indicator category-header">
           <span>Select a category to explore</span>
@@ -400,7 +400,7 @@
         </div>
       {/if}
 
-      <!-- Kategorie-Toggle-Buttons -->
+      <!-- Category toggle buttons -->
       <div class="category-toggles">
         <button 
           class="category-toggle {currentCategory === 'design' ? 'active' : ''}" 
@@ -438,12 +438,12 @@
     <div class="blur-gradient"></div>
   </div>
 
-  <!-- Dynamisch generierte Projekt-Sektionen mit individuellen Inhalten -->
+  <!-- Dynamically generated project sections with individual content -->
   {#if currentCategory && allProjects.length > 0}
     {#each allProjects as project, i}
-      <div class="section project-section" data-anchor="{currentCategory}-{i}">
+      <div class="section project-section" data-anchor="{project.anchor}">
         <div class="content-wrapper grid-container">
-          <!-- Projekt 1/3: Inhalt links, Bild rechts -->
+          <!-- Project 1/3: Content left, image right -->
           {#if i === 0 || i === 2}
             <div class="project-content left-content">
               <h2>{project.title}</h2>
@@ -456,7 +456,7 @@
                 {/each}
               </div>
               
-              <!-- Collaborators nur für bestimmte Kategorien anzeigen -->
+              <!-- Show collaborators only for certain categories -->
               {#if currentCategory !== 'photo' && currentCategory !== 'about'}
                 <div class="content-divider"></div>
                 <div class="collaborators">
@@ -468,21 +468,21 @@
                   </div>
                 </div>
               {:else}
-                <!-- Zusätzlicher Abstand für photo und about -->
+                <!-- Additional spacing for photo and about -->
                 <div class="spacer-for-photo-about"></div>
               {/if}
               
               <a href={project.link} class="project-button">Open Project</a>
             </div>
             
-            <!-- Bild rechts -->
+            <!-- Image right -->
             <div class="project-image right-image">
-              <img src={project.image} alt={project.title} />
+              <img src={project.image} alt={project.title} loading="lazy" />
             </div>
-          <!-- Projekt 2/4: Bild links, Inhalt rechts -->
+          <!-- Project 2/4: Image left, content right -->
           {:else}
             <div class="project-image left-image">
-              <img src={project.image} alt={project.title} />
+              <img src={project.image} alt={project.title} loading="lazy" />
             </div>
             
             <div class="project-content right-content">
@@ -496,7 +496,7 @@
                 {/each}
               </div>
               
-              <!-- Collaborators nur für bestimmte Kategorien anzeigen -->
+              <!-- Show collaborators only for certain categories -->
               {#if currentCategory !== 'photo' && currentCategory !== 'about'}
                 <div class="content-divider"></div>
                 <div class="collaborators">
@@ -508,7 +508,7 @@
                   </div>
                 </div>
               {:else}
-                <!-- Zusätzlicher Abstand für photo und about -->
+                <!-- Additional spacing for photo and about -->
                 <div class="spacer-for-photo-about"></div>
               {/if}
               
@@ -522,13 +522,13 @@
   {/if}
 </div>
 
-<!-- Footer als permanentes Overlay -->
+<!-- Footer as permanent overlay -->
 <div class="footer-overlay">
   <HomeFooter />
 </div>
 
 <style>
-  /* Font-Definitionen aus der Projektseite einbinden */
+  /* Font definitions */
   @font-face {
     font-family: 'Franz-Plex';
     src: url('/fonts/IBM_Plex_Mono/IBMPlexMono-Regular.ttf') format('truetype');
@@ -545,7 +545,7 @@
     font-display: swap;
   }
 
-  /* Ergänze die fette Variante von Franz-Plex für bessere Darstellung */
+  /* Add bold variant of Franz-Plex for better display */
   @font-face {
     font-family: 'Franz-Plex';
     src: url('/fonts/IBM_Plex_Mono/IBMPlexMono-Bold.ttf') format('truetype');
@@ -554,6 +554,19 @@
     font-display: swap;
   }
 
+  /* CSS Variables */
+  :root {
+    --bg-color: #01031A;
+    --text-color: #fff;
+    --accent-color: rgba(255, 255, 255, 0.2);
+    --border-color: rgba(255, 255, 255, 0.3);
+    --hover-bg: rgba(255, 255, 255, 0.1);
+    --active-bg: rgba(255, 255, 255, 0.2);
+    --dark-overlay: rgba(0, 0, 0, 0.7);
+    --card-bg: rgba(27, 29, 58, 0.6);
+  }
+
+  /* Global styles */
   :global(html) {
     overflow: hidden;
     height: 100%;
@@ -564,33 +577,32 @@
     overflow: hidden;
   }
   
-  /* Grundlegendes Styling */
   :global(.section) {
     position: relative;
-    background-color: #01031A;
-    color: #fff;
-    font-family: 'Franz-Plex', monospace; /* Geändert zu Franz-Plex */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Franz-Plex', monospace;
   }
   
-  /* Zurück-nach-oben-Button neu gestaltet */
+  /* Back to top button */
   .back-to-top {
     position: fixed;
     bottom: 60px;
     right: 45px;
     z-index: 100;
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--dark-overlay);
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%; /* Rundes Design */
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
     width: 50px;
     height: 50px;
-    font-size: 20px; /* Größeres Pfeilsymbol */
+    font-size: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    justify-content: center; /* Zentriert den Pfeil */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Leichter Schatten für Tiefe */
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   }
   
   .back-to-top:hover {
@@ -599,26 +611,15 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
   }
   
-  /* Für Mobilgeräte etwas kleiner */
-  @media (max-width: 768px) {
-    .back-to-top {
-      width: 50px;
-      height: 50px;
-      font-size: 18px;
-      bottom: 30px;
-      right: 10px;
-    }
-  }
-  
-  /* Version-Toggle */
+  /* Version toggle */
   .version-toggle {
     position: fixed;
     top: 18px;
-    right: 140px; /* Links neben dem Kontakt-Icon */
+    right: 140px;
     z-index: 9900;
     color: white;
-    background: transparent; /* Kein Hintergrund */
-    border: none; /* Keine Border im Normalzustand */
+    background: transparent;
+    border: none;
     padding: 8px 12px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 14px;
@@ -629,26 +630,19 @@
   }
   
   .version-toggle:hover {
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Border erscheint beim Hover */
+    border: 1px solid var(--border-color);
     border-radius: 4px;
-    background: rgba(0, 0, 0, 0.3); /* Leichter Hintergrund beim Hover */
+    background: rgba(0, 0, 0, 0.3);
     transform: translateY(-2px);
   }
   
-  /* Mobil-Anpassung beibehalten */
-  @media (max-width: 768px) {
-    .version-toggle {
-      display: none; /* Button im Hauptlayout ausblenden */
-    }
-  }
-  
-  /* Intro-Sektion */
+  /* Intro section */
   .intro-section {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative; /* Wichtig für absolute Positionierung der Kategorie-Toggles */
-    height: 100vh; /* Sicherstellen, dass die Sektion immer die volle Höhe einnimmt */
+    position: relative;
+    height: 100vh;
   }
   
   .content-wrapper {
@@ -658,7 +652,7 @@
     padding: 0 2rem;
     z-index: 5;
     position: relative;
-    height: 100%; /* Volle Höhe für bessere Positionierung */
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -670,12 +664,12 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    margin-bottom: 4rem; /* Mehr Abstand zur Kategorie-Leiste */
-    margin-left: 2rem; /* Neuer Wert: Text nach rechts verschieben */
-    align-self: flex-start; /* Linksbündig am Container ausrichten */
+    margin-bottom: 4rem;
+    margin-left: 2rem;
+    align-self: flex-start;
   }
   
-  /* Styling für die Begrüßung */
+  /* Greeting styling */
   .greeting-container {
     margin-bottom: 1rem;
     height: 5rem;
@@ -688,51 +682,39 @@
     font-weight: 700;
     color: #fff;
     transition: opacity 0.5s ease;
-    font-family: 'Franz-Plex', monospace; /* Von Franz-Grotesk zu Franz-Plex geändert */
+    font-family: 'Franz-Plex', monospace;
   }
   
-  /* Optional: Schriftgröße anpassen, da Mono-Fonts oft breiter erscheinen */
-  @media (max-width: 768px) {
-    .greeting-text {
-      font-size: 1.8rem; /* Etwas kleiner für Mobilgeräte */
-    }
-  }
-  
-  /* Überschriften-Styling */
+  /* Heading styling */
   .heading-large {
     font-size: 3.5rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
     letter-spacing: -1px;
-    font-family: 'Franz-Plex', monospace; /* Geändert zu Franz-Grotesk */
+    font-family: 'Franz-Plex', monospace;
   }
   
   .intro-description {
     font-size: 1.3rem;
     line-height: 1.7;
-    margin-top: 0rem;
+    margin-top: 0;
     margin-bottom: 2rem;
     max-width: 700px;
     text-align: left;
     margin-left: 0;
     padding-left: 0;
-    font-family: 'Franz-Plex', monospace; /* Geändert zu Franz-Plex */
+    font-family: 'Franz-Plex', monospace;
   }
   
-  /* Kategorie-Toggles */
+  /* Category toggles */
   .category-toggles {
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
     width: 100%;
-    justify-content: flex-start; /* Links ausrichten */
-    position: flex; /* Absolut positionieren */
-    bottom: 18%; /* Im unteren Drittel platzieren */
-    left: 0;
-    right: 0;
+    justify-content: center;
     padding: 0 2rem;
     margin-top: 2.5rem;
-    justify-content: center;
   }
   
   .category-toggle {
@@ -745,21 +727,21 @@
     cursor: pointer;
     transition: all 0.3s ease;
     font-family: 'Franz-Plex', monospace;
-    flex-grow: 0; /* Nicht automatisch wachsen */
-    margin-bottom: 8px; /* Abstand zwischen Reihen beim Umbrechen */
+    flex-grow: 0;
+    margin-bottom: 8px;
   }
   
   .category-toggle:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--hover-bg);
     transform: translateY(-2px);
   }
   
   .category-toggle.active {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: var(--active-bg);
+    border-color: var(--border-color);
   }
   
-  /* Scroll-Indikator */
+  /* Scroll indicator */
   .scroll-indicator {
     margin-top: 1rem;
     opacity: 0.7;
@@ -789,14 +771,14 @@
     100% { opacity: 0.3; transform: translateY(0); }
   }
   
-  /* Projekt-Sektion */
+  /* Project section */
   .project-section {
     position: relative;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #01031A; /* Hintergrundfarbe statt Hintergrundbild */
+    background-color: var(--bg-color);
   }
   
   .project-content {
@@ -813,36 +795,31 @@
     justify-content: center;
   }
   
-  /* Entferne das pseudo-Element und den Border-left vom Text */
-  .project-content::before {
-    content: none;
-  }
-  
   .project-content h2 {
     font-size: 2.5rem;
-    margin-bottom: 2.5rem; /* Erhöhter Abstand: von 0 auf 2.5rem */
+    margin-bottom: 2.5rem;
     font-weight: 700;
     text-align: left;
     font-family: 'Franz-Grotesk', sans-serif;
     color: #FFFFFF;
-    position: relative; /* Für z-index */
-    z-index: 2; /* Über der Linie */
-    width: 100%; /* Volle Breite */
+    position: relative;
+    z-index: 2;
+    width: 100%;
   }
   
   .project-content p {
     font-size: 1.1rem;
     line-height: 1.6;
-    margin-bottom: 2.5rem; /* Erhöhter Abstand: von 0 auf 2.5rem */
-    margin-top: 0; /* Null Margin oben, da wir die Linie separat platzieren */
+    margin-bottom: 2.5rem;
+    margin-top: 0;
     text-align: left;
     font-family: 'Franz-Plex', monospace;
-    position: relative; /* Für z-index */
-    z-index: 2; /* Über der Linie */
-    padding-left: 0; /* Kein Padding mehr */
-    border-left: none; /* Keine Linie mehr am Text */
-    margin-left: 0; /* Kein Abstand mehr */
-    width: 100%; /* Volle Breite */
+    position: relative;
+    z-index: 2;
+    padding-left: 0;
+    border-left: none;
+    margin-left: 0;
+    width: 100%;
   }
   
   .project-button {
@@ -855,52 +832,57 @@
     font-size: 1rem;
     font-weight: 500;
     transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--border-color);
     text-align: center;
     font-family: 'Franz-Plex', monospace;
-    margin-left: 0; /* Kein Abstand mehr */
-    position: relative; /* Für z-index */
-    z-index: 2; /* Über der Linie */
-    align-self: flex-start; /* Linksbündig statt zentriert */
+    margin-left: 0;
+    position: relative;
+    z-index: 2;
+    align-self: flex-start;
   }
   
-  /* Grid-Container für 8 Spalten */
+  .project-button:hover {
+    background-color: var(--hover-bg);
+    transform: translateY(-2px);
+  }
+  
+  /* Grid container for 8 columns */
   .grid-container {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    gap: 40px; /* Größerer Abstand zwischen Inhalt und Bild */
+    gap: 40px;
     width: 100%;
     max-width: 1400px;
     padding: 0 2rem;
   }
   
-  /* Linke 3 Spalten */
+  /* Left 4 columns */
   .left-content {
-    grid-column: 1 / span 4; /* Linke 4 Spalten */
+    grid-column: 1 / span 4;
   }
   
-  /* Rechte 3 Spalten */
+  /* Right 4 columns */
   .right-content {
-    grid-column: 5 / span 4; /* Rechte 4 Spalten */
+    grid-column: 5 / span 4;
   }
   
-  /* Bild links */
+  /* Image left */
   .left-image {
-    grid-column: 1 / span 4; /* Linke 4 Spalten */
+    grid-column: 1 / span 4;
     display: flex;
     justify-content: center;
     align-items: center;
   }
   
-  /* Bild rechts */
+  /* Image right */
   .right-image {
-    grid-column: 5 / span 4; /* Rechte 4 Spalten */
+    grid-column: 5 / span 4;
     display: flex;
     justify-content: center;
     align-items: center;
   }
   
-  /* Bild-Styling */
+  /* Image styling */
   .project-image img {
     width: 100%;
     height: auto;
@@ -910,7 +892,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   }
   
-  /* Screen reader only class für verstecktes H1 */
+  /* Screen reader only class for hidden H1 */
   .sr-only {
     position: absolute;
     width: 1px;
@@ -923,173 +905,7 @@
     border-width: 0;
   }
   
-  /* Responsive Design */
-  @media (max-width: 992px) {
-    .category-toggles {
-      justify-content: center; /* Auf mittleren Bildschirmen zentrieren */
-    }
-    
-    .category-toggle {
-      flex-basis: calc(33.33% - 16px); /* Ungefähr 3 pro Zeile mit Berücksichtigung des Gaps */
-      text-align: center;
-    }
-    
-    .project-content {
-      max-width: 90%;
-      padding: 30px;
-    }
-    
-    .project-content h2 {
-      font-size: 2rem;
-    }
-    
-    .left-content, .right-content, .left-image, .right-image {
-      grid-column: 2 / span 6; /* Bei schmalen Bildschirmen zentriert mit etwas Rand */
-    }
-    
-    /* Bei mittleren Bildschirmen Reihenfolge ändern */
-    .grid-container {
-      grid-template-rows: auto auto;
-      row-gap: 40px;
-    }
-    
-    /* Bild immer über dem Inhalt anzeigen */
-    .project-image {
-      grid-row: 1;
-    }
-    
-    .project-content {
-      grid-row: 2;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .greeting-text {
-      font-size: 2rem;
-    }
-    
-    .heading-large {
-      font-size: 2.5rem;
-    }
-    
-    .intro-description {
-      font-size: 1.1rem;
-    }
-    
-    .category-toggle {
-      flex-basis: calc(50% - 16px); /* 2 pro Zeile auf kleineren Bildschirmen */
-    }
-    
-    .project-content {
-      max-width: 95%;
-      padding: 20px;
-    }
-    
-    .project-content h2 {
-      font-size: 1.7rem;
-    }
-    
-    .project-content p {
-      font-size: 1rem;
-    }
-    
-    .left-content, .right-content, .left-image, .right-image {
-      grid-column: 1 / span 8; /* Bei sehr schmalen Bildschirmen volle Breite */
-    }
-    
-    .project-image img {
-      max-height: 50vh;
-    }
-    
-    .project-content::before {
-      left: 20px;
-      height: calc(100% - 180px);
-    }
-    
-    .project-content h2 {
-      margin-bottom: 2rem;
-    }
-    
-    .project-content p {
-      padding-left: 15px;
-      margin-left: 15px;
-    }
-    
-    .project-button {
-      margin-left: 15px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .category-toggle {
-      flex-basis: 100%; /* 1 pro Zeile auf sehr kleinen Bildschirmen */
-    }
-  }
-  
-  /* Vollbild-Sektion anpassen */
-  .section {
-    height: 100vh !important; /* Erzwinge volle Viewport-Höhe */
-    min-height: 100vh !important; /* Sichere Mindesthöhe */
-    scroll-snap-align: none; /* Entferne, da fullpage.js dies übernimmt */
-  }
-
-  /* Modifizierte Styles für das Fullpage-Container */
-  #fullpage {
-    overflow-y: visible; /* Zurücksetzen zur Standardeinstellung */
-    height: auto; /* Zurücksetzen zur Standardeinstellung */
-    scroll-snap-type: none; /* Entferne, da fullpage.js dies übernimmt */
-  }
-
-  /* Footer als permanentes Overlay */
-  .footer-overlay {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 50; /* Hoch genug für Inhalte, aber niedriger als Navigation/Header */
-    background: rgba(1, 3, 26, 0.7); /* Transparenter Hintergrund, der zum Design passt */
-    backdrop-filter: blur(5px); /* Optional: leichter Blur-Effekt */
-  }
-  
-  /* Bei kleineren Bildschirmen Footer anpassen */
-  @media (max-width: 768px) {
-    .footer-overlay {
-      background: rgba(1, 3, 26, 0.9); /* Weniger Transparenz auf kleinen Geräten */
-    }
-  }
-
-  /* Styles für fullpage.js anpassen */
-  :global(.fp-watermark) {
-    display: none !important; /* Optional: Versucht, das Wasserzeichen zu verbergen */
-  }
-  
-  :global(.fp-tooltip) {
-    color: white !important;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-family: 'Franz-Plex', monospace;
-  }
-
-  /* Kategorie-Header über den Buttons */
-  .category-header {
-    margin-bottom: 1.5rem;
-    text-align: center;
-    width: 100%;
-  }
-  
-  /* Scroll-Indikator anpassen */
-  .scroll-indicator {
-    opacity: 0.7;
-    animation: fadeInOut 2s infinite;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 3rem; /* Mehr Abstand zum Text */
-    margin-bottom: 1rem; /* Weniger Abstand zu den Kategorien */
-  }
-
-  /* Dünne Trennlinie für Projekt-Content-Bereiche */
+  /* Content divider */
   .content-divider {
     width: 100%;
     height: 1px;
@@ -1097,7 +913,7 @@
     margin: 1.5rem 0;
   }
   
-  /* Tag-Styling wie in der migrants-Seite */
+  /* Tag styling */
   .tags {
     display: flex;
     flex-wrap: wrap;
@@ -1110,14 +926,14 @@
     display: inline-flex;
     align-items: center;
     padding: 0.5rem 1rem;
-    background-color: rgba(27, 29, 58, 0.6);
+    background-color: var(--card-bg);
     border-radius: 9999px;
     color: #fff;
     font-size: 0.9rem;
     font-family: 'Franz-Plex', monospace;
   }
   
-  /* Collaborators-Bereich */
+  /* Collaborators section */
   .collaborators {
     margin: 1.2rem 0 2rem 0;
     width: 100%;
@@ -1143,336 +959,268 @@
     font-size: 0.9rem;
   }
   
-  /* Responsiveness für neue Elemente */
-  @media (max-width: 768px) {
-    .tags {
-      display: none;
-    }
-    
-    .content-divider {
-      display: none;
-    }
-    
-    .collaborators {
-      margin: 1rem 0 1.5rem 0;
-    }
-    
-    .collaborators-list {
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-  }
-
-  /* fullpage.js Navigationspunkte weiß einfärben */
-  :global(#fp-nav ul li a span),
-  :global(.fp-slidesNav ul li a span) {
-    background-color: rgb(122, 122, 122) !important; /* Weißer Punkt */
-    border-color: rgb(122, 122, 122) !important; /* Weißer Rahmen */
-  }
-  
-  :global(#fp-nav ul li a.active span),
-  :global(.fp-slidesNav ul li a.active span) {
-    background-color: white !important; /* Aktiver Punkt auch weiß */
-    transform: scale(1) !important; /* Aktiver Punkt etwas größer */
-  }
-  
-  :global(#fp-nav ul li .fp-tooltip) {
-    color: white !important; /* Tooltip-Text weiß */
-  }
-  
-  :global(#fp-nav ul li .fp-sr-only) {
-    color: white !important; /* Screen-Reader-Text weiß (falls sichtbar) */
-  }
-  
-  /* Optional: Bessere Sichtbarkeit auf dunklem Hintergrund */
-  :global(#fp-nav) {
-    background: rgba(0, 0, 0, 0.2); /* Leicht transparenter Hintergrund */
-    border-radius: 15px; /* Abgerundete Ecken */
-    padding: 5px; /* Etwas Innenabstand */
-  }
-
-  /* Medienabfrage für mobile Geräte anpassen */
-  @media (max-width: 768px) {
-    /* Bestehende Styles bleiben unverändert... */
-    
-    /* Tags auf mobilen Geräten ausblenden */
-    .tags {
-      display: none;
-    }
-    
-    /* Trennlinien auf mobilen Geräten ausblenden */
-    .content-divider {
-      display: none;
-    }
-    
-    /* Collaborators in 2 Spalten anordnen */
-    .collaborators-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr; /* 2 Spalten mit gleicher Breite */
-      gap: 0.5rem 1rem; /* Vertikaler und horizontaler Abstand */
-      flex-direction: unset; /* Überschreibt die bestehende column-Eigenschaft */
-    }
-    
-    /* Sicherstellen, dass die Namen gut lesbar bleiben */
-    .collaborator {
-      font-size: 0.85rem; /* Etwas kleinere Schrift für bessere Passform */
-      white-space: nowrap; /* Verhindert Zeilenumbrüche innerhalb der Namen */
-      overflow: hidden;
-      text-overflow: ellipsis; /* Falls Namen zu lang sind */
-    }
-    
-    /* Collaborators-Überschrift anpassen */
-    .collaborators h4 {
-      margin-bottom: 0.5rem; /* Weniger Abstand zur Liste */
-    }
-    
-    /* Abstand nach unten zum Button reduzieren */
-    .collaborators {
-      margin-bottom: 1.2rem;
-    }
-
-    /* Verkleinerte Abstände */
-    .project-content h2 {
-      margin-bottom: 1.2rem; /* Reduziert von 2rem */
-      font-size: 1.7rem;
-    }
-    
-    .project-content p {
-      font-size: 1rem;
-      margin-bottom: 1.5rem; /* Reduziert von 2.5rem */
-      padding-left: 0;     /* Entfernt unerwünschtes Padding */
-      margin-left: 0;      /* Entfernt unerwünschten Margin */
-    }
-    
-    /* Button zentrieren */
-    .project-button {
-      margin-left: 0;      /* Entfernt den linken Margin */
-      align-self: center;  /* Zentriert den Button */
-      width: 80%;          /* Breiter Button für bessere mobile Bedienung */
-    }
-    
-    /* Kleinere Abstände für Collaborators */
-    .collaborators {
-      margin: 0.8rem 0 1.2rem 0; /* Reduziert Abstände oben und unten */
-    }
-    
-    .collaborators h4 {
-      margin-bottom: 0.5rem; /* Bereits klein, beibehalten */
-    }
-    
-    /* Kleinerer Abstand zwischen den Collaborator-Zeilen */
-    .collaborators-list {
-      gap: 0.4rem 1rem; /* Vertikaler Abstand reduziert */
-    }
-  }
-
-  /* Zusätzliche Anpassung für sehr kleine Bildschirme */
-  @media (max-width: 480px) {
-    .project-button {
-      width: 100%; /* Volle Breite auf sehr kleinen Bildschirmen */
-    }
-  }
-  
-  /* Noch kleinere Bildschirme (z.B. schmale Smartphones) */
-  @media (max-width: 480px) {
-    /* Bei sehr schmalen Geräten zurück zur einspaltigen Ansicht */
-    .collaborators-list {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  @media (max-width: 768px) {
-    /* Bestehende Styles... */
-    
-    /* Intro-Text weiter nach unten verschieben */
-    .intro-text {
-      margin-top: 25vh; /* Verschiebt den Text nach unten */
-      margin-bottom: 2rem; /* Weniger Abstand nach unten */
-      margin-left: 1.5rem; /* Leichter Rand links */
-      align-self: flex-start; /* Linksbündig am Container ausrichten */
-      text-align: left; /* Text linksbündig */
-    }
-    
-    /* Greeting Container anpassen - linksbündig */
-    .greeting-container {
-      justify-content: flex-start; /* Linksbündig ausrichten */
-      margin-bottom: 0.5rem; /* Weniger Abstand */
-      height: 3rem; /* Kleinere Höhe */
-    }
-    
-    /* Überschrift und Beschreibung anpassen - linksbündig */
-    .heading-large {
-      text-align: left;
-      margin-bottom: 1rem;
-    }
-    
-    .intro-description {
-      text-align: left;
-      margin-bottom: 1.5rem;
-      max-width: 90%; /* Verhindert, dass der Text zu breit wird */
-    }
-    
-    /* Rest der Styles bleibt unverändert... */
-  }
-
-  /* Für sehr kleine Bildschirme */
-  @media (max-width: 480px) {
-    .intro-text {
-      margin-left: 1rem; /* Etwas weniger Rand auf sehr kleinen Geräten */
-      margin-top: 15vh; /* Etwas weniger nach unten */
-    }
-  }
-
-  @media (max-width: 768px) {
-    /* Bestehende Styles... */
-    
-    /* Intro-Text weiter nach unten verschieben */
-    .intro-text {
-      margin-top: 25vh; /* Verschiebt den Text nach unten */
-      margin-bottom: 2rem; /* Weniger Abstand nach unten */
-      margin-left: 0; /* Zentriert auf mobilen Geräten */
-      align-self: center; /* Zentriert auf mobilen Geräten */
-      text-align: center; /* Text zentrieren */
-    }
-    
-    /* Greeting Container anpassen */
-    .greeting-container {
-      justify-content: left; /* Zentriert die Grußnachricht */
-      margin-bottom: 0.5rem; /* Weniger Abstand */
-      height: 3rem; /* Kleinere Höhe */
-    }
-    
-    /* Überschrift und Beschreibung anpassen */
-    .heading-large {
-      text-align: left;
-      margin-bottom: 1rem;
-    }
-    
-    .intro-description {
-      text-align: left;
-      margin-bottom: 1.5rem;
-    }
-    
-    /* Kategorie-Toggles verbessern */
-    .category-toggles {
-      display: grid;
-      grid-template-columns: 1fr 1fr; /* Genau 2 Spalten */
-      gap: 12px; /* Kleinerer Abstand */
-      width: 90%; /* Etwas schmaler als der Container */
-      margin-top: 2rem; /* Mehr Abstand zum Text */
-      padding: 0;
-    }
-    
-    .category-toggle {
-      flex-basis: auto; /* Zurücksetzen des flex-basis */
-      margin-bottom: 0; /* Grid-Gap übernimmt den Abstand */
-      padding: 10px 15px; /* Etwas kompakter */
-      font-size: 0.9rem; /* Kleinere Schrift */
-      width: 100%; /* Volle Breite in der Grid-Zelle */
-    }
-    
-    /* Category-Header anpassen */
-    .category-header {
-      margin-bottom: 1rem; /* Weniger Abstand */
-    }
-    
-    /* Scroll-Indikator anpassen */
-    .scroll-indicator {
-      margin-top: 1.5rem;
-      margin-bottom: 0.7rem;
-    }
-  }
-  
-  /* Für sehr kleine Bildschirme einspaltiges Layout */
-  @media (max-width: 480px) {
-    .category-toggles {
-      grid-template-columns: 1fr; /* Einspaltiges Layout */
-    }
-    
-    .intro-text {
-      margin-top: 15vh; /* Etwas weniger nach unten auf sehr kleinen Geräten */
-    }
-  }
-
-  /* Bestehende Styles... */
-  
-  /* Partikel-Canvas */
+  /* Particle canvas */
   .particle-canvas {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 1; /* Über dem Hintergrund, aber unter dem Inhalt */
-    pointer-events: none; /* Erlaubt Interaktionen mit Elementen dahinter */
+    z-index: 1;
+    pointer-events: none;
   }
 
-  /* Abstandhalter für photo und about Kategorien */
+  /* Spacer for photo and about categories */
   .spacer-for-photo-about {
-    height: 2rem; /* Größerer Abstand */
+    height: 2rem;
     width: 100%;
   }
 
-  /* Bei mobilen Geräten etwas weniger Abstand */
-  @media (max-width: 768px) {
-    .spacer-for-photo-about {
-      height: 1.5rem;
+  /* Footer as permanent overlay */
+  .footer-overlay {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: rgba(1, 3, 26, 0.7);
+    backdrop-filter: blur(5px);
+  }
+  
+  /* Fullpage.js styling */
+  :global(.fp-watermark) {
+    display: none !important;
+  }
+  
+  :global(.fp-tooltip) {
+    color: white !important;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-family: 'Franz-Plex', monospace;
+  }
+
+  /* Navigation dots styling */
+  :global(#fp-nav ul li a span),
+  :global(.fp-slidesNav ul li a span) {
+    background-color: rgb(122, 122, 122) !important;
+    border-color: rgb(122, 122, 122) !important;
+  }
+  
+  :global(#fp-nav ul li a.active span),
+  :global(.fp-slidesNav ul li a.active span) {
+    background-color: white !important;
+    transform: scale(1) !important;
+  }
+  
+  :global(#fp-nav ul li .fp-tooltip) {
+    color: white !important;
+  }
+  
+  :global(#fp-nav ul li .fp-sr-only) {
+    color: white !important;
+  }
+  
+  :global(#fp-nav) {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    padding: 5px;
+  }
+
+  /* Category header */
+  .category-header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    width: 100%;
+  }
+  
+  /* Responsive design - Tablet */
+  @media (max-width: 1024px) {
+    .grid-container {
+      grid-template-columns: repeat(6, 1fr);
+    }
+    
+    .left-content, .right-content {
+      grid-column: 1 / span 6;
+    }
+    
+    .left-image, .right-image {
+      grid-column: 1 / span 6;
+      margin-bottom: 2rem;
+    }
+    
+    .project-section {
+      padding: 2rem 0;
     }
   }
 
-  /* Für sehr kleine Bildschirme */
-  @media (max-width: 480px) {
-    /* Toggle-Buttons bleiben zweispaltig */
-    .category-toggles {
-      grid-template-columns: 1fr 1fr; /* Zweispaltiges Layout beibehalten */
-      gap: 8px; /* Noch etwas kleinerer Abstand für bessere Passform */
-    }
-    
-    /* Kategorie-Buttons etwas kompakter gestalten */
-    .category-toggle {
-      font-size: 0.8rem; /* Kleinere Schrift */
-      padding: 8px 10px; /* Kompakteres Padding */
-    }
-    
-    /* Bestehende Anpassungen beibehalten */
-    .intro-text {
-      margin-top: 5vh; /* Etwas weniger nach unten auf sehr kleinen Geräten */
-    }
-    
-    /* Andere kleine Bildschirm-Anpassungen bleiben bestehen... */
-  }
-
-  /* Responsive Anpassungen für fullpage.js */
+  /* Responsive design - Mobile */
   @media (max-width: 768px) {
-    /* Globale Anpassungen für normales Scrolling auf Mobilgeräten */
+    /* Global adjustments for normal scrolling on mobile */
     :global(html), :global(body) {
       overflow: auto !important;
       height: auto !important;
     }
     
-    /* Sektionen anpassen für normales Scrolling */
+    /* Section adjustments for normal scrolling */
     .section {
       height: auto !important;
-      min-height: 100vh !important; /* Mindesthöhe beibehalten */
-      padding: 4rem 0 !important; /* Zusätzlicher Abstand oben und unten */
+      min-height: 100vh !important;
+      padding: 4rem 0 !important;
     }
     
-    /* Intro-Sektion speziell anpassen */
+    /* Intro section special adjustments */
     .intro-section {
-      height: 100vh !important; /* Erste Sektion volle Höhe lassen */
-      min-height: 600px !important; /* Minimalhöhe für kleine Displays */
+      height: 100vh !important;
+      min-height: 600px !important;
     }
     
-    /* Navigation verstecken auf Mobilgeräten */
+    /* Hide navigation on mobile devices */
     :global(#fp-nav) {
       display: none !important;
     }
     
-    /* Zurück-nach-oben-Button anpassen */
+    /* Adjust back-to-top button */
     .back-to-top {
-      display: flex !important; /* Immer anzeigen, wenn gescrollt wird */
-      bottom: 80px; /* Über dem Footer platzieren */
+      display: flex !important;
+      bottom: 80px;
       right: 15px;
+    }
+    
+    /* Hide version toggle on mobile */
+    .version-toggle {
+      display: none;
+    }
+    
+    /* Adjust greeting text size */
+    .greeting-text {
+      font-size: 2rem;
+    }
+    
+    .heading-large {
+      font-size: 2.5rem;
+    }
+    
+    .intro-description {
+      font-size: 1.1rem;
+    }
+    
+    /* Category toggles for mobile */
+    .category-toggles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 90%;
+      margin-top: 2rem;
+      padding: 0;
+    }
+    
+    .category-toggle {
+      width: 100%;
+      padding: 10px 15px;
+      font-size: 0.9rem;
+      margin-bottom: 0;
+    }
+    
+    /* Intro text centering on mobile */
+    .intro-text {
+      margin-top: 25vh;
+      margin-bottom: 2rem;
+      margin-left: 0;
+      align-self: center;
+      text-align: center;
+    }
+    
+    /* Greeting container on mobile */
+    .greeting-container {
+      justify-content: left;
+      margin-bottom: 0.5rem;
+      height: 3rem;
+    }
+    
+    /* Project content adjustments */
+    .project-content {
+      padding: 20px;
+    }
+    
+    .project-content h2 {
+      font-size: 1.7rem;
+      margin-bottom: 1.2rem;
+    }
+    
+    .project-content p {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Hide tags on mobile */
+    .tags {
+      display: none;
+    }
+    
+    /* Hide dividers on mobile */
+    .content-divider {
+      display: none;
+    }
+    
+    /* Collaborators in 2 columns */
+    .collaborators-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem 1rem;
+    }
+    
+    .collaborator {
+      font-size: 0.85rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    /* Button centering */
+    .project-button {
+      align-self: center;
+      width: 80%;
+    }
+    
+    /* Footer adjustments */
+    .footer-overlay {
+      background: rgba(1, 3, 26, 0.9);
+    }
+
+    /* Adjust back-to-top button */
+    .back-to-top {
+      width: 50px;
+      height: 50px;
+      font-size: 18px;
+      bottom: 30px;
+      right: 10px;
+    }
+  }
+  
+  /* Very small screens */
+  @media (max-width: 480px) {
+    .content-wrapper {
+      padding: 0 1rem;
+    }
+    
+    .project-button {
+      width: 100%;
+    }
+    
+    .intro-text {
+      margin-top: 15vh;
+    }
+    
+    /* Keep category toggles in two columns */
+    .category-toggles {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    
+    .category-toggle {
+      font-size: 0.8rem;
+      padding: 8px 10px;
     }
   }
 </style>
