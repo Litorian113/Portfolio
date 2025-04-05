@@ -390,48 +390,6 @@ const pageKeywords = "AI card game, ChatGPT API, SvelteKit, interactive web game
     letter-spacing: 0.1rem;
   }
   
-  .title-link {
-    display: inline-flex;
-    align-items: center;
-    text-decoration: none;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-    position: relative; /* Erforderlich für absolute Positionierung des Pseudoelements */
-  }
-  
-  .title-link:hover h1 {
-    text-decoration: none; /* Entferne die bestehende Unterstreichung */
-  }
-  
-  .title-link::after {
-    content: '';
-    position: absolute;
-    bottom: 8px; /* Anpassung der Position relativ zum Text */
-    left: 0;
-    width: 0; /* Beginnt mit 0 Breite */
-    height: 1px; /* Dünnere Linie als der Standard-Unterstrich */
-    background-color: #00CCB5; /* Gleiche Farbe wie der Text */
-    transition: width 0.3s ease; /* Animation von links nach rechts */
-    transform-origin: left;
-  }
-  
-  .title-link:hover::after {
-    width: 100%; /* Volle Breite beim Hover */
-  }
-  
-  .link-icon {
-    font-size: 2.5rem;
-    color: #00CCB5;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-    margin-top: 0.5rem; /* Feinabstimmung für vertikale Ausrichtung */
-  }
-  
-  .title-link:hover .link-icon {
-    opacity: 1;
-    transform: translateY(-3px);
-  }
-  
   /* Drei Spalten Layout */
   .project-columns {
     display: flex;
@@ -553,21 +511,6 @@ const pageKeywords = "AI card game, ChatGPT API, SvelteKit, interactive web game
     line-height: 1.6;
     font-size: 1.5rem;
   }
-  
-
-
-  
-  .img-section-4 {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: repeat(1, 1fr);
-    gap: 8px;
-    margin-top: 10rem;
-  }
-      
-  .img-container {
-    grid-column: span 4 / span 4;
-  }
 
 
   
@@ -623,16 +566,6 @@ const pageKeywords = "AI card game, ChatGPT API, SvelteKit, interactive web game
     .heading-container h1 {
       font-size: 4rem;
       line-height: 1.1;
-    }
-    
-    /* Andere Bilder sollen die volle Breite behalten */
-    .img-section-4 {
-      display: block;
-      margin-top: 5rem;
-    }
-    
-    .img-container {
-      width: 100%;
     }
     
     .image-section {

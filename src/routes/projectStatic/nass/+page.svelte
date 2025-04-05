@@ -255,7 +255,7 @@
 
   <!-- Prototype building process -->
   <div class="image-section">
-    <img src="/Nass-Doku6.png" alt="Three detailed images showing the prototype building process, with the final product being held by a user in the last image" />
+    <img src="/Nass-Doku6.png" alt="Three detailed contents showing the prototype building process, with the final product being held by a user in the last content" />
   </div>
 
   <!-- Data visualization and web platform -->
