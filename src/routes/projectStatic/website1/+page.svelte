@@ -103,7 +103,7 @@
     "isPartOf": {
       "@type": "WebSite",
       "name": "FXMA Design",
-      "url": "https://fxma.design"
+      "url": "https://fxma.design/projectStatic/website1"
     },
     "image": "https://fxma.design/website1/website1-cover.png"
   }
