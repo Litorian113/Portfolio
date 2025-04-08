@@ -692,6 +692,7 @@
     margin-bottom: 1.5rem;
     letter-spacing: -1px;
     font-family: 'Franz-Plex', monospace;
+    text-align: left;
   }
   
   .intro-description {
@@ -1140,18 +1141,64 @@
     
     /* Project content adjustments */
     .project-content {
-      padding: 20px;
+      padding: 20px 0;
+      margin-top: 1rem;
+      text-align: left;
     }
     
+    /* Bildposition für mobile Geräte - immer zuerst */
+    .grid-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    /* Für Projekte, bei denen der Text links ist (0, 2), 
+       müssen wir die Reihenfolge umkehren */
+    .left-content {
+      order: 2;
+      grid-column: 1 / span 6;
+      text-align: left;
+    }
+    
+    .right-content {
+      order: 2;
+      grid-column: 1 / span 6;
+      text-align: left;
+    }
+    
+    .left-image, .right-image {
+      order: 1;
+      grid-column: 1 / span 6;
+      margin-bottom: 1rem;
+    }
+    
+    /* Projekt-Content-Abstand anpassen */
+    .project-content {
+      padding: 20px 0;
+      margin-top: 1rem;
+      text-align: left;
+    }
+    
+    /* Explizit Texte links ausrichten */
     .project-content h2 {
-      font-size: 1.7rem;
-      margin-bottom: 1.2rem;
+      text-align: left;
+      width: 100%;
     }
     
     .project-content p {
-      font-size: 1rem;
-      margin-bottom: 1.5rem;
+      text-align: left;
+      width: 100%;
     }
+    
+    /* Button links ausrichten statt zentrieren */
+    .project-button {
+      align-self: flex-start;
+      width: auto;
+      min-width: 60%;
+    }
+    
+    /* Weitere bestehende mobile Styles... */
     
     /* Hide tags on mobile */
     .tags {
