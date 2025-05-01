@@ -37,6 +37,8 @@ export class Typewriter {
                 'creative journey.'
             ]
         ];
+
+        this.intervals = [null, null, null, null, null]; // Store interval IDs
     }
 
     /**
@@ -458,5 +460,41 @@ export class Typewriter {
         
         context.shadowColor = "transparent";
         texture.needsUpdate = true;
+    }
+
+    startTypingEffect(index, updateFunction, context, texture) {
+        // Clear existing interval for this index before starting a new one
+        this.stopTypingEffect(index);
+
+        this.subtitleProgress[index] = 0;
+        this.intervals[index] = setInterval(() => {
+            this.subtitleProgress[index]++;
+            updateFunction(context, texture);
+
+            // Determine total length for the current section
+            let totalLength = 0;
+            if (this.subtitleTexts[index]) {
+                this.subtitleTexts[index].forEach(line => totalLength += line.length);
+            }
+
+            if (this.subtitleProgress[index] >= totalLength) {
+                this.stopTypingEffect(index);
+            }
+        }, 50); // Adjust typing speed if needed
+    }
+
+    stopTypingEffect(index) {
+        if (this.intervals[index]) {
+            clearInterval(this.intervals[index]);
+            this.intervals[index] = null;
+        }
+    }
+
+    // Add a dispose method to clear all intervals
+    dispose() {
+        console.log("Disposing Typewriter and clearing intervals.");
+        for (let i = 0; i < this.intervals.length; i++) {
+            this.stopTypingEffect(i);
+        }
     }
 }

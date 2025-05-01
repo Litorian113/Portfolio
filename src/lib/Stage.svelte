@@ -287,6 +287,10 @@
     if (introText) {
       introText.dispose();
     }
+    // Add cleanup for typewriter
+    if (typewriter) {
+      typewriter.dispose(); // Call the new dispose method
+    }
 
     // Clean up back button
     if (backButton) {
@@ -411,24 +415,42 @@
     
     // Direct index access for better performance
     const meshAssignments = [
-      { meshIndex: 0, texture: 'bild1', project: 'nass' },
-      { meshIndex: 1, texture: 'bild2', project: 'bwegt' },
-      { meshIndex: 2, texture: 'bild3', project: 'iceAgeMammals' },
-      { meshIndex: 3, texture: 'bild4', project: 'hybridWallet' },
-      { meshIndex: 6, texture: 'fotoCover', project: 'photovideo' }
+      { meshIndex: 0, textureKey: 'bild1', project: 'nass' }, // Changed 'texture' to 'textureKey' to avoid confusion
+      { meshIndex: 1, textureKey: 'bild2', project: 'bwegt' },
+      { meshIndex: 2, textureKey: 'bild3', project: 'iceAgeMammals' },
+      { meshIndex: 3, textureKey: 'bild4', project: 'hybridWallet' },
+      { meshIndex: 6, textureKey: 'fotoCover', project: 'photovideo' } // Assuming meshIndex 6 is pngMeshFoto
     ];
     
-    meshAssignments.forEach(({ meshIndex, texture, project }) => {
+    meshAssignments.forEach(({ meshIndex, textureKey, project }) => {
       if (meshIndex >= 0 && meshIndex < imageMeshes.length) {
+        const mesh = imageMeshes[meshIndex];
+        if (!mesh || !mesh.material) return; // Safety check
+
+        const currentTexture = mesh.material.map; // Get the current texture
+
         textureLoader.load(
-          paths[texture], 
+          paths[textureKey], 
           newTexture => {
             newTexture.colorSpace = THREE.SRGBColorSpace;
-            currentTextures[texture] = newTexture;
+            
+            // Dispose the old texture if it exists and is different
+            if (currentTexture && currentTexture !== newTexture) {
+              currentTexture.dispose();
+              console.log(`Disposed old texture for ${project}`);
+            }
+            
+            // Assign the new texture
+            mesh.material.map = newTexture;
+            mesh.material.needsUpdate = true; // Important: Tell Three.js the material has changed
+            
+            // Update the reference in currentTextures (optional, but good for consistency)
+            currentTextures[textureKey] = newTexture;
           },
           undefined,
           error => {
-            // Silent fail in production
+            console.error(`Error loading texture ${paths[textureKey]} for ${project}:`, error);
+            // Silent fail in production (consider logging instead)
           }
         );
       }
